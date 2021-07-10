@@ -1,13 +1,14 @@
-import datetime
-
+import datetime, time, threading
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
-from numpy import True_
-import plotly
-from dash.dependencies import Input, Output
 
-
+def made_measurement(db):
+    while(True):
+        print("Started task...")
+        print("%s: %s" % (threading.current_thread().name, time.ctime(time.time())))
+        time.sleep(10)
+        # db.session.add(Measurement(measurement=psutil.cpu_percent(), date_measurement=datetime.datetime.now()))
+        # db.session.commit()
+        print("task completed")
     
 if __name__ == '__main__':
     from flask import Flask
@@ -34,4 +35,5 @@ if __name__ == '__main__':
     from dashApp.callbacks import register_callbacks
     register_callbacks(app)
 
-    app.run_server(debug=True)
+    t1 = threading.Thread(target=app.run_server(debug=True)).start()
+    t2 = threading.Thread(target=made_measurement(db)).start()
