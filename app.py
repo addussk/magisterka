@@ -1,28 +1,11 @@
 import datetime, time, threading, psutil
-import dash
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from dashApp.layout import layout_main
-from dashApp.callbacks import register_callbacks
 from scripts import dummy_temperature
-
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+from dashApp.webapp import create_app
 
 app = Flask(__name__)
-# inject Dash
-app = dash.Dash(
-    server=app,
-    url_base_pathname='/dashboard/',
-    suppress_callback_exceptions=True,
-    external_stylesheets=external_stylesheets
-)
-app.server.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/test.db"
 
-app.layout = layout_main
-
-db = SQLAlchemy(app.server)
-
-register_callbacks(app)
+app, db = create_app(app)
 
 def made_measurement():
     from dashApp.models import Frequency, Temperature
