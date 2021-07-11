@@ -110,3 +110,11 @@ def build_quick_stats_panel():
         ],
     )
 
+def build_chart_panel():
+    return html.Div(
+        id="control-chart-container",
+        className="twelve columns",
+        children=[
+            
+        ],
+    )

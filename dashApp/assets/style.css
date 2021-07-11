@@ -180,6 +180,13 @@ body {
     color: #91dfd2 !important;
 }
 
+#graphs-container {
+    display: flex;
+    flex-direction: column;
+    flex: 3 1;
+    max-width: calc(75%);
+    width: 70%;
+  }
   /* Tab 2 Quick stats
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 #quick-stats {
