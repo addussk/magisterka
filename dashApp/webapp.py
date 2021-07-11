@@ -6,10 +6,10 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 def create_app(app):
     # inject Dash
     app = dash.Dash(
+    __name__,
     server=app,
     url_base_pathname='/dashboard/',
     suppress_callback_exceptions=True,
-    external_stylesheets=external_stylesheets
     )
 
     app.server.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/test.db"
