@@ -29,3 +29,6 @@ class Temperature(db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+    
+    def get(self):
+        return (self.measured_freq, self.time_of_measurement)

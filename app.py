@@ -4,6 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from dashApp.layout import layout_main
 from dashApp.callbacks import register_callbacks
+from scripts import dummy_temperature
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -22,23 +23,20 @@ app.layout = layout_main
 db = SQLAlchemy(app.server)
 
 register_callbacks(app)
-class Frequency(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    measured_freq = db.Column(db.Integer, nullable=False)
-    time_of_measurement = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
-
-    def __repr__(self):
-        return '<User {}>'.format(self.username) 
-    
-    def get(self):
-        return (self.measured_freq, self.time_of_measurement)
 
 def made_measurement():
+    from dashApp.models import Frequency, Temperature
     while(True):
         print("Started task...")
         print("%s: %s" % (threading.current_thread().name, time.ctime(time.time())))
         time.sleep(10)
+
+        print("Measure frequency...")
         db.session.add(Frequency(measured_freq=psutil.cpu_percent(), time_of_measurement=datetime.datetime.now()))
+        db.session.commit()
+
+        print("Measure temperature...")
+        db.session.add(Temperature(measured_temp=dummy_temperature(), time_of_measurement=datetime.datetime.now()))
         db.session.commit()
         print("task completed")
 
