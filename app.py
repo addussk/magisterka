@@ -28,6 +28,7 @@ t2.start()
 
 if __name__ == '__main__':
     db.create_all()
-    t1 = threading.Thread(target=app.run_server)
-    t1.start()
+    app.run_server(debug=True)
+    # t1 = threading.Thread(target=app.run_server)
+    # t1.start()
     
