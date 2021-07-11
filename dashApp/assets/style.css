@@ -14,6 +14,14 @@ body {
     margin: 0;
 }
 
+#big-app-container {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 6rem;
+}
+
 .banner {
     height: fit-content;
     background-color: #1e2130;
@@ -108,4 +116,129 @@ body {
     margin-left: 3px;
 }
 
+.section-banner {
+    color: darkgray;
+    font-size: 1.5rem;
+    text-align: left;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #4b5460;
+}
 
+/* Container
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+#app-container {
+    background: #161a28;
+    margin: 1rem 2rem;
+    max-width: 100%;
+    width: 100%;
+    height: calc(100vh - 10rem - 1px);
+}
+
+#app-content {
+    background: inherit;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+#status-container {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+/*Dash Daq Graduatebar */
+
+#quick-stats.row {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+#card-1, #card-2, #utility-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+  
+#card-1 {
+    margin-bottom: 3rem;
+}
+
+#stop-button > div > button:hover {
+    color: #91dfd2 !important;
+}
+
+  /* Tab 2 Quick stats
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+#quick-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-right: #1E2130 solid 0.8rem;
+    flex: 1 1;
+    padding: 2rem;
+    max-width: 25%;
+}
+
+#operator-led {
+    width: 200px;
+}
+  
+#operator-led > div {
+    width: 80%;
+    margin: auto;
+}
+
+#operator-led > div > div {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+/* Tab 2 Specs
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+#stop-button > div > button {
+    color: white !important;
+    background-color: #1d202d !important;
+    border: 1px solid #4B5460 !important;
+    border-radius: 4px;
+    height: 40px;
+    line-height: 40px;
+}
+  
+  #stop-button > div > button:hover {
+    color: #91dfd2 !important;
+    border-color: white !important;
+    background-color: #1d202d !important;
+}
+
+#card-1 P, #card-2 P {
+    margin: 2rem;
+    color: inherit;
+    font-weight: bold;
+    align-self: flex-start;
+}
+
+#card-2 .scale, #card-2 .needle, #card-2 .needle-knob {
+    display: none !important;
+}
+
+
+/* Tab 2 metric row
+–––––––––––––––––––––––––––––––––––––––––––––––––– */

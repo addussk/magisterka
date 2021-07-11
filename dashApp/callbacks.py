@@ -1,11 +1,9 @@
 from dashApp.models import Frequency
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from datetime import datetime as dt
 import dash_html_components as html
-import cpuinfo
-import psutil
 import plotly
-
+from dashApp.templates import build_tab_1, build_quick_stats_panel
 
 dataFreq = { 
     'Freq': [],
@@ -58,11 +56,22 @@ def register_callbacks(dashapp):
 
         return fig
 
-    @dashapp.callback(Output('container-button-timestamp', 'children'),
-                Input('btn-record', 'n_clicks'))
-    def displayClick(btn1):
-        dataFreq['TurnOn'] = not dataFreq['TurnOn']
+    
+    @dashapp.callback(
+        [Output("app-content", "children"), Output("interval-component", "n_intervals")],
+        [Input("app-tabs", "value")],
+        [State("n-interval-stage", "data")],
+    )
+    def render_tab_content(tab_switch, stopped_interval):
+        if tab_switch == "tab1":
+            return build_tab_1(), stopped_interval
+        return (
+            html.Div(
+                id="status-container",
+                children=[
+                    build_quick_stats_panel(),
 
-        if dataFreq['TurnOn']:
-            return "Recording"
-        else: return "Click to recording!"
+                ],
+            ),
+            stopped_interval,
+        )
