@@ -1,3 +1,4 @@
+from dashApp.models import Frequency
 from dash.dependencies import Input, Output
 from datetime import datetime as dt
 import dash_html_components as html
@@ -13,7 +14,8 @@ dataFreq = {
 }
 
 def register_callbacks(dashapp):
-
+    from dashApp.extensions import db
+    
     @dashapp.callback(Output('live-update-text', 'children'),
                   Input('interval-component', 'n_intervals'))
     def update_metrics(n):
@@ -31,22 +33,24 @@ def register_callbacks(dashapp):
                 Input('interval-component', 'n_intervals'))
     def update_graph_live(n):
         
-        time = dt.now()
-        
-        if dataFreq['TurnOn']:
-            dataFreq['Freq'].append(psutil.cpu_percent())
-            dataFreq['Time'].append(time)
-        
         # Create the graph with subplots
         fig = plotly.tools.make_subplots(rows=1, cols=1, vertical_spacing=0.2)
         
         fig['layout']['margin'] = {
             'l': 30, 'r': 10, 'b': 30, 't': 10
         }
+        
+        # get all users in database
+        users = db.session.query(Frequency).order_by(Frequency.time_of_measurement.desc()).limit(50).all()
+        last_user = db.session.query(Frequency).order_by(Frequency.id.desc()).first()
+        if last_user.get()[1] != dataFreq['Time']:
+            temp_y = [ el.get()[0] for el in users]
+            temp_x = [ el.get()[1] for el in users]
+            dataFreq['Time'] = temp_y[-1]
 
         fig.append_trace({
-            'x': dataFreq['Time'],
-            'y': dataFreq['Freq'],
+            'x': temp_x,
+            'y': temp_y,
             'text': dataFreq['Time'],
             'mode': 'lines+markers',
             'type': 'scatter'
