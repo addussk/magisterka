@@ -9,8 +9,8 @@ layout_main = html.Div(
         dcc.Interval(
             id='interval-component',
             interval=1*1000, # in milliseconds
-            n_intervals=50, # start at batch 50
-            disabled = True,
+            #n_intervals=50, # start at batch 50
+            #disabled = True,
         ),
         html.Div(
             id="app-container",

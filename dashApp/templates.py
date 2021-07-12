@@ -137,10 +137,9 @@ def build_chart_panel():
                     {
                         "data": [
                             {
-                                "x": [1,2,3,4,5],
-                                "y": [5,5,5,5,5],
+                                "x": [],
+                                "y": [],
                                 "mode": "lines+markers",
-                                "name": 'Nazwa@@@@',
                             }
                         ],
                         "layout": {
