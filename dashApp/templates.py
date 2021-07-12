@@ -1,8 +1,8 @@
+from typing import Sized
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_daq as daq
 import plotly.graph_objs as go
-
 
 def build_banner():
     return html.Div(
@@ -66,12 +66,27 @@ def generate_section_banner(title):
     return html.Div(className="section-banner", children=title)
 
 # do zaimplementowania
-def generate_temp_chart():
-    return None
-
-# do zaimplementowania
 def build_tab_1():
     return None
+
+
+def generate_indicator():
+    return html.Div(
+        id="thermometer-card",
+        children=[
+            daq.Thermometer(
+                id="thermometer-indicator",
+                min=0,
+                max=105,
+                value=50, # should be update in runtime
+                showCurrentValue=True,
+                units="C",
+                color="#f71606",
+                style={
+                }
+            )
+        ]
+    )
 
 def build_quick_stats_panel():
     return html.Div(
@@ -81,11 +96,11 @@ def build_quick_stats_panel():
             html.Div(
                 id="card-1",
                 children=[
-                    html.P("Operator ID"),
+                    html.P("User ID"),
                     daq.LEDDisplay(
                         id="operator-led",
                         value="999",
-                        color="#92e0d3",
+                        color="#c8f10f",
                         backgroundColor="#1e2130",
                         size=50,
                     ),
@@ -141,6 +156,36 @@ def build_chart_panel():
                         },
                     }
                 ),
+            ),
+        ],
+    )
+
+def build_bottom_panel():
+    return html.Div(
+        id="top-section-container",
+        className="row",
+        children=[
+            # Table with all chapters
+            html.Div(
+                id="all-charts-tab",
+                className="eight columns",
+                children=[
+                    generate_section_banner("All measurement: "),
+                    html.Div(
+                        id="all-charts-div",
+                        children=[
+                        ],
+                    )
+                ],
+            ),
+            # Temperature indicator
+            html.Div(
+                id="temp-indicator",
+                className="four columns",
+                children=[
+                    generate_section_banner("Current temperature (Celsius)"),
+                    generate_indicator(),
+                ],
             ),
         ],
     )

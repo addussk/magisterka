@@ -3,7 +3,7 @@ from dash.dependencies import Input, Output, State
 from datetime import datetime as dt
 import dash_html_components as html
 import plotly
-from dashApp.templates import build_tab_1, build_quick_stats_panel
+from dashApp.templates import build_tab_1, build_quick_stats_panel, build_chart_panel, build_bottom_panel
 
 dataFreq = { 
     'Freq': [],
@@ -70,7 +70,10 @@ def register_callbacks(dashapp):
                 id="status-container",
                 children=[
                     build_quick_stats_panel(),
-
+                    html.Div(
+                        id="graphs-container",
+                        children=[build_chart_panel(), build_bottom_panel() ],
+                    ),
                 ],
             ),
             stopped_interval,

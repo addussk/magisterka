@@ -36,6 +36,7 @@ body {
 
 .banner h5 {
     font-family: 'Open Sans Semi Bold', sans-serif;
+    color: #c8f10f;
     font-weight: 500;
     line-height: 1.2;
     font-size: 2rem;
@@ -44,13 +45,14 @@ body {
 }
 
 .banner h6 {
+    color: #c8f10f;
     font-size: 1.6rem;
     line-height: 1;
 }
 
 
 .banner button {
-    color: #95969A;
+    color: #c8f10f;
     margin-right: 10px;
     height: 5rem;
     line-height: 3rem;
@@ -64,7 +66,7 @@ body {
 }
 
 .banner button:hover {
-    color: #92e0d3;
+    color: #c8f10f;
     border-color: whitesmoke;
 }
 
@@ -124,6 +126,18 @@ body {
     border-bottom: 1px solid #4b5460;
 }
 
+/* Main Dashboard Tab
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+#top-section-container {
+    height: 40rem;
+    flex-direction: row;
+    display: flex;
+    max-width: 100%;
+    border-top: #1e2130 solid 0.8rem;
+    /*width: 100%;*/
+  }
+
 /* Container
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
@@ -149,7 +163,7 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin: 0;
+    margin-top: 0rem;
     padding: 0;
 }
 
@@ -163,10 +177,36 @@ body {
 }
 
 #control-chart-container {
+    flex-direction: row;
     position: relative;
     z-index: 4;
     width: 100%;
     border-top: #1E2130 solid 0.8rem;
+}
+
+#all-charts-tab {
+    height: 100%;
+    flex: 1 1 auto;
+}
+
+#temp-indicator{
+    height: 100%;
+    margin: 0;
+    border-left: #1E2130 solid 0.8rem;
+    flex: 1 1 auto;
+}
+
+#thermometer-card {
+    color: #c8f10f;
+    font-size: 10rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 5rem;
+    margin-right: 10rem;
+    padding: 0;
+    width: 100%;
 }
 
 #card-1, #card-2, #utility-card {
@@ -184,9 +224,16 @@ body {
 }
 
 #stop-button > div > button:hover {
-    color: #91dfd2 !important;
+    color: #c8f10f !important;
 }
 
+#graphs-container {
+    display: flex;
+    flex-direction: column;
+    flex: 3 1;
+    max-width: calc(75%);
+    width: 70%;
+}
   /* Tab 2 Quick stats
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 #quick-stats {
@@ -194,7 +241,8 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    border-right: #1E2130 solid 0.8rem;
+    border-right: #1e2130 solid 0.8rem;
+    border-top: #1e2130 solid 0.8rem;
     flex: 1 1;
     padding: 2rem;
     max-width: 25%;
@@ -230,7 +278,7 @@ body {
 }
   
   #stop-button > div > button:hover {
-    color: #91dfd2 !important;
+    color: #c8f10f !important;
     border-color: white !important;
     background-color: #1d202d !important;
 }
@@ -249,3 +297,6 @@ body {
 
 /* Tab 2 metric row
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
+#all-charts-div {
+    padding: 1rem 2rem 1rem 1rem;
+  }
