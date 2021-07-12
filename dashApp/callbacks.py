@@ -8,15 +8,16 @@ from dashApp.templates import build_tab_1, build_quick_stats_panel, build_chart_
 dataFreq = { 
     'Freq': [],
     'Time': [],
-    'TurnOn': False,
+    'TurnOn': 1,
 }
 
 def register_callbacks(dashapp):
     from dashApp.extensions import db
         
     # Multiple components can update everytime interval gets fired.
-    @dashapp.callback(Output('control-chart-live', 'figure'),
-                Input('interval-component', 'n_intervals'))
+    @dashapp.callback(
+        Output('control-chart-live', 'figure'),
+        Input('interval-component', 'n_intervals'))
     def update_graph_live(n):
 
         # get all users in database
@@ -53,8 +54,8 @@ def register_callbacks(dashapp):
         return fig
 
     @dashapp.callback(
-    Output('thermometer-indicator', 'value'),
-    [Input('interval-component', 'n_intervals')]
+        Output('thermometer-indicator', 'value'),
+        [Input('interval-component', 'n_intervals')]
     )
     def update_therm_col(val):
         last_measurement = db.session.query(Temperature).order_by(Temperature.id.desc()).first()
