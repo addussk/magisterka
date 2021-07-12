@@ -162,6 +162,13 @@ body {
     align-items: center;
 }
 
+#control-chart-container {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    border-top: #1E2130 solid 0.8rem;
+}
+
 #card-1, #card-2, #utility-card {
     display: flex;
     flex-direction: column;

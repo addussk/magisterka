@@ -115,6 +115,32 @@ def build_chart_panel():
         id="control-chart-container",
         className="twelve columns",
         children=[
-            
+            generate_section_banner("Live Measurement Chart"),
+            dcc.Graph(
+                id="control-chart-live",
+                figure=go.Figure(
+                    {
+                        "data": [
+                            {
+                                "x": [1,2,3,4,5],
+                                "y": [5,5,5,5,5],
+                                "mode": "lines+markers",
+                                "name": 'Nazwa@@@@',
+                            }
+                        ],
+                        "layout": {
+                            "paper_bgcolor": "rgba(0,0,0,0)",
+                            "plot_bgcolor": "rgba(0,0,0,0)",
+                            "xaxis": dict(
+                                showline=False, showgrid=False, zeroline=False
+                            ),
+                            "yaxis": dict(
+                                showgrid=False, showline=False, zeroline=False
+                            ),
+                            "autosize": True,
+                        },
+                    }
+                ),
+            ),
         ],
     )
