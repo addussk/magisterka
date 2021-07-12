@@ -1,4 +1,4 @@
-from dashApp.models import Frequency
+from dashApp.models import Frequency, Temperature
 from dash.dependencies import Input, Output, State
 from datetime import datetime as dt
 import dash_html_components as html
@@ -20,11 +20,12 @@ def register_callbacks(dashapp):
     def update_graph_live(n):
 
         # get all users in database
-        users = db.session.query(Frequency).order_by(Frequency.time_of_measurement.desc()).limit(50).all()
-        last_user = db.session.query(Frequency).order_by(Frequency.id.desc()).first()
-        if last_user.get()[1] != dataFreq['Time']:
-            temp_y = [ el.get()[0] for el in users]
-            temp_x = [ el.get()[1] for el in users]
+        frequency_measurement = db.session.query(Frequency).order_by(Frequency.time_of_measurement.desc()).limit(50).all()
+        last_measurement = db.session.query(Frequency).order_by(Frequency.id.desc()).first()
+        if last_measurement.get()[1] != dataFreq['Time']:
+            temp_y = [ el.get()[0] for el in frequency_measurement]
+            temp_x = [ el.get()[1] for el in frequency_measurement]
+            dataFreq['Time'] = temp_x[-1]
 
         fig={
                 "data": [
@@ -51,7 +52,15 @@ def register_callbacks(dashapp):
 
         return fig
 
-    
+    @dashapp.callback(
+    Output('thermometer-indicator', 'value'),
+    [Input('interval-component', 'n_intervals')]
+    )
+    def update_therm_col(val):
+        last_measurement = db.session.query(Temperature).order_by(Temperature.id.desc()).first()
+
+        return int(last_measurement.get_temperature())
+
     @dashapp.callback(
         [Output("app-content", "children"), Output("interval-component", "n_intervals")],
         [Input("app-tabs", "value")],

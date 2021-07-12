@@ -31,4 +31,7 @@ class Temperature(db.Model):
         return '<User {}>'.format(self.username)
     
     def get(self):
-        return (self.measured_freq, self.time_of_measurement)
+        return (self.measured_temp, self.time_of_measurement)
+    
+    def get_temperature(self):
+        return self.measured_temp
