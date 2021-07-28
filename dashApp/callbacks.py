@@ -3,7 +3,7 @@ from dash.dependencies import Input, Output, State
 from datetime import datetime as dt
 import dash_html_components as html
 import plotly.graph_objs as go
-from dashApp.templates import build_tab_1, build_quick_stats_panel, build_chart_panel, build_bottom_panel
+from dashApp.templates import build_tab_1, build_quick_stats_panel, build_chart_panel, build_bottom_panel, build_value_setter_line
 
 dataFreq = { 
     'Freq': [],
@@ -83,3 +83,20 @@ def register_callbacks(dashapp):
             ),
             stopped_interval,
         )
+    
+    @dashapp.callback(
+        output=[
+            Output("value-setter-panel", "children"),
+        ],
+        inputs=[Input("metric-select-dropdown", "value")],
+        state=[State("value-setter-store", "data")]
+    )
+    def build_value_setter_panel(dd_sel_mode, state_value):
+        return [
+            build_value_setter_line(
+                "value-setter-panel-header",
+                "Specs",
+                "Historical Value",
+                "Set new value",
+            ),
+        ]

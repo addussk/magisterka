@@ -12,6 +12,11 @@ meas_modes = {
     'sweeping': 2,
 }
 
+def init_value_setter_store():
+    # Initialize store data - will be implemented
+    state_dict = 0
+    return state_dict
+
 def build_banner():
     return html.Div(
         id="banner",
@@ -73,6 +78,17 @@ def build_tabs():
 def generate_section_banner(title):
     return html.Div(className="section-banner", children=title)
 
+def build_value_setter_line(line_num, label, value, col3):
+    return html.Div(
+        id=line_num,
+        children=[
+            html.Label(label, className="four columns"),
+            html.Label(value, className="four columns"),
+            html.Div(col3, className="four columns"),
+        ],
+        className="row",
+    )
+    
 # do zaimplementowania
 def build_tab_1():
     return [
@@ -115,7 +131,6 @@ def build_tab_1():
                                 html.Button(
                                     "View current setup",
                                     id="value-setter-view-btn",
-                                    # n_clicks=0,
                                 ),
                             ]
                         ),

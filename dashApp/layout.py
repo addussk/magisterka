@@ -20,6 +20,7 @@ layout_main = html.Div(
                 html.Div(id="app-content"),
             ],
         ),
+        dcc.Store(id="value-setter-store", data=init_value_setter_store()),
         dcc.Store(id="n-interval-stage", data=50),
     ], style={'text-align':'center'}
 )
