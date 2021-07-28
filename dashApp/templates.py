@@ -2,7 +2,15 @@ from typing import Sized
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_daq as daq
+from dash_html_components.P import P
 import plotly.graph_objs as go
+
+
+meas_modes = {
+    'fixed_value': 0,
+    'tracking': 1,
+    'sweeping': 2,
+}
 
 def build_banner():
     return html.Div(
@@ -67,7 +75,59 @@ def generate_section_banner(title):
 
 # do zaimplementowania
 def build_tab_1():
-    return None
+    return [
+        #Manually select metrics
+        html.Div(
+            id="set-specs-intro-container",
+            # className="twelve columns",
+            children=html.P(
+                "Choose measurement mode and set parameters"
+            )
+        ),
+        html.Div(
+            id="settings-menu",
+            children=[
+                html.Div(
+                    id="metric-select-menu",
+                    # className='five columns',
+                    children=[
+                        html.Label(id="metric-select-title", children="Select Measurement Mode"),
+                        html.Br(),
+                        dcc.Dropdown(
+                            id="metric-select-dropdown",
+                            options=list(
+                                {"label": mode, "value": meas_modes[mode]} for mode in meas_modes
+                            ),
+                            value=0,
+                        ),
+                    ],
+                ),
+                html.Div(
+                    id="value-setter-menu",
+                    # className='six columns',
+                    children=[
+                        html.Div(id="value-setter-panel"),
+                        html.Br(),
+                        html.Div(
+                            id="button-div",
+                            children=[
+                                html.Button("Update", id="value-setter-set-btn"),
+                                html.Button(
+                                    "View current setup",
+                                    id="value-setter-view-btn",
+                                    # n_clicks=0,
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            id="value-setter-view-output", className="output-datatable"
+                        ),
+                    ]
+                )
+            ]
+        )
+
+    ]
 
 
 def generate_indicator():
