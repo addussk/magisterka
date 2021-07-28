@@ -21,13 +21,6 @@ layout_main = html.Div(
             ],
         ),
         dcc.Store(id="n-interval-stage", data=50),
-        # html.H4('Live Chart'),
-        # html.Div(id='live-update-text'),
-        # html.Div(id='click-update-text'),
-        # dcc.Graph(id='live-update-graph'),
-        # html.Button('Record', id='btn-record', n_clicks=0),
-        # html.Div(id='container-button-timestamp'),
-        
     ], style={'text-align':'center'}
 )
 
