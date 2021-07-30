@@ -303,6 +303,10 @@ body {
     border-color: white;
 }
 
+#value-setter-panel-freq, #value-setter-panel-power, #value-setter-panel-time-step {
+    padding: 1rem 0;
+}
+
 .output-datatable {
     margin: 2rem 0rem 2rem 2rem;
     line-height: 3;
