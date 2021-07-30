@@ -14,8 +14,16 @@ meas_modes = {
 
 def init_value_setter_store():
     # Initialize store data - will be implemented
-    state_dict = 0
-    return state_dict
+    ret = {
+        "cur_fix_meas_setting": {
+            "turn_on": False,
+            "frequency": 1,
+            "power":1,
+            "time_step":1,
+        }
+    }
+    
+    return ret
 
 def build_banner():
     return html.Div(
