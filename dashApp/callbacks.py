@@ -99,9 +99,10 @@ def register_callbacks(dashapp):
     
     @dashapp.callback(
         Output("value-setter-panel", "children"),
-        inputs=[Input("metric-select-dropdown", "value")],
+        Input("metric-select-dropdown", "value"),
+        State("value-setter-store", "data"),
     )
-    def build_value_setter_panel(dd_sel_mode):
+    def build_value_setter_panel(dd_sel_mode, state_value):
         return  [
             build_value_setter_line(
                 "value-setter-panel-header",
@@ -111,17 +112,17 @@ def register_callbacks(dashapp):
             ), build_value_setter_line(
                 "value-setter-panel-freq",
                 "Frequency [MHz]:",
-                "0",
+                state_value["cur_fix_meas_setting"]["frequency"],
                 fixed_freq_input,
             ), build_value_setter_line(
                 "value-setter-panel-power",
                 "Power [dBm]:",
-                "0",
+                state_value["cur_fix_meas_setting"]["power"],
                 power_input,
             ), build_value_setter_line(
                 "value-setter-panel-time-step",
                 "Time for one step [s]:",
-                "0",
+                state_value["cur_fix_meas_setting"]["time_step"],
                 time_step_input,
             )
         ]
