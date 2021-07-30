@@ -18,8 +18,24 @@ def init_value_setter_store():
         "cur_fix_meas_setting": {
             "turn_on": False,
             "frequency": 1,
-            "power":1,
-            "time_step":1,
+            "power":36,
+            "time_step":10,
+        },
+        "cur_track_meas_setting": {
+            "turn_on": False,
+            "start_freq":90,
+            "stop_freq":110,
+            "power":36,
+            "freq_step":1,
+            "time_step":10,
+        },
+        "cur_sweep_meas_setting": {
+            "turn_on": False,
+            "start_freq":90,
+            "stop_freq":110,
+            "power":36,
+            "freq_step":1,
+            "time_step":10,
         }
     }
     
