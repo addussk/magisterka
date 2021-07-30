@@ -16,15 +16,15 @@ def register_callbacks(dashapp):
     from dashApp.extensions import db
 
     fixed_freq_input = daq.NumericInput(
-        id="fixed_freq_input", className="setting-input", size=200, max=9999999
+        id="fixed_freq_input", value=100, className="setting-input", size=200, max=9999999
     )
 
     power_input = daq.NumericInput(
-        id="power_input", className="setting-input", size=200, max=9999999
+        id="power_input", value=10, className="setting-input", size=200, max=9999999
     )
 
     time_step_input = daq.NumericInput(
-        id="time_step_input", className="setting-input", size=200, max=9999999
+        id="time_step_input", value=5, className="setting-input", size=200, max=9999999
     )
     
     # Multiple components can update everytime interval gets fired.
