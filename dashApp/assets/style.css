@@ -156,6 +156,25 @@ body {
     max-width: 100%;
 }
 
+#settings-menu {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-evenly;
+    margin: 4rem 5rem 1rem;
+}
+
+#metric-select-menu {
+    flex: 1 1 0;
+}
+
+#value-setter-menu {
+    flex: 1 1 30%;
+    margin-left: 5rem;
+    display: flex;
+    flex-direction: column;
+}
+
 #status-container {
     width: 100%;
     max-width: 100%;
@@ -234,6 +253,137 @@ body {
     max-width: calc(75%);
     width: 70%;
 }
+
+/* Tab1 content
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+#set-specs-intro-container {
+    font-weight: bold;
+    margin: 8rem 5rem 1rem;
+    font-size: 3rem;
+}
+
+#metric-select-title {
+    font-size: 2rem;
+    color: #c8f10f;
+}
+
+#button-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+  
+#value-setter-view-btn {
+    margin-left: 20px;
+}
+  
+#value-setter-panel {
+    line-height: 2;
+}
+
+#value-setter-panel-header {
+    font-weight: bold;
+    color: darkgray;
+    line-height: 1;
+    padding: 2rem 0;
+    border-bottom: 1px solid #4b5460;
+}
+  
+#value-setter-panel-header > div {
+    text-align: right;
+}
+
+#value-setter-view-btn, #value-setter-set-btn {
+    border: 1px solid #4B5460;
+    color: darkgray;
+}
+  
+#value-setter-set-btn:hover, #value-setter-view-btn:hover {
+    color: #91dfd2;
+    border-color: white;
+}
+
+.output-datatable {
+    margin: 2rem 0rem 2rem 2rem;
+    line-height: 3;
+    align-self: flex-end;
+    width: 80%;
+}
+
+/*Dropdown*/
+.setting-input {
+    width: 100% !important;
+    height: 100%;
+  }
+  
+  .react-numeric-input, .react-numeric-input input {
+    width: 100% !important;
+  }
+  
+  .react-numeric-input input {
+    background-color: #242633 !important;
+    border-color: darkgray !important;
+    color: white !important;
+  }
+  
+  .react-numeric-input b:nth-child(2) i {
+    border-color: transparent transparent white !important;
+  }
+  
+  .react-numeric-input b:nth-child(3) i {
+    border-color: white transparent transparent !important;
+  }
+  
+  
+  /* Dropdown
+  ----------------------------------------------*/
+  
+  /*Dropdown items*/
+  .Select-control, .Select-multi-value-wrapper, .Select-menu-outer div {
+    background-color: #242633;
+  }
+  
+  /*Dropdown items*/
+  .Select-control, .Select, .Select-value-label, .Select-clear-zone {
+    color: white;
+  }
+  
+  
+  /*Dropdown items*/
+  .Select-menu-outer {
+    background-color: #242633;
+    border: 1px solid darkgray !important;
+  }
+  
+  /*Dropdown items*/
+  .Select-menu-outer div:hover {
+    background-color: rgba(36, 38, 51, 0.5) !important;
+    cursor: pointer;
+  }
+  
+  /*Dropdown arrow + delete button*/
+  .Select-control, .Select-control > span {
+    color: white;
+    background: #242633 !important;
+  }
+  
+  /*Placeholder*/
+  .Select.has-value.Select--single > .Select-control .Select-value .Select-value-label, .Select.has-value.is-pseudo-focused.Select--single > .Select-control .Select-value .Select-value-label {
+    color: white !important;
+  }
+  
+  /*Placeholder*/
+  .Select--single > .Select-control .Select-value, .Select-placeholder {
+    /*border: 1px solid darkgray;*/
+    border-radius: 4px;
+    background-color: #242633;
+    cursor: pointer;
+  }
+  
+  
+  .Select.is-focused:not(.is-open) > .Select-control {
+    border-color: #91dfd2 !important;
+  }
   /* Tab 2 Quick stats
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 #quick-stats {

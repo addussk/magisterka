@@ -7,9 +7,9 @@ import plotly.graph_objs as go
 
 
 meas_modes = {
-    'fixed_value': 0,
-    'tracking': 1,
-    'sweeping': 2,
+    "Fixed Frequency": 0,
+    'Tracking': 1,
+    'Sweeping': 2,
 }
 
 def init_value_setter_store():
@@ -127,7 +127,7 @@ def build_tab_1():
                         html.Div(
                             id="button-div",
                             children=[
-                                html.Button("Update", id="value-setter-set-btn"),
+                                html.Button("Set new setup", id="value-setter-set-btn"),
                                 html.Button(
                                     "View current setup",
                                     id="value-setter-view-btn",
