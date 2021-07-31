@@ -3,101 +3,13 @@ from dash.dependencies import Input, Output, State
 from datetime import datetime as dt
 import dash_html_components as html
 import plotly.graph_objs as go
-from dashApp.templates import build_tab_1, build_quick_stats_panel, build_chart_panel, build_bottom_panel, build_value_setter_line, daq, meas_modes
+from dashApp.templates import *
 
 dataFreq = { 
     'Freq': [],
     'Time': [],
     'TurnOn': 1,
 }
-
-def fix_meas_tab(state_value):
-    return [
-        build_value_setter_line(
-            "value-setter-panel-header",
-            "Parameter",
-            "Last Value",
-            "Set new value",
-        ), 
-        
-        build_value_setter_line(
-            "value-setter-panel-freq",
-            "Frequency [MHz]:",
-            state_value["cur_fix_meas_setting"]["frequency"],
-            daq.NumericInput(
-                id="fixed_freq_input", value=100, className="setting-input", size=200, max=9999999
-            ),
-        ), 
-        build_value_setter_line(
-            "value-setter-panel-power",
-            "Power [dBm]:",
-            state_value["cur_fix_meas_setting"]["power"],
-            daq.NumericInput(
-                id="power_fm_input", value=10, className="setting-input", size=200, max=9999999
-            ),
-        ), 
-        build_value_setter_line(
-            "value-setter-panel-time-step",
-            "Time for one step [s]:",
-            state_value["cur_fix_meas_setting"]["time_step"],
-            daq.NumericInput(
-                id="time_step_fm_input", value=5, className="setting-input", size=200, max=9999999
-            ),
-        )
-    ]
-
-def track_meas_tab(state_value):
-    return [
-        build_value_setter_line(
-            "value-setter-panel-header",
-            "Parameter",
-            "Last Value",
-            "Set new value",
-        ), 
-        
-        build_value_setter_line(
-            "value-setter-panel-start-freq",
-            "Start Frequency [MHz]:",
-            state_value["cur_track_meas_setting"]["start_freq"],
-            daq.NumericInput(
-                id="start_freq_input", value=100, className="setting-input", size=200, max=9999999
-            ),
-        ),
-
-        build_value_setter_line(
-            "value-setter-panel-stop-freq",
-            "Stop Frequency [MHz]:",
-            state_value["cur_track_meas_setting"]["stop_freq"],
-            daq.NumericInput(
-                id="stop_freq_input", value=100, className="setting-input", size=200, max=9999999
-            ),
-        ),
-
-        build_value_setter_line(
-            "value-setter-panel-power",
-            "Power [dBm]:",
-            state_value["cur_track_meas_setting"]["power"],
-            daq.NumericInput(
-                id="power_track_input", value=10, className="setting-input", size=200, max=9999999
-            ),
-        ), 
-        build_value_setter_line(
-            "value-setter-panel-time-step",
-            "Frequency Step[MHz]:",
-            state_value["cur_track_meas_setting"]["freq_step"],
-            daq.NumericInput(
-                id="freq_step_input", value=5, className="setting-input", size=200, max=9999999
-            ),
-        ), 
-        build_value_setter_line(
-            "value-setter-panel-time-step",
-            "Time for one step [s]:",
-            state_value["cur_track_meas_setting"]["time_step"],
-            daq.NumericInput(
-                id="time_step_track_input", value=5, className="setting-input", size=200, max=9999999
-            ),
-        )
-    ]
 
 def register_callbacks(dashapp):
     from dashApp.extensions import db
@@ -184,4 +96,7 @@ def register_callbacks(dashapp):
             return  fix_meas_tab(state_value)
         elif dd_sel_mode is meas_modes["Tracking"]:
             return track_meas_tab(state_value)
+        elif dd_sel_mode is meas_modes["Sweeping"]:
+            raise NameError('Do zaimplementowania')
+            
         else: raise NameError('Ivalid Mode')
