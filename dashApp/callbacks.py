@@ -100,3 +100,16 @@ def register_callbacks(dashapp):
             raise NameError('Do zaimplementowania')
             
         else: raise NameError('Ivalid Mode')
+
+    # @@@ Callbacks to update stored data via click @@@
+    @dashapp.callback(
+        output=Output("value-setter-store", "data"),
+        inputs=[Input("value-setter-set-btn", "n_clicks")],
+        state=[
+            State("metric-select-dropdown", "value"),
+            State("value-setter-store", "data")
+        ]
+    )
+    def set_value_setter_store(set_btn, mode, store):
+        print(set_btn, mode, store )
+        return store
