@@ -290,14 +290,14 @@ def build_bottom_panel():
 def fix_meas_tab(state_value):
     return [
         build_value_setter_line(
-            "value-setter-panel-header",
+            "value-setter-panel-fm-header",
             "Parameter",
             "Last Value",
             "Set new value",
         ), 
         
         build_value_setter_line(
-            "value-setter-panel-freq",
+            "value-setter-panel-fm-freq",
             "Frequency [MHz]:",
             state_value["cur_fix_meas_setting"]["frequency"],
             daq.NumericInput(
@@ -305,7 +305,7 @@ def fix_meas_tab(state_value):
             ),
         ), 
         build_value_setter_line(
-            "value-setter-panel-power",
+            "value-setter-panel-fm-power",
             "Power [dBm]:",
             state_value["cur_fix_meas_setting"]["power"],
             daq.NumericInput(
@@ -313,7 +313,7 @@ def fix_meas_tab(state_value):
             ),
         ), 
         build_value_setter_line(
-            "value-setter-panel-time-step",
+            "value-setter-panel-fm-time-step",
             "Time for one step [s]:",
             state_value["cur_fix_meas_setting"]["time_step"],
             daq.NumericInput(
@@ -325,14 +325,14 @@ def fix_meas_tab(state_value):
 def track_meas_tab(state_value):
     return [
         build_value_setter_line(
-            "value-setter-panel-header",
+            "value-setter-panel-track-header",
             "Parameter",
             "Last Value",
             "Set new value",
         ), 
         
         build_value_setter_line(
-            "value-setter-panel-start-freq",
+            "value-setter-panel-track-start-freq",
             "Start Frequency [MHz]:",
             state_value["cur_track_meas_setting"]["start_freq"],
             daq.NumericInput(
@@ -341,7 +341,7 @@ def track_meas_tab(state_value):
         ),
 
         build_value_setter_line(
-            "value-setter-panel-stop-freq",
+            "value-setter-panel-track-stop-freq",
             "Stop Frequency [MHz]:",
             state_value["cur_track_meas_setting"]["stop_freq"],
             daq.NumericInput(
@@ -350,7 +350,7 @@ def track_meas_tab(state_value):
         ),
 
         build_value_setter_line(
-            "value-setter-panel-power",
+            "value-setter-panel-track-power",
             "Power [dBm]:",
             state_value["cur_track_meas_setting"]["power"],
             daq.NumericInput(
@@ -358,7 +358,7 @@ def track_meas_tab(state_value):
             ),
         ), 
         build_value_setter_line(
-            "value-setter-panel-time-step",
+            "value-setter-panel-freq-step",
             "Frequency Step[MHz]:",
             state_value["cur_track_meas_setting"]["freq_step"],
             daq.NumericInput(
@@ -366,7 +366,7 @@ def track_meas_tab(state_value):
             ),
         ), 
         build_value_setter_line(
-            "value-setter-panel-time-step",
+            "value-setter-panel-track-time-step",
             "Time for one step [s]:",
             state_value["cur_track_meas_setting"]["time_step"],
             daq.NumericInput(

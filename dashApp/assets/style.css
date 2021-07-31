@@ -303,7 +303,7 @@ body {
     border-color: white;
 }
 
-#value-setter-panel-freq, #value-setter-panel-power, #value-setter-panel-time-step {
+#value-setter-panel .row {
     padding: 1rem 0;
 }
 
