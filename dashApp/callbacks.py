@@ -13,13 +13,14 @@ dataFreq = {
 
 def register_callbacks(dashapp):
     from dashApp.extensions import db
-    
+    fixed_freq_input = daq.NumericInput(
+        id="fixed_freq_input", value=100, className="setting-input", size=200, max=9999999
+    )
     # Multiple components can update everytime interval gets fired.
     @dashapp.callback(
         Output('control-chart-live', 'figure'),
         Input('interval-component', 'n_intervals'))
     def update_graph_live(n):
-
         # get all users in database
         frequency_measurement = db.session.query(Frequency).order_by(Frequency.time_of_measurement.desc()).limit(50).all()
         last_measurement = db.session.query(Frequency).order_by(Frequency.id.desc()).first()
@@ -91,7 +92,10 @@ def register_callbacks(dashapp):
     )
     def build_value_setter_panel(dd_sel_mode, state_value):
         if dd_sel_mode is None:
-            return  fix_meas_tab(state_value) # by default
+            return  html.Div( 
+                id="inputs_fix_meas",
+                children=fix_meas_tab(state_value),
+                ) # by default
         if dd_sel_mode is meas_modes["Fixed Frequency"]:
             return  fix_meas_tab(state_value)
         elif dd_sel_mode is meas_modes["Tracking"]:
@@ -103,13 +107,50 @@ def register_callbacks(dashapp):
 
     # @@@ Callbacks to update stored data via click @@@
     @dashapp.callback(
-        output=Output("value-setter-store", "data"),
-        inputs=[Input("value-setter-set-btn", "n_clicks")],
-        state=[
+        [   Output("value-setter-store", "data"),
+            Output("fixed_freq_input", "value"),
+            Output("power_fm_input", "value"),
+            Output("time_step_fm_input", "value"),
+        ],
+        [   
+            Input("value-setter-set-btn", "n_clicks"),
+            Input("value-setter-panel", "children")],
+        [
             State("metric-select-dropdown", "value"),
             State("value-setter-store", "data")
         ]
-    )
-    def set_value_setter_store(set_btn, mode, store):
-        print(set_btn, mode, store )
-        return store
+    )   # set_bn ilosc klikniec, mode - wybrany tryb (0 fixed mode), store state
+    def set_value_setter_store(set_btn, input, mode, store):
+        res = []
+        print(store)
+        for x in input:
+            x = x["props"]
+            while type(x) == type([]) or type(x) == type({}):
+                if type(x) == type([]):
+                    for list_dict in x:
+                        x = list_dict["props"]
+
+                if "children" in x:
+                    x = x["children"]
+                if "props" in x:
+                    x = x["props"]
+                         
+                if type(x) is type({}) and ("value" in x) :
+                    res.append((x['id'], x['value']))
+                    break
+        print(res)
+        if set_btn is None:
+            return store, 100, 10, 5
+        else:
+            if mode == 0 or mode == 1:
+                store["cur_fix_meas_setting"]["frequency"] = res[0][1]
+                store["cur_fix_meas_setting"]["power"] = res[1][1]
+                store["cur_fix_meas_setting"]["time_step"] = res[2][1]
+
+                return store, res[0][1], res[1][1], res[2][1]
+            elif mode == 2:
+                raise NameError("Need to be implemented")
+                store["cur_sweep_meas_setting"] = 1919
+            else:
+                raise NameError("Updating store error")
+            return store, 100, 10, 5
