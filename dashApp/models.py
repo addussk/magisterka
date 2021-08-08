@@ -35,3 +35,17 @@ class Temperature(db.Model):
     
     def get_temperature(self):
         return self.measured_temp
+
+class Ustawienia(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    meas_mode = db.Column(db.Integer, nullable=False)
+    start_freq = db.Column(db.Integer, nullable=False)
+    stop_freq = db.Column(db.Integer, nullable=False)
+    power = db.Column(db.Integer, nullable=False)
+    time_stemp = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return '<Mode {}>'.format(self.meas_mode)
+    
+    def get(self):
+        return (self.id, self.meas_mode, self.start_freq, self.stop_freq, self.power, self.time_stemp)
