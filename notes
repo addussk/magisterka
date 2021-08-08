@@ -1,1 +1,5 @@
 1. Problem z baza danych, jesli klasa stworzona w models.py jest problem z jej umieszczeniem - do rozwiazania pozniej
+2. Umiescic Blueprinty
+3. Stworzyc funkcje do odczytu danych z formularza
+4. Poprawic classe definiujaca config
+5.
