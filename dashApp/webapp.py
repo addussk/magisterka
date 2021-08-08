@@ -13,6 +13,7 @@ def create_app(app):
     )
 
     app.server.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/test.db"
+    app.server.config['SECRET_KEY'] = 'asd asd asd'
 
     from dashApp.layout import layout_main
     app.layout = layout_main
