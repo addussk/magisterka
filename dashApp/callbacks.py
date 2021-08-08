@@ -1,18 +1,26 @@
-from dashApp.models import Frequency, Temperature
+from dashApp.models import Frequency, Temperature, Ustawienia
 from dash.dependencies import Input, Output, State
 from datetime import datetime as dt
 import dash_html_components as html
 import plotly.graph_objs as go
 from dashApp.templates import *
-
+from dashApp.extensions import db
 dataFreq = { 
     'Freq': [],
     'Time': [],
     'TurnOn': 1,
 }
 
+def write_to_db(data):
+    Ustawienia(meas_mode=0, start_freq=data[0], stop_freq=0, power=data[1], time_stemp=data[2])
+    db.session.add(Ustawienia(meas_mode=0, start_freq=data[0], stop_freq=0, power=data[1], time_stemp=data[2]))
+    db.session.commit()
+
+def save_param(param):
+    print("Ustawienia pomiaru do zapisania: {}".format(param))
+    write_to_db(param)
+
 def register_callbacks(dashapp):
-    from dashApp.extensions import db
     fixed_freq_input = daq.NumericInput(
         id="fixed_freq_input", value=100, className="setting-input", size=200, max=9999999
     )
@@ -22,7 +30,7 @@ def register_callbacks(dashapp):
         Input('interval-component', 'n_intervals'))
     def update_graph_live(n):
         # get all users in database
-        frequency_measurement = db.session.query(Frequency).order_by(Frequency.time_of_measurement.desc()).limit(50).all()
+        frequency_measurement = db.session.query(Frequency).order_by(Frequency.time_of_measurement.desc()).limit(20).all()
         last_measurement = db.session.query(Frequency).order_by(Frequency.id.desc()).first()
         if last_measurement.get()[1] != dataFreq['Time']:
             temp_y = [ el.get()[0] for el in frequency_measurement]
@@ -139,6 +147,9 @@ def register_callbacks(dashapp):
                     res.append((x['id'], x['value']))
                     break
         print(res)
+
+        save_param([1,10,100])
+
         if set_btn is None:
             return store, 100, 10, 5
         else:
