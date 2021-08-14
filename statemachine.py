@@ -2,9 +2,13 @@ import time
 
 TURN_OFF = 0
 TURN_ON = 1
+COMPLETED = 2
 
-DATA_BASE = dict()
-
+DATA_BASE = {
+   "init_status": None,
+   "calib_status" : False,
+   "tool_status" : TURN_OFF,
+}
 class State(object):
 
    name = "state"
@@ -55,8 +59,8 @@ class Calibration(State):
       print("TODO: calibration stuff")
       time.sleep(1)
       print("Calibration completed")
-      self.status = True
-      
+      self.status = COMPLETED
+   
 class Off(State):
    name = "off"
    allowed = ['on']
@@ -80,9 +84,10 @@ class Guard(object):
    """ A class representing a guardian """
    status = None
    
-   settup = {
+   settings = {
+      "init_status": None,
       "calib_status" : False,
-      "generator_status" : TURN_OFF,
+      "tool_status" : TURN_OFF,
    }
    
 
@@ -96,7 +101,7 @@ class Guard(object):
       self.status = status
    
    def set_calib_status(self, status):
-      self.settup["calib_status"] = status
+      self.settings["calib_status"] = status
 
    # getter functions
    def get_status(self):
@@ -104,17 +109,22 @@ class Guard(object):
       return self.state.status
 
    def isCalibrated(self):
-      return self.settup["calib_status"]
+      return self.settings["calib_status"]
 
    # rest functions
    def change(self, state):
       """ Change state """
       self.state.switch(state)
    
+   def change_settings(self, key, value):
+      if key in self.settings.keys():
+         self.settings[key] = value
+      else: raise Exception("Key doesn't exist!")
+   
    def check(self):
-      read_settup = self.read_db()
+      read_settings = self.read_db()
 
-      if read_settup == self.settup:
+      if read_settings == self.settings:
          print("Nothing change, stay in IDLE")
       
       else:
@@ -124,8 +134,10 @@ class Guard(object):
       print("Reading database")
       return 0
 
-   def write_to_db(self):
+   def write_to_db(self, db, *args):
       print("Write to DB")
+      for el in args:
+         print(el)
 
 
 comp = Guard(State)
@@ -133,14 +145,17 @@ comp = Guard(State)
 comp.state.print_state()
 comp.state.initialization()
 
+# Initialization process
 if comp.state.isInitialized():
+   comp.change_settings("init_status", COMPLETED)
+
    if comp.isCalibrated():
       comp.change(Idle)
    
    else:
       comp.change(Calibration)
       comp.state.calibration()
-      comp.set_calib_status(True)
+      comp.set_calib_status(comp.get_status())
 
       if comp.isCalibrated() == False:
          raise Exception("Problem with calibration")
