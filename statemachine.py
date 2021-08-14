@@ -112,7 +112,7 @@ class Guard(object):
       return self.settings["calib_status"]
 
    # rest functions
-   def change(self, state):
+   def change_state(self, state):
       """ Change state """
       self.state.switch(state)
    
@@ -150,17 +150,17 @@ if comp.state.isInitialized():
    comp.change_settings("init_status", COMPLETED)
 
    if comp.isCalibrated():
-      comp.change(Idle)
+      comp.change_state(Idle)
    
    else:
-      comp.change(Calibration)
+      comp.change_state(Calibration)
       comp.state.calibration()
       comp.set_calib_status(comp.get_status())
 
       if comp.isCalibrated() == False:
          raise Exception("Problem with calibration")
       
-      comp.change(Idle)
+      comp.change_state(Idle)
 else:
    raise Exception("Problem with initialization")
 
