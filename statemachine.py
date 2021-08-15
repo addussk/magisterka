@@ -120,6 +120,8 @@ class Guard(object):
       if key in self.settings.keys():
          self.settings[key] = value
       else: raise Exception("Key doesn't exist!")
+
+      self.write_to_db(DATA_BASE, self.settings)
    
    def check(self):
       read_settings = self.read_db()
@@ -132,12 +134,12 @@ class Guard(object):
 
    def read_db(self):
       print("Reading database")
-      return 0
+      return DATA_BASE
 
    def write_to_db(self, db, *args):
       print("Write to DB")
       for el in args:
-         print(el)
+         db.update(el)
 
 
 comp = Guard(State)
@@ -155,7 +157,7 @@ if comp.state.isInitialized():
    else:
       comp.change_state(Calibration)
       comp.state.calibration()
-      comp.set_calib_status(comp.get_status())
+      comp.change_settings("calib_status", comp.get_status())
 
       if comp.isCalibrated() == False:
          raise Exception("Problem with calibration")
