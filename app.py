@@ -2,7 +2,8 @@ import datetime, time, threading, psutil
 from flask import Flask
 from scripts import dummy_temperature
 from dashApp.webapp import create_app
-
+from statemachine import Guard, Idle, Calibration, State
+from database import *
 from dashApp.models import Frequency, Temperature, Ustawienia
 app = Flask(__name__, instance_relative_config=False)
 
@@ -22,16 +23,47 @@ def read_setting_from_db():
     return latest_set.get()
 
 def made_measurement():
+    comp = Guard(State)
+
+    comp.state.print_state()
+    comp.state.initialization()
+    # Initialization process
+    if comp.state.isInitialized():
+        comp.change_settings("init_status", COMPLETED)
+
+        if comp.isCalibrated():
+            comp.change_state(Idle)
+    
+        else:
+            comp.change_state(Calibration)
+            comp.state.calibration()
+            comp.change_settings("calib_status", comp.get_status())
+
+            if comp.isCalibrated() == False:
+                raise Exception("Problem with calibration")
+            
+            comp.change_state(Idle)
+    else:
+        raise Exception("Problem with initialization")
+
+    comp.state.print_state()
+
     while(True):
+        print("Endless loop")
+        comp.state.print_state()
+        comp.check()
+        time.sleep(3)
+
+        # OLD PART
         # print("Started task...")
         # print("%s: %s" % (threading.current_thread().name, time.ctime(time.time())))
-        curr_setting = read_setting_from_db()
-        print(curr_setting)
-        time.sleep(10)
-        gen_dummy_freq()
+        # curr_setting = read_setting_from_db()
+        # print(curr_setting)
+        # time.sleep(10)
+        # gen_dummy_freq()
 
         # print("Measure temperature...")
-        gen_dummy_temp()
+        # gen_dummy_temp()
         
         # print("task completed")
 

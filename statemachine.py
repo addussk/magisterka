@@ -1,29 +1,5 @@
 import time
-
-TURN_OFF = 0
-TURN_ON = 1
-COMPLETED = 2
-MEASUREMENT_NONE = 3
-MEASUREMENT_START = 4
-MEASUREMENT_HOLD = 5
-MEASUREMENT_STOP = 6
-
-
-
-DATA_BASE = {
-   "init_status": None,
-   "calib_status" : False,
-   "tool_status" : TURN_OFF,
-   "meas_req": None,
-   "settup":{
-      "mode" : 0,
-      "start_freq" : 0,
-      "stop_freq" : 0,
-      "power" : 0,
-      "time_stamp" : 0,
-      "reset_tracing_period" : 0,
-   }
-}
+from database import *
 class State(object):
 
    name = "state"
@@ -213,34 +189,35 @@ class Guard(object):
          db.update(el)
 
 
-comp = Guard(State)
+# INTEGRATED TO APP file
+# comp = Guard(State)
 
-comp.state.print_state()
-comp.state.initialization()
+# comp.state.print_state()
+# comp.state.initialization()
 
-# Initialization process
-if comp.state.isInitialized():
-   comp.change_settings("init_status", COMPLETED)
+# # Initialization process
+# if comp.state.isInitialized():
+#    comp.change_settings("init_status", COMPLETED)
 
-   if comp.isCalibrated():
-      comp.change_state(Idle)
+#    if comp.isCalibrated():
+#       comp.change_state(Idle)
    
-   else:
-      comp.change_state(Calibration)
-      comp.state.calibration()
-      comp.change_settings("calib_status", comp.get_status())
+#    else:
+#       comp.change_state(Calibration)
+#       comp.state.calibration()
+#       comp.change_settings("calib_status", comp.get_status())
 
-      if comp.isCalibrated() == False:
-         raise Exception("Problem with calibration")
+#       if comp.isCalibrated() == False:
+#          raise Exception("Problem with calibration")
       
-      comp.change_state(Idle)
-else:
-   raise Exception("Problem with initialization")
+#       comp.change_state(Idle)
+# else:
+#    raise Exception("Problem with initialization")
 
-comp.state.print_state()
+# comp.state.print_state()
 
-while True:
-   print("Endless loop")
-   comp.state.print_state()
-   comp.check()
-   time.sleep(3)
+# while True:
+#    print("Endless loop")
+#    comp.state.print_state()
+#    comp.check()
+#    time.sleep(3)
