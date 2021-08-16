@@ -3,11 +3,26 @@ import time
 TURN_OFF = 0
 TURN_ON = 1
 COMPLETED = 2
+MEASUREMENT_NONE = 3
+MEASUREMENT_START = 4
+MEASUREMENT_HOLD = 5
+MEASUREMENT_STOP = 6
+
+
 
 DATA_BASE = {
    "init_status": None,
    "calib_status" : False,
    "tool_status" : TURN_OFF,
+   "meas_req": None,
+   "settup":{
+      "mode" : 0,
+      "start_freq" : 0,
+      "stop_freq" : 0,
+      "power" : 0,
+      "time_stamp" : 0,
+      "reset_tracing_period" : 0,
+   }
 }
 class State(object):
 
@@ -65,10 +80,20 @@ class Off(State):
    name = "off"
    allowed = ['on']
 
+   def turn_off(self):
+      print("Turn on process")
+
+      return TURN_OFF
+
 class On(State):
    """ State of being powered on and working """
    name = "on"
    allowed = ['off','measurement','idle']
+
+   def turn_on(self):
+      print("Turn on process")
+
+      return TURN_ON
 
 class Idle(State):
    """ State of being in hibernation after powered on """
@@ -76,18 +101,44 @@ class Idle(State):
    allowed = ['off', 'on', 'measurement']
 
 class Measurement(State):
-   """ State of being in suspended mode after switched on """
    name = "measurement"
-   allowed = ['on']
+   allowed = ['idle']
+
+   def measurement(self, type_req, settup):
+      print("measurement")
+
+      if type_req == MEASUREMENT_START:
+         self.start_measurement()
+
+      elif type_req == MEASUREMENT_STOP:
+         self.stop_measurement()
+      
+
+   def stop_measurement(self):
+      print("Stopped measurement")
+   
+   def start_measurement(self):
+      print("Start measurement")
    
 class Guard(object):
    """ A class representing a guardian """
    status = None
    
+   scheduler = list()
+   
    settings = {
       "init_status": None,
       "calib_status" : False,
       "tool_status" : TURN_OFF,
+      "meas_req": None,
+      "settup":{
+         "mode" : 0,
+         "start_freq" : 0,
+         "stop_freq" : 0,
+         "power" : 0,
+         "time_stamp" : 0,
+         "reset_tracing_period" : 0,
+      }
    }
    
 
@@ -131,6 +182,26 @@ class Guard(object):
       
       else:
          print("Take action")
+         # If settings has been changed, choose requested action
+         if self.settings["tool_status"] != read_settings["tool_status"]:
+
+            if read_settings["tool_status"] == TURN_ON:
+               self.change_state(On)
+               retStatus = self.state.turn_on()
+               self.change_settings("tool_status", retStatus)
+
+            elif read_settings["tool_status"] == TURN_OFF:
+               self.change_state(Off)
+               retStatus = self.state.turn_off()
+               self.change_settings("tool_status", retStatus)
+
+            else: raise Exception("Wrong tool status")
+
+            if read_settings["meas_req"] != read_settings["meas_req"]:
+               self.change_state(Measurement)
+               self.state.measurement(read_settings["meas_req"], read_settings["settup"])
+
+            
 
    def read_db(self):
       print("Reading database")
@@ -170,5 +241,6 @@ comp.state.print_state()
 
 while True:
    print("Endless loop")
+   comp.state.print_state()
    comp.check()
    time.sleep(3)
