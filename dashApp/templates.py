@@ -218,7 +218,7 @@ def build_quick_stats_panel():
             ),
             html.Div(
                 id="utility-card",
-                children=[daq.StopButton(id="stop-button", size=160, n_clicks=0)],
+                children=[daq.StopButton(id="pwr-on-off-buton",  buttonText='TURN ON', size=160, n_clicks=0)],
             ),
         ],
     )

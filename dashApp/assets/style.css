@@ -242,7 +242,7 @@ body {
     margin-bottom: 3rem;
 }
 
-#stop-button > div > button:hover {
+#pwr-on-off-buton > div > button:hover {
     color: #c8f10f !important;
 }
 
@@ -422,7 +422,7 @@ body {
 /* Tab 2 Specs
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
-#stop-button > div > button {
+#pwr-on-off-buton > div > button {
     color: white !important;
     background-color: #1d202d !important;
     border: 1px solid #4B5460 !important;
@@ -431,7 +431,7 @@ body {
     line-height: 40px;
 }
   
-  #stop-button > div > button:hover {
+#pwr-on-off-buton > div > button:hover {
     color: #c8f10f !important;
     border-color: white !important;
     background-color: #1d202d !important;

@@ -5,6 +5,8 @@ import dash_html_components as html
 import plotly.graph_objs as go
 from dashApp.templates import *
 from dashApp.extensions import db
+from database import *
+
 dataFreq = { 
     'Freq': [],
     'Time': [],
@@ -165,3 +167,17 @@ def register_callbacks(dashapp):
             else:
                 raise NameError("Updating store error")
             return store, 100, 10, 5
+    
+    @dashapp.callback(
+        Output( component_id='pwr-on-off-buton', component_property="buttonText"),
+        Input('pwr-on-off-buton', 'n_clicks'),
+        State( component_id='pwr-on-off-buton', component_property="buttonText"),
+    )
+    def update_output(n_click, btnText,):
+        print("dupa")
+        print(btnText)
+        if btnText == "TURN ON":
+            return "TURN OFF"
+        elif btnText == "TURN OFF":
+            return "TURN ON"
+        else: raise Exception("Error with power button")

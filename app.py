@@ -49,10 +49,10 @@ def made_measurement():
     comp.state.print_state()
 
     while(True):
-        print("Endless loop")
-        comp.state.print_state()
+        # print("Endless loop")
+        # comp.state.print_state()
         comp.check()
-        time.sleep(3)
+        time.sleep(5)
 
         # OLD PART
         # print("Started task...")
@@ -73,7 +73,7 @@ t2.start()
 if __name__ == '__main__':
     db.create_all()
     app.run_server(debug=True)
-    t2.join()
+    # t2.join()
     # t1 = threading.Thread(target=app.run_server)
     # t1.start()
     
