@@ -22,3 +22,10 @@ DATA_BASE = {
       "reset_tracing_period" : 0,
    }
 }
+
+def write_to_database(db, sett, val):
+   print("CLIENT: Write to DB")
+   if sett in db.keys():
+      db[sett] = val
+   else:
+      raise Exception("Key isn't in dictionary")

@@ -155,6 +155,8 @@ class Guard(object):
 
       if read_settings == self.settings:
          print("Nothing change, stay in IDLE")
+         if self.state.__class__ != Idle:
+            self.change_state(Idle)
       
       else:
          print("Take action")
