@@ -176,8 +176,13 @@ def register_callbacks(dashapp):
     def update_output(n_click, btnText,):
         print("dupa")
         print(btnText)
-        if btnText == "TURN ON":
-            return "TURN OFF"
-        elif btnText == "TURN OFF":
-            return "TURN ON"
-        else: raise Exception("Error with power button")
+        if n_click:
+            if btnText == "TURN ON":
+                write_to_database(DATA_BASE, "tool_status", TURN_ON)
+                return "TURN OFF"
+            elif btnText == "TURN OFF":
+                write_to_database(DATA_BASE, "tool_status", TURN_OFF)
+                return "TURN ON"
+            else: raise Exception("Error with power button")
+        else:
+            return btnText
