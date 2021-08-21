@@ -1,4 +1,4 @@
-import random
+import random, math, datetime
 
 def dummy_temperature(min_temp=0, max_temp=100):
     sum = 0 
@@ -7,3 +7,8 @@ def dummy_temperature(min_temp=0, max_temp=100):
         sum += round(random.uniform(min_temp, max_temp), 1)
 
     return int(sum/5)
+
+
+def dummy_val_fixed_meas(freq):
+    # t = datetime.datetime.now()
+    return math.sin(freq)
