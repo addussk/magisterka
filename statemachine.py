@@ -1,5 +1,6 @@
 import time
 from database import *
+import threading
 class State(object):
 
    name = "state"
@@ -80,21 +81,72 @@ class Measurement(State):
    name = "measurement"
    allowed = ['idle']
 
-   def measurement(self, type_req, settup):
-      print("measurement")
+   meas_status = 0
+   mode = 0
+   start_freq = 0
+   stop_freq = 0
+   power = 0
+   time_stamp = 0
+   reset_tracing_period = 0
+
+   def __init__(self) -> None:
+      self.update_settings(DATA_BASE)
+
+   def managing_measurement(self, type_req, thread_list):
 
       if type_req == MEASUREMENT_START:
-         self.start_measurement()
+         if self.mode == 0:
+            thread_list.append(threading.Thread(target=self.fixed__freq_mode))
+         elif self.mode == 1:
+            thread_list.append(threading.Thread(target=self.tracking_mode))
+         elif self.mode == 2:
+            thread_list.append(threading.Thread(target=self.sweeping_mode))
+         else:
+            raise Exception("Problem with creation measurement")
 
       elif type_req == MEASUREMENT_STOP:
          self.stop_measurement()
-      
+         print("task terminated")
+
+      else:
+         raise Exception("Problem with handling with measurement")
+
 
    def stop_measurement(self):
       print("Stopped measurement")
+      self.meas_status = MEASUREMENT_FREE
+      
+
+   def sweeping_mode(self):
+      print("Sweeping mode")
    
-   def start_measurement(self):
-      print("Start measurement")
+   def tracking_mode(self):
+      print("Tracking mode")
+   
+   def fixed__freq_mode(self):
+      while self.meas_status == MEASUREMENT_START:
+         print("Fixed measurement")
+         time.sleep(10)
+         #  while self.meas_status:
+         #    tmp_freq = self.setting.get_start_freq()
+         #    tmp_power = self.setting.get_power()
+         #    tmp_time = round(time.time() * 1000)
+
+         #    received_power = self.make_measurement(tmp_power, tmp_time, tmp_freq)
+
+         #    self.result_power.append(received_power)
+
+         #    print("sleeping for: ", self.setting.get_ts())
+         #    time.sleep(self.setting.get_ts())
+
+   def update_settings(self, db):
+      self.mode = read_from_database(db, "mode")
+      self.start_freq = read_from_database(db, "start_freq")
+      self.stop_freq = read_from_database(db, "stop_freq")
+      self.power = read_from_database(db, "power")
+      self.time_stamp = read_from_database(db, "time_stamp")
+      self.reset_tracing_period = read_from_database(db, "reset_tracing_period")
+      self.meas_status = read_from_database(db, "meas_req")
    
 class Guard(object):
    """ A class representing a guardian """
@@ -106,17 +158,14 @@ class Guard(object):
       "init_status": None,
       "calib_status" : False,
       "tool_status" : TURN_OFF,
-      "meas_req": None,
-      "settup":{
-         "mode" : 0,
-         "start_freq" : 0,
-         "stop_freq" : 0,
-         "power" : 0,
-         "time_stamp" : 0,
-         "reset_tracing_period" : 0,
-      }
+      "meas_req": MEASUREMENT_FREE,
+      "mode" : 0,
+      "start_freq" : 0,
+      "stop_freq" : 0,
+      "power" : 0,
+      "time_stamp" : 0,
+      "reset_tracing_period" : 0,
    }
-   
 
    def __init__(self, in_name='Main'):
       self.name = in_name
@@ -164,22 +213,37 @@ class Guard(object):
          if self.settings["tool_status"] != read_settings["tool_status"]:
 
             if read_settings["tool_status"] == TURN_ON:
+               print("ON MODE")
                self.change_state(On)
                retStatus = self.state.turn_on()
                self.change_settings("tool_status", retStatus)
 
             elif read_settings["tool_status"] == TURN_OFF:
+               print("OFF MODE")
                self.change_state(Off)
                retStatus = self.state.turn_off()
                self.change_settings("tool_status", retStatus)
 
             else: raise Exception("Wrong tool status")
 
-            if read_settings["meas_req"] != read_settings["meas_req"]:
+         if self.settings["meas_req"] != read_settings["meas_req"]:
+            print("MEASUREMENT MODE")
+            if read_settings["meas_req"] == MEASUREMENT_START:
                self.change_state(Measurement)
-               self.state.measurement(read_settings["meas_req"], read_settings["settup"])
+               self.state.managing_measurement(read_settings["meas_req"], self.scheduler)
+               for task in self.scheduler:
+                  task.start()
 
-            
+               self.settings["meas_req"] = MEASUREMENT_ONGOING
+               self.change_settings("meas_req", MEASUREMENT_ONGOING)
+               self.change_state(Idle)
+            elif read_settings["meas_req"] == MEASUREMENT_STOP:
+               self.change_state(Measurement)
+               self.scheduler.pop()
+               self.state.managing_measurement(read_settings["meas_req"], self.scheduler)
+               self.change_settings("meas_req", MEASUREMENT_FREE)
+               self.change_state(Idle)
+
 
    def read_db(self):
       print("Reading database")

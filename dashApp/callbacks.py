@@ -20,7 +20,14 @@ def write_to_db(data):
 
 def save_param(param):
     print("Ustawienia pomiaru do zapisania: {}".format(param))
-    write_to_db(param)
+    if param[0] == 0:
+        write_to_database(DATA_BASE, "mode", param[0])
+        write_to_database(DATA_BASE, "start_freq", param[1][1])
+        write_to_database(DATA_BASE, "power", param[2][1])
+        write_to_database(DATA_BASE, "time_stamp", param[3][1])
+        write_to_database(DATA_BASE, "meas_req", param[4])
+
+    #write_to_db(param)
 
 def register_callbacks(dashapp):
     fixed_freq_input = daq.NumericInput(
@@ -131,51 +138,56 @@ def register_callbacks(dashapp):
         ]
     )   # set_bn ilosc klikniec, mode - wybrany tryb (0 fixed mode), store state
     def set_value_setter_store(set_btn, input, mode, store):
-        res = []
-        print(store)
-        for x in input:
-            x = x["props"]
-            while type(x) == type([]) or type(x) == type({}):
-                if type(x) == type([]):
-                    for list_dict in x:
-                        x = list_dict["props"]
+        res = [mode]
+        status_measurement = read_from_database(DATA_BASE, "meas_req")
 
-                if "children" in x:
-                    x = x["children"]
-                if "props" in x:
-                    x = x["props"]
-                         
-                if type(x) is type({}) and ("value" in x) :
-                    res.append((x['id'], x['value']))
-                    break
-        print(res)
+        # sprawdz czy mozna zaczac nowy pomiar
+        if status_measurement in [None, MEASUREMENT_FREE]:
+            # rozpakowanie htmla aby dotrzec do parametrow z formularza
+            for x in input:
+                x = x["props"]
+                while type(x) == type([]) or type(x) == type({}):
+                    if type(x) == type([]):
+                        for list_dict in x:
+                            x = list_dict["props"]
 
-        save_param([1,10,100])
+                    if "children" in x:
+                        x = x["children"]
+                    if "props" in x:
+                        x = x["props"]
+    
+                    if type(x) is type({}) and ("value" in x) :
+                        res.append((x['id'], x['value']))
+                        break
+            # ustawiamy status pomiarow na start
+            res.append(MEASUREMENT_START)
 
+            # zapisujemy do bazy danych, rozne od None zeby dochodzilo do zapisu po kliknieciu buttonu a nie przy inicjalizaci.
+            if set_btn != None:
+                save_param(res)
+
+        # fragment odpowiedzialny za ustawianie wartosci w formularzu
         if set_btn is None:
             return store, 100, 10, 5
         else:
             if mode == 0 or mode == 1:
-                store["cur_fix_meas_setting"]["frequency"] = res[0][1]
-                store["cur_fix_meas_setting"]["power"] = res[1][1]
-                store["cur_fix_meas_setting"]["time_step"] = res[2][1]
+                store["cur_fix_meas_setting"]["frequency"] = res[1][1]
+                store["cur_fix_meas_setting"]["power"] = res[2][1]
+                store["cur_fix_meas_setting"]["time_step"] = res[3][1]
 
-                return store, res[0][1], res[1][1], res[2][1]
+                return store, res[1][1], res[2][1], res[3][1]
             elif mode == 2:
                 raise NameError("Need to be implemented")
                 store["cur_sweep_meas_setting"] = 1919
             else:
                 raise NameError("Updating store error")
-            return store, 100, 10, 5
     
     @dashapp.callback(
         Output( component_id='pwr-on-off-buton', component_property="buttonText"),
         Input('pwr-on-off-buton', 'n_clicks'),
         State( component_id='pwr-on-off-buton', component_property="buttonText"),
     )
-    def update_output(n_click, btnText,):
-        print("dupa")
-        print(btnText)
+    def update_output(n_click, btnText):
         if n_click:
             if btnText == "TURN ON":
                 write_to_database(DATA_BASE, "tool_status", TURN_ON)
@@ -186,3 +198,16 @@ def register_callbacks(dashapp):
             else: raise Exception("Error with power button")
         else:
             return btnText
+    
+    @dashapp.callback(
+        Output( component_id="value-setter-view-btn", component_property="contextMenu"),
+        Input("value-setter-view-btn", 'n_clicks'),
+    )
+    def stop_btn(n_click):
+        if n_click:
+            meas_status = read_from_database(DATA_BASE, "meas_req")
+            if meas_status == MEASUREMENT_ONGOING:
+                write_to_database(DATA_BASE, "meas_req", MEASUREMENT_STOP)
+                return "True"
+            else: "False"
+        else: return "else"
