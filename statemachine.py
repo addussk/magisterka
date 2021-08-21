@@ -254,36 +254,3 @@ class Guard(object):
       for el in args:
          db.update(el)
 
-
-# INTEGRATED TO APP file
-# comp = Guard(State)
-
-# comp.state.print_state()
-# comp.state.initialization()
-
-# # Initialization process
-# if comp.state.isInitialized():
-#    comp.change_settings("init_status", COMPLETED)
-
-#    if comp.isCalibrated():
-#       comp.change_state(Idle)
-   
-#    else:
-#       comp.change_state(Calibration)
-#       comp.state.calibration()
-#       comp.change_settings("calib_status", comp.get_status())
-
-#       if comp.isCalibrated() == False:
-#          raise Exception("Problem with calibration")
-      
-#       comp.change_state(Idle)
-# else:
-#    raise Exception("Problem with initialization")
-
-# comp.state.print_state()
-
-# while True:
-#    print("Endless loop")
-#    comp.state.print_state()
-#    comp.check()
-#    time.sleep(3)
