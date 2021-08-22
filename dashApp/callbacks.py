@@ -109,7 +109,7 @@ def register_callbacks(dashapp):
         if dd_sel_mode is None:
             return  html.Div( 
                 id="inputs_fix_meas",
-                children=fix_meas_tab(state_value),
+                children=None,
                 ) # by default
         if dd_sel_mode is meas_modes["Fixed Frequency"]:
             return  fix_meas_tab(state_value)
@@ -132,7 +132,7 @@ def register_callbacks(dashapp):
             Input("value-setter-panel", "children")],
         [
             State("metric-select-dropdown", "value"),
-            State("value-setter-store", "data")
+            State("value-setter-store", "data"), 
         ]
     )   # set_bn ilosc klikniec, mode - wybrany tryb (0 fixed mode), store state
     def set_value_setter_store(set_btn, input, mode, store):
