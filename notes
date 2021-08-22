@@ -3,7 +3,7 @@
 2. Umiescic Blueprinty
 3. Stworzyc funkcje do odczytu danych z formularza
 4. Poprawic classe definiujaca config
-5.
+5. Dodac warningi do statemachine (wymmagany wlaczony zasilacz zeby wystartowac pomiar, za duza temperatura ostrzezenie itp)
 
 
 #####   THREAD   #### 
