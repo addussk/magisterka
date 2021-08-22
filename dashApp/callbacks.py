@@ -1,8 +1,6 @@
 from dashApp.models import Frequency, Temperature, Ustawienia
 from dash.dependencies import Input, Output, State
-from datetime import datetime as dt
 import dash_html_components as html
-import plotly.graph_objs as go
 from dashApp.templates import *
 from dashApp.extensions import db
 from database import *
