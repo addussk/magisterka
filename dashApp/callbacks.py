@@ -24,7 +24,14 @@ def save_param(param):
         write_to_database(DATA_BASE, "power", param[2][1])
         write_to_database(DATA_BASE, "time_stamp", param[3][1])
         write_to_database(DATA_BASE, "meas_req", param[4])
-
+    if param[0] == 1:
+        write_to_database(DATA_BASE, "mode", param[0])
+        write_to_database(DATA_BASE, "start_freq", param[1][1])
+        write_to_database(DATA_BASE, "stop_freq", param[2][1])
+        write_to_database(DATA_BASE, "power", param[3][1])
+        write_to_database(DATA_BASE, "freq_step", param[4][1])
+        write_to_database(DATA_BASE, "time_stamp", param[5][1])
+        write_to_database(DATA_BASE, "meas_req", param[6])
     #write_to_db(param)
 
 def register_callbacks(dashapp):

@@ -184,6 +184,7 @@ class Guard(object):
       "power" : 0,
       "time_stamp" : 0,
       "reset_tracing_period" : 0,
+      "freq_step": 0,
    }
 
    def __init__(self, in_name='Main', database_ptr = None):
