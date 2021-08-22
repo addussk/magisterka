@@ -108,7 +108,7 @@ def register_callbacks(dashapp):
     def build_value_setter_panel(dd_sel_mode, state_value):
         if dd_sel_mode is None:
             return  html.Div( 
-                id="inputs_fix_meas",
+                id="default_input_area",
                 children=None,
                 ) # by default
         if dd_sel_mode is meas_modes["Fixed Frequency"]:
@@ -122,11 +122,7 @@ def register_callbacks(dashapp):
 
     # @@@ Callbacks to update stored data via click @@@
     @dashapp.callback(
-        [   Output("value-setter-store", "data"),
-            Output("fixed_freq_input", "value"),
-            Output("power_fm_input", "value"),
-            Output("time_step_fm_input", "value"),
-        ],
+        Output("value-setter-store", "data"),
         [   
             Input("value-setter-set-btn", "n_clicks"),
             Input("value-setter-panel", "children")],
@@ -166,14 +162,14 @@ def register_callbacks(dashapp):
 
         # fragment odpowiedzialny za ustawianie wartosci w formularzu
         if set_btn is None:
-            return store, 100, 10, 5
+            return store
         else:
             if mode == 0 or mode == 1:
                 store["cur_fix_meas_setting"]["frequency"] = res[1][1]
                 store["cur_fix_meas_setting"]["power"] = res[2][1]
                 store["cur_fix_meas_setting"]["time_step"] = res[3][1]
 
-                return store, res[1][1], res[2][1], res[3][1]
+                return store
             elif mode == 2:
                 raise NameError("Need to be implemented")
                 store["cur_sweep_meas_setting"] = 1919
