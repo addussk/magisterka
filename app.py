@@ -23,7 +23,7 @@ def read_setting_from_db():
     return latest_set.get()
 
 def made_measurement():
-    comp = Guard(State)
+    comp = Guard(State, db)
 
     comp.state.print_state()
     comp.state.initialization()

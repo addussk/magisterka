@@ -1,18 +1,21 @@
-import time
+import time, datetime
 from database import *
 import threading
+from scripts import dummy_val_fixed_meas
+from dashApp.models import Frequency
 class State(object):
 
    name = "state"
    allowed = []
 
-   def switch(self, state):
+   def switch(self, state, ptr_to_db):
       """ Switch to new state """
       if state.name in self.allowed:
          print('Current:',self,' => switched to new state',state.name)
          self.__class__ = state
-         state.__init__(self)
-
+         if state == Measurement:
+            state.__init__(self, ptr_to_db)
+         else: state.__init__(self)
       else:
          print('Current:',self,' => switching to',state.name,'not possible.')
 
@@ -88,9 +91,11 @@ class Measurement(State):
    power = 0
    time_stamp = 0
    reset_tracing_period = 0
+   ptr_to_db = None
 
-   def __init__(self) -> None:
+   def __init__(self, ptr_to_db) -> None:
       self.update_settings(DATA_BASE)
+      self.ptr_to_db = ptr_to_db
 
    def managing_measurement(self, type_req, thread_list):
 
@@ -126,18 +131,13 @@ class Measurement(State):
    def fixed__freq_mode(self):
       while self.meas_status == MEASUREMENT_START:
          print("Fixed measurement")
-         time.sleep(10)
-         #  while self.meas_status:
-         #    tmp_freq = self.setting.get_start_freq()
-         #    tmp_power = self.setting.get_power()
-         #    tmp_time = round(time.time() * 1000)
+         time.sleep(self.time_stamp)
 
-         #    received_power = self.make_measurement(tmp_power, tmp_time, tmp_freq)
+         retVal = self.power*abs(dummy_val_fixed_meas(self.start_freq))
 
-         #    self.result_power.append(received_power)
-
-         #    print("sleeping for: ", self.setting.get_ts())
-         #    time.sleep(self.setting.get_ts())
+         self.ptr_to_db.session.add(Frequency(measured_freq=retVal, time_of_measurement=datetime.datetime.now()))
+         self.ptr_to_db.session.commit()
+         
 
    def update_settings(self, db):
       self.mode = read_from_database(db, "mode")
@@ -151,7 +151,7 @@ class Measurement(State):
 class Guard(object):
    """ A class representing a guardian """
    status = None
-   
+   ptr_to_database = None
    scheduler = list()
    
    settings = {
@@ -167,7 +167,8 @@ class Guard(object):
       "reset_tracing_period" : 0,
    }
 
-   def __init__(self, in_name='Main'):
+   def __init__(self, in_name='Main', database_ptr = None):
+      self.ptr_to_database = database_ptr
       self.name = in_name
       # State of the guard - default is init.
       self.state = Init()
@@ -190,7 +191,7 @@ class Guard(object):
    # rest functions
    def change_state(self, state):
       """ Change state """
-      self.state.switch(state)
+      self.state.switch(state, self.ptr_to_database)
    
    def change_settings(self, key, value):
       if key in self.settings.keys():

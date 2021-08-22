@@ -13,7 +13,7 @@ dataFreq = {
     'TurnOn': 1,
 }
 
-def write_to_db(data):
+def write_to_db_alchemy(data):
     Ustawienia(meas_mode=0, start_freq=data[0], stop_freq=0, power=data[1], time_stemp=data[2])
     db.session.add(Ustawienia(meas_mode=0, start_freq=data[0], stop_freq=0, power=data[1], time_stemp=data[2]))
     db.session.commit()
