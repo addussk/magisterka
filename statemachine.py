@@ -1,7 +1,7 @@
 import time, datetime
 from database import *
 import threading
-from scripts import dummy_val_fixed_meas
+from scripts import dummy_val_fixed_meas, dummy_val_tracking
 from dashApp.models import Frequency
 
 class State(object):
@@ -99,7 +99,6 @@ class Measurement(State):
       self.ptr_to_db = ptr_to_db
 
    def managing_measurement(self, type_req, thread_list):
-
       if type_req == MEASUREMENT_START:
          if self.mode == 0:
             thread_list.append(threading.Thread(target=self.fixed__freq_mode))
@@ -120,12 +119,34 @@ class Measurement(State):
    def stop_measurement(self):
       print("Stopped measurement")
       self.meas_status = MEASUREMENT_FREE
-      
+   
+   def measure(self, freq, in_power):
+      retVal = dummy_val_tracking(freq, in_power)
+      return retVal
+
    def sweeping_mode(self):
       print("Sweeping mode")
    
    def tracking_mode(self):
       print("Tracking mode")
+      time.sleep(self.time_stamp)
+
+      first_time = True
+      tmp_freq = self.start_freq
+      tmp_power = self.power
+      scanning_scope = abs(self.stop_freq - self.start_freq)
+
+      while self.meas_status == MEASUREMENT_START:
+         if first_time:
+            print("[TRACKING] Fast scanning results: ")
+
+            for iter in range(scanning_scope):
+               received_power = self.measure(tmp_freq, tmp_power)
+
+               first_time = False
+         else:
+             print("[TRACKING] Measuring..")
+
    
    def fixed__freq_mode(self):
       while self.meas_status == MEASUREMENT_START:
