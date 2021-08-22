@@ -153,7 +153,7 @@ def build_tab_1():
                             children=[
                                 html.Button("Set new setup", id="value-setter-set-btn"),
                                 html.Button(
-                                    "View current setup",
+                                    "Stop measurement",
                                     id="value-setter-view-btn",
                                 ),
                             ]
