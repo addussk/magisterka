@@ -13,6 +13,7 @@ class User(db.Model):
 class Frequency(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     measured_freq = db.Column(db.Integer, nullable=False)
+    measured_power = db.Column(db.Integer, nullable=False)
     time_of_measurement = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
 
     def __repr__(self):

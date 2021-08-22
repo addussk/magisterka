@@ -3,6 +3,7 @@ from database import *
 import threading
 from scripts import dummy_val_fixed_meas
 from dashApp.models import Frequency
+
 class State(object):
 
    name = "state"
@@ -135,7 +136,7 @@ class Measurement(State):
 
          retVal = self.power*abs(dummy_val_fixed_meas(self.start_freq))
 
-         self.ptr_to_db.session.add(Frequency(measured_freq=retVal, time_of_measurement=datetime.datetime.now()))
+         self.ptr_to_db.session.add(Frequency(measured_freq=self.start_freq, measured_power=retVal, time_of_measurement=datetime.datetime.now()))
          self.ptr_to_db.session.commit()
          
 
