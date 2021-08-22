@@ -14,4 +14,4 @@ def dummy_val_fixed_meas(freq):
     return math.sin(freq)
 
 def dummy_val_tracking(freq, in_power):
-    return 0
+    return math.sin(freq)

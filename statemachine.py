@@ -76,11 +76,6 @@ class On(State):
 
       return TURN_ON
 
-class Idle(State):
-   """ State of being in hibernation after powered on """
-   name = "idle"
-   allowed = ['off', 'on', 'measurement']
-
 class Measurement(State):
    name = "measurement"
    allowed = ['idle']
@@ -153,7 +148,7 @@ class Measurement(State):
          print("Fixed measurement")
          time.sleep(self.time_stamp)
 
-         retVal = self.power*abs(dummy_val_fixed_meas(self.start_freq))
+         retVal = self.power*abs(self.measure(self.start_freq, self.power))
 
          self.ptr_to_db.session.add(Frequency(measured_freq=self.start_freq, measured_power=retVal, time_of_measurement=datetime.datetime.now()))
          self.ptr_to_db.session.commit()
@@ -166,7 +161,15 @@ class Measurement(State):
       self.time_stamp = read_from_database(db, "time_stamp")
       self.reset_tracing_period = read_from_database(db, "reset_tracing_period")
       self.meas_status = read_from_database(db, "meas_req")
-   
+
+class Idle(Measurement):
+   """ State of being in hibernation after powered on """
+   name = "idle"
+   allowed = ['off', 'on', 'measurement']
+
+   def __init__(self):
+      pass
+
 class Guard(object):
    """ A class representing a guardian """
    status = None
@@ -225,7 +228,7 @@ class Guard(object):
 
       if read_settings == self.settings:
          print("Nothing change, stay in IDLE")
-         if self.state.__class__ != Idle:
+         if self.state.__class__ != Idle and self.state.__class__ != Measurement:
             self.change_state(Idle)
       
       else:
@@ -257,7 +260,6 @@ class Guard(object):
 
                self.settings["meas_req"] = MEASUREMENT_ONGOING
                self.change_settings("meas_req", MEASUREMENT_ONGOING)
-               self.change_state(Idle)
             elif read_settings["meas_req"] == MEASUREMENT_STOP:
                self.change_state(Measurement)
                self.scheduler.pop()
