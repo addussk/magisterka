@@ -4,7 +4,7 @@ from scripts import dummy_temperature
 from dashApp.webapp import create_app
 from statemachine import Guard, Idle, Calibration, State
 from database import *
-from dashApp.models import Frequency, Temperature, Ustawienia
+from dashApp.models import  Ustawienia, Temperature, Frequency
 app = Flask(__name__, instance_relative_config=False)
 
 app, db = create_app(app)
@@ -62,8 +62,8 @@ def made_measurement():
         # time.sleep(10)
         # gen_dummy_freq()
 
-        # print("Measure temperature...")
-        # gen_dummy_temp()
+        print("Measure temperature...")
+        gen_dummy_temp()
         
         # print("task completed")
 
