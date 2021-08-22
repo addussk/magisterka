@@ -117,12 +117,10 @@ class Measurement(State):
       else:
          raise Exception("Problem with handling with measurement")
 
-
    def stop_measurement(self):
       print("Stopped measurement")
       self.meas_status = MEASUREMENT_FREE
       
-
    def sweeping_mode(self):
       print("Sweeping mode")
    
@@ -139,7 +137,6 @@ class Measurement(State):
          self.ptr_to_db.session.add(Frequency(measured_freq=self.start_freq, measured_power=retVal, time_of_measurement=datetime.datetime.now()))
          self.ptr_to_db.session.commit()
          
-
    def update_settings(self, db):
       self.mode = read_from_database(db, "mode")
       self.start_freq = read_from_database(db, "start_freq")
