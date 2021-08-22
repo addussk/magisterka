@@ -20,7 +20,7 @@ class Frequency(db.Model):
         return '<User {}>'.format(self.measured_freq) 
     
     def get(self):
-        return (self.measured_freq, self.time_of_measurement)
+        return (self.measured_power, self.time_of_measurement)
     
 
 class Temperature(db.Model):
