@@ -185,7 +185,7 @@ def register_callbacks(dashapp):
         Input('pwr-on-off-buton', 'n_clicks'),
         State( component_id='pwr-on-off-buton', component_property="buttonText"),
     )
-    def update_output(n_click, btnText):
+    def update_pwr_supply_btn(n_click, btnText):
         if n_click:
             if btnText == "TURN ON":
                 write_to_database(DATA_BASE, "tool_status", TURN_ON)
