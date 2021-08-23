@@ -113,7 +113,6 @@ def build_value_setter_line(line_num, label, value, col3):
         className="row",
     )
     
-# do zaimplementowania
 def build_tab_1():
     return [
         #Manually select metrics
@@ -164,8 +163,11 @@ def build_tab_1():
                     ]
                 )
             ]
-        )
-
+        ),
+        html.Div(
+            id="chart_scannig_container",
+            className="twelve columns",
+        ),
     ]
 
 def generate_indicator():
