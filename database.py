@@ -20,7 +20,10 @@ DATA_BASE = {
    "time_stamp" : 0,
    "reset_tracing_period" : 0,
    "freq_step": 0,
+   "isScanAvalaible": False
 }
+
+SCANNING_RESULT = list()
 
 def write_to_database(db, sett, val):
    print("CLIENT: Write to DB")

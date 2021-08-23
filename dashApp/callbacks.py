@@ -77,6 +77,29 @@ def register_callbacks(dashapp):
         return fig
 
     @dashapp.callback(
+        Output("chart_scannig_container", "children"),
+        Input('interval-component', 'n_intervals'),
+    )
+    def create_scanning_graph(n_interval):
+        if read_from_database(DATA_BASE, "isScanAvalaible"):
+            x_data = [ el[1] for el in SCANNING_RESULT]
+            y_data = [ el[0] for el in SCANNING_RESULT]
+            return dcc.Graph(
+                        id='scanning-result-graph',
+                        figure={
+                            'data': [
+                                {'x': x_data, 
+                                'y': y_data, 
+                                'type': 'lines+markers', },
+                            ],
+                            'layout': {
+                                'title': 'Scanning results'
+                            }
+                        }
+                    ),
+        else: None # stworzyc gif loading jesli mode zostal wystawiony i pomiary sie dokonuje
+
+    @dashapp.callback(
         Output('thermometer-indicator', 'value'),
         [Input('interval-component', 'n_intervals')]
     )
