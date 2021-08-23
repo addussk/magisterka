@@ -1,4 +1,4 @@
-import time, datetime
+import time, datetime, random
 from database import *
 import threading
 from scripts import dummy_val_fixed_meas, dummy_val_tracking
@@ -87,12 +87,16 @@ class Measurement(State):
    power = 0
    time_stamp = 0
    reset_tracing_period = 0
+   freq_step = 0
    ptr_to_db = None
+
+   #debug var
+   value_to_inject = 0
 
    def __init__(self, ptr_to_db) -> None:
       self.update_settings(DATA_BASE)
       self.ptr_to_db = ptr_to_db
-
+     
    def managing_measurement(self, type_req, thread_list):
       if type_req == MEASUREMENT_START:
          if self.mode == 0:
@@ -115,8 +119,8 @@ class Measurement(State):
       print("Stopped measurement")
       self.meas_status = MEASUREMENT_FREE
    
-   def measure(self, freq, in_power):
-      retVal = dummy_val_tracking(freq, in_power)
+   def measure(self, freq, in_power, var_to_inject):
+      retVal = dummy_val_tracking(freq, in_power, var_to_inject)
       return retVal
 
    def sweeping_mode(self):
@@ -124,31 +128,62 @@ class Measurement(State):
    
    def tracking_mode(self):
       print("Tracking mode")
-      time.sleep(self.time_stamp)
 
       first_time = True
       tmp_freq = self.start_freq
       tmp_power = self.power
       scanning_scope = abs(self.stop_freq - self.start_freq)
-
+      best_result = 0
+      
       while self.meas_status == MEASUREMENT_START:
+         time.sleep(self.time_stamp)
+
          if first_time:
             print("[TRACKING] Fast scanning results: ")
 
             for iter in range(scanning_scope):
-               received_power = self.measure(tmp_freq, tmp_power)
+               tmp_freq_iter = tmp_freq+iter
+               received_power = self.measure(tmp_freq_iter, tmp_power)
+               SCANNING_RESULT.append((received_power, tmp_freq_iter))
 
-               first_time = False
+            best_result = min(SCANNING_RESULT)
+            first_time = False
+            write_to_database(DATA_BASE, "isScanAvalaible", True)
+
          else:
-             print("[TRACKING] Measuring..")
+            print("[TRACKING] Measuring..")
 
-   
+            # Krok w gore
+            tmp_freq = best_result[1] + self.freq_step
+            if(tmp_freq > self.stop_freq):
+                  tmp_freq =  best_result[1]
+
+            up_freq_res = (self.measure(tmp_freq, tmp_power), tmp_freq) 
+
+            time.sleep(1)
+
+            # Krok w dol
+            tmp_freq = best_result[1] - 1
+            if(tmp_freq <= self.start_freq):
+               tmp_freq = best_result[1]
+
+            less_freq_res = (self.measure(tmp_freq, tmp_power), tmp_freq) 
+
+            print("[TRACKING] Scanning results: {}".format([up_freq_res, less_freq_res, best_result]))
+            best_result = min([up_freq_res, less_freq_res, best_result])
+            print("[TRACKING] Update the best setting: Freq:{}, R_Power: {}".format(best_result[1], best_result[0]))
+
+            self.ptr_to_db.session.add(Frequency(measured_freq=best_result[1], measured_power=best_result[0], time_of_measurement=datetime.datetime.now()))
+            self.ptr_to_db.session.commit()
+
+            best_result = (best_result[0] + random.random(), best_result[1])
+
    def fixed__freq_mode(self):
       while self.meas_status == MEASUREMENT_START:
          print("Fixed measurement")
          time.sleep(self.time_stamp)
 
-         retVal = self.power*abs(self.measure(self.start_freq, self.power))
+         retVal = self.measure(self.start_freq, self.power)
 
          self.ptr_to_db.session.add(Frequency(measured_freq=self.start_freq, measured_power=retVal, time_of_measurement=datetime.datetime.now()))
          self.ptr_to_db.session.commit()
@@ -161,6 +196,7 @@ class Measurement(State):
       self.time_stamp = read_from_database(db, "time_stamp")
       self.reset_tracing_period = read_from_database(db, "reset_tracing_period")
       self.meas_status = read_from_database(db, "meas_req")
+      self.freq_step = read_from_database(db, "freq_step")
 
 class Idle(Measurement):
    """ State of being in hibernation after powered on """
@@ -188,6 +224,7 @@ class Guard(object):
       "time_stamp" : 0,
       "reset_tracing_period" : 0,
       "freq_step": 0,
+      "isScanAvalaible": False,
    }
 
    def __init__(self, in_name='Main', database_ptr = None):
@@ -266,7 +303,6 @@ class Guard(object):
                self.state.managing_measurement(read_settings["meas_req"], self.scheduler)
                self.change_settings("meas_req", MEASUREMENT_FREE)
                self.change_state(Idle)
-
 
    def read_db(self):
       print("Reading database")

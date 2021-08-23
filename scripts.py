@@ -10,8 +10,8 @@ def dummy_temperature(min_temp=0, max_temp=100):
 
 
 def dummy_val_fixed_meas(freq):
-    # t = datetime.datetime.now()
-    return math.sin(freq)
+    return abs(math.sin(freq))
 
 def dummy_val_tracking(freq, in_power):
-    return math.sin(freq)
+    r_number = random.randint(1,10)
+    return (in_power*abs(math.sin(freq)) + (in_power/r_number)*math.cos(freq))
