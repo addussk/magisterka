@@ -119,8 +119,8 @@ class Measurement(State):
       print("Stopped measurement")
       self.meas_status = MEASUREMENT_FREE
    
-   def measure(self, freq, in_power, var_to_inject):
-      retVal = dummy_val_tracking(freq, in_power, var_to_inject)
+   def measure(self, freq, in_power):
+      retVal = dummy_val_tracking(freq, in_power)
       return retVal
 
    def sweeping_mode(self):
