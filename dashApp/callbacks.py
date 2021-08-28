@@ -100,6 +100,30 @@ def register_callbacks(dashapp):
         else: None # stworzyc gif loading jesli mode zostal wystawiony i pomiary sie dokonuje
 
     @dashapp.callback(
+        Output("slider_min_pointer", "children"),
+        Input("value-setter-set-btn", "n_clicks"),
+    )
+    def create_slider(clicked):
+        if clicked:
+            return [
+                dcc.Slider( 
+                    id="slider-drag",
+                    min=2000,
+                    max=3000,
+                    step=1,
+                    value=2500,
+                ),
+                html.Div(id='slider-drag-output', style={'margin-top': 20}),
+            ]
+        else:
+            return None
+
+    @dashapp.callback(Output('slider-drag-output', 'children'),
+              [Input('slider-drag', 'drag_value'), Input('slider-drag', 'value')])
+    def display_value(drag_value, value):
+        return 'drag_value: {} | value: {}'.format(drag_value, value)
+
+    @dashapp.callback(
         Output('thermometer-indicator', 'value'),
         [Input('interval-component', 'n_intervals')]
     )

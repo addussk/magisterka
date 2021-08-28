@@ -168,6 +168,15 @@ def build_tab_1():
             id="chart_scannig_container",
             className="twelve columns",
         ),
+        html.Div(
+            id="slider_min_pointer",
+            className="eight columns",
+            style={
+                "margin-top":100,
+                "margin-left":300,
+                'align-items': 'center',
+            }
+        ),
     ]
 
 def generate_indicator():
