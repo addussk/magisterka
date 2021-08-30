@@ -134,21 +134,26 @@ class Measurement(State):
       tmp_power = self.power
       scanning_scope = abs(self.stop_freq - self.start_freq)
       best_result = 0
-      
+      slid_val = read_from_database(SLIDER_CONTAINER, "slider_val")
+
       while self.meas_status == MEASUREMENT_START:
          time.sleep(self.time_stamp)
 
-         if first_time:
+         if first_time or (slid_val != read_from_database(SLIDER_CONTAINER, "slider_val")):
             print("[TRACKING] Fast scanning results: ")
+            SCANNING_RESULT.clear()
 
             for iter in range(scanning_scope):
                tmp_freq_iter = tmp_freq+iter
                received_power = self.measure(tmp_freq_iter, tmp_power)
                SCANNING_RESULT.append((received_power, tmp_freq_iter))
-
-            best_result = min(SCANNING_RESULT)
-            first_time = False
-            write_to_database(DATA_BASE, "isScanAvalaible", True)
+            
+            write_to_database(SLIDER_CONTAINER, "slider_val", slid_val)
+            
+            if first_time:
+               best_result = min(SCANNING_RESULT)
+               first_time = False
+               write_to_database(DATA_BASE, "isScanAvalaible", True)
 
          else:
             print("[TRACKING] Measuring..")

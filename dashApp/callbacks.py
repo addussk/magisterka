@@ -118,9 +118,14 @@ def register_callbacks(dashapp):
         else:
             return None
 
-    @dashapp.callback(Output('slider-drag-output', 'children'),
-              [Input('slider-drag', 'drag_value'), Input('slider-drag', 'value')])
+    @dashapp.callback(
+        Output('slider-drag-output', 'children'),
+        [Input('slider-drag', 'drag_value'), Input('slider-drag', 'value')]
+        )
     def display_value(drag_value, value):
+        if value != read_from_database(SLIDER_CONTAINER, "slider_val"):
+            write_to_database(SLIDER_CONTAINER, 'slider_val', value)
+            
         return 'drag_value: {} | value: {}'.format(drag_value, value)
 
     @dashapp.callback(

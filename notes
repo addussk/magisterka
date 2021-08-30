@@ -8,3 +8,9 @@
 
 #####   THREAD   #### 
 1) zrobic tablice z miejscami dla poszczegolnych taskow poz 1 - pomiar fm, 2 pomiar tracking itp i w ten miejsca dodawac taski lub usuwac, inicjacja None
+
+
+
+#### Co ostatnio zostalo zrobione###
+- stworzenie funckji generujacej dummy wartosci
+- dodanie slidera do przesuwania minimum
