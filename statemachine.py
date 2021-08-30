@@ -4,7 +4,37 @@ import threading
 from scripts import dummy_val_fixed_meas, dummy_val_tracking
 from dashApp.models import Frequency
 
-class State(object):
+class DataBase(object):
+   ptr_to_database = None
+
+   def __init__(self, ptr) -> None:
+      self.ptr_to_database = ptr
+
+   def set_database_ptr(self, ptr):
+      self.ptr_to_database = ptr
+
+   def get_database_ptr(self):
+      return self.ptr_to_database
+
+   def write_to_database(self, db, sett, val):
+      print("CLIENT: Write to DB")
+      if sett in db.keys():
+         db[sett] = val
+      else:
+         raise Exception("Key isn't in dictionary")
+
+   def read_from_database(self, db, sett):
+      if sett in db.keys():
+         return db[sett]
+      else:
+         raise Exception("Key isn't in dictionary")
+
+   def read_from_Alchemy(self, table):
+      records = self.ptr_to_database.session.query(table).order_by(table.time_of_measurement.desc()).limit(20).all()
+      for el in records:
+         print(el.get())
+
+class State(DataBase):
 
    name = "state"
    allowed = []
@@ -134,7 +164,7 @@ class Measurement(State):
       tmp_power = self.power
       scanning_scope = abs(self.stop_freq - self.start_freq)
       best_result = 0
-      slid_val = read_from_database(SLIDER_CONTAINER, "slider_val")
+      slid_val = self.read_from_database(SLIDER_CONTAINER, "slider_val")
 
       while self.meas_status == MEASUREMENT_START:
          time.sleep(self.time_stamp)
@@ -148,12 +178,13 @@ class Measurement(State):
                received_power = self.measure(tmp_freq_iter, tmp_power)
                SCANNING_RESULT.append((received_power, tmp_freq_iter))
             
-            write_to_database(SLIDER_CONTAINER, "slider_val", slid_val)
+            # write_to_database(SLIDER_CONTAINER, "slider_val", slid_val)
+            self.write_to_database(SLIDER_CONTAINER, "slider_val", slid_val)
             
             if first_time:
                best_result = min(SCANNING_RESULT)
                first_time = False
-               write_to_database(DATA_BASE, "isScanAvalaible", True)
+               self.write_to_database(DATA_BASE, "isScanAvalaible", True)
 
          else:
             print("[TRACKING] Measuring..")
@@ -214,7 +245,7 @@ class Idle(Measurement):
 class Guard(object):
    """ A class representing a guardian """
    status = None
-   ptr_to_database = None
+   db = None
    scheduler = list()
    
    settings = {
@@ -233,10 +264,10 @@ class Guard(object):
    }
 
    def __init__(self, in_name='Main', database_ptr = None):
-      self.ptr_to_database = database_ptr
       self.name = in_name
       # State of the guard - default is init.
       self.state = Init()
+      self.db = DataBase(database_ptr)
    
    # setter functions
    def set_status(self, status):
@@ -256,7 +287,8 @@ class Guard(object):
    # rest functions
    def change_state(self, state):
       """ Change state """
-      self.state.switch(state, self.ptr_to_database)
+      self.state.switch(state, self.db.get_database_ptr())
+      self.db.read_from_Alchemy(Frequency)
    
    def change_settings(self, key, value):
       if key in self.settings.keys():
@@ -271,7 +303,7 @@ class Guard(object):
       if read_settings == self.settings:
          print("Nothing change, stay in IDLE")
          if self.state.__class__ != Idle and self.state.__class__ != Measurement:
-            self.change_state(Idle)
+            self.change_state(Idle)       
       
       else:
          print("Take action")
