@@ -9,18 +9,9 @@ app = Flask(__name__, instance_relative_config=False)
 
 app, db = create_app(app)
 
-def gen_dummy_freq():
-    # print("Measure frequency...")
-    db.session.add(Frequency(measured_freq=psutil.cpu_percent(), time_of_measurement=datetime.datetime.now()))
-    db.session.commit()
-
 def gen_dummy_temp():
     db.session.add(Temperature(measured_temp=dummy_temperature(), time_of_measurement=datetime.datetime.now()))
     db.session.commit()
-
-def read_setting_from_db():
-    latest_set = db.session.query(Ustawienia).order_by(Ustawienia.id.desc()).first()
-    return latest_set.get()
 
 def made_measurement():
     comp = Guard(State, db)
@@ -53,14 +44,6 @@ def made_measurement():
         # comp.state.print_state()
         comp.check()
         time.sleep(5)
-
-        # OLD PART
-        # print("Started task...")
-        # print("%s: %s" % (threading.current_thread().name, time.ctime(time.time())))
-        # curr_setting = read_setting_from_db()
-        # print(curr_setting)
-        # time.sleep(10)
-        # gen_dummy_freq()
 
         print("Measure temperature...")
         gen_dummy_temp()
