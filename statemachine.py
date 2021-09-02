@@ -210,8 +210,8 @@ class Measurement(State):
             best_result = min([up_freq_res, less_freq_res, best_result])
             print("[TRACKING] Update the best setting: Freq:{}, R_Power: {}".format(best_result[1], best_result[0]))
 
-            self.ptr_to_db.session.add(Frequency(measured_freq=best_result[1], measured_power=best_result[0], time_of_measurement=datetime.datetime.now()))
-            self.ptr_to_db.session.commit()
+            self.ptr_to_database.session.add(Frequency(measured_freq=best_result[1], measured_power=best_result[0], time_of_measurement=datetime.datetime.now()))
+            self.ptr_to_database.session.commit()
 
             best_result = (best_result[0] + random.random(), best_result[1])
 
