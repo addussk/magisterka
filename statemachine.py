@@ -220,8 +220,8 @@ class Measurement(State):
 
          retVal = self.measure(self.start_freq, self.power)
 
-         self.ptr_to_db.session.add(Frequency(measured_freq=self.start_freq, measured_power=retVal, time_of_measurement=datetime.datetime.now()))
-         self.ptr_to_db.session.commit()
+         self.ptr_to_database.session.add(Frequency(measured_freq=self.start_freq, measured_power=retVal, time_of_measurement=datetime.datetime.now()))
+         self.ptr_to_database.session.commit()
          
    def update_settings(self, db):
       self.mode = read_from_database(db, "mode")
