@@ -41,7 +41,10 @@ class DataBase(object):
    def write_to_database_FrontEndInfo(self, arg1):
       self.ptr_to_database.session.add(FrontEndInfo(slider_val=arg1))
       self.ptr_to_database.session.commit()
-
+   
+   def write_to_database_Frequency(self, freq=17, power=1, tim = datetime.datetime.now()):
+      self.ptr_to_database.session.add(Frequency(measured_freq=freq, measured_power=power, time_of_measurement=tim))
+      self.ptr_to_database.session.commit()
 
 class State(DataBase):
 
@@ -68,9 +71,12 @@ class Init(State):
    allowed = ['calibration', 'idle']
    status = None
 
-   def __init__(self) -> None:
+   def __init__(self, ptrToDB) -> None:
       print("Init Instance")
       self.status = False
+      self.set_database_ptr(ptrToDB)
+      self.write_to_database_FrontEndInfo(2500)
+      self.write_to_database_Frequency()
    
    def initialization(self):
       print("TODO: initialization things")
@@ -262,7 +268,7 @@ class Guard(object):
    def __init__(self, in_name='Main', database_ptr = None):
       self.name = in_name
       # State of the guard - default is init.
-      self.state = Init()
+      self.state = Init(database_ptr)
       self.db = DataBase(database_ptr)
    
    # setter functions
