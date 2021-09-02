@@ -1,4 +1,4 @@
-from dashApp.models import Frequency, Temperature, Ustawienia
+from dashApp.models import Frequency, FrontEndInfo, Temperature, Ustawienia
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 from dashApp.templates import *
@@ -123,9 +123,13 @@ def register_callbacks(dashapp):
         [Input('slider-drag', 'drag_value'), Input('slider-drag', 'value')]
         )
     def display_value(drag_value, value):
-        if value != read_from_database(SLIDER_CONTAINER, "slider_val"):
-            write_to_database(SLIDER_CONTAINER, 'slider_val', value)
-            
+
+        tmp_recent_slider_val = (db.session.query(FrontEndInfo).order_by(FrontEndInfo.id.desc()).first()).get_slider()
+
+        if value != tmp_recent_slider_val:
+            db.session.add(FrontEndInfo(slider_val=value))
+            db.session.commit()
+
         return 'drag_value: {} | value: {}'.format(drag_value, value)
 
     @dashapp.callback(

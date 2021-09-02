@@ -50,3 +50,17 @@ class Ustawienia(db.Model):
     
     def get(self):
         return (self.id, self.meas_mode, self.start_freq, self.stop_freq, self.power, self.time_stemp)
+
+class FrontEndInfo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    slider_val = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return '<Slider Value: {}>'.format(self.slider_val)
+    
+    def get_record(self):
+        return (self.id, self.slider_val)
+
+    def get_slider(self):
+        return self.slider_val
+

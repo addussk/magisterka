@@ -1,6 +1,6 @@
 import random, math, datetime
-from database import SLIDER_CONTAINER, read_from_database
-
+from dashApp.models import FrontEndInfo
+ 
 def dummy_temperature(min_temp=0, max_temp=100):
     sum = 0 
     
@@ -13,7 +13,7 @@ def dummy_temperature(min_temp=0, max_temp=100):
 def dummy_val_fixed_meas(freq):
     return abs(math.sin(freq))
 
-def dummy_val_tracking(freq, in_power):
+def dummy_val_tracking(freq, in_power, db):
     a, p = 1/10, (100 * in_power)
-    mid_freq= read_from_database(SLIDER_CONTAINER, "slider_val")
+    mid_freq= (db.session.query(FrontEndInfo).order_by(FrontEndInfo.id.desc()).first()).get_slider()
     return (a*(freq - mid_freq)**2 - p) * math.sin(math.radians(math.pi*freq)*1.5)
