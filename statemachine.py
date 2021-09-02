@@ -1,8 +1,8 @@
 import time, datetime, random
+from scripts import dummy_val_tracking
 from database import *
 import threading
-from scripts import dummy_val_fixed_meas, dummy_val_tracking
-from dashApp.models import Frequency
+from dashApp.models import Frequency, FrontEndInfo
 
 class DataBase(object):
    ptr_to_database = None
@@ -34,6 +34,15 @@ class DataBase(object):
       for el in records:
          print(el.get())
 
+   
+   def read_recent_slider_val(self):
+      return (self.ptr_to_database.session.query(FrontEndInfo).order_by(FrontEndInfo.id.desc()).first()).get_slider()
+   
+   def write_to_database_FrontEndInfo(self, arg1):
+      self.ptr_to_database.session.add(FrontEndInfo(slider_val=arg1))
+      self.ptr_to_database.session.commit()
+
+
 class State(DataBase):
 
    name = "state"
@@ -44,9 +53,7 @@ class State(DataBase):
       if state.name in self.allowed:
          print('Current:',self,' => switched to new state',state.name)
          self.__class__ = state
-         if state == Measurement:
-            state.__init__(self, ptr_to_db)
-         else: state.__init__(self)
+         state.__init__(self, ptr_to_db)
       else:
          print('Current:',self,' => switching to',state.name,'not possible.')
 
@@ -78,8 +85,6 @@ class Calibration(State):
    name = "calibration"
    allowed = ["idle"]
    status = False
-   def __init__(self) -> None:
-      print("Calibration instance")
    
    def calibration(self):
       print("TODO: calibration stuff")
@@ -126,6 +131,9 @@ class Measurement(State):
    def __init__(self, ptr_to_db) -> None:
       self.update_settings(DATA_BASE)
       self.ptr_to_db = ptr_to_db
+      
+      temp_mid = (self.stop_freq + self.start_freq)/2
+      self.write_to_database_FrontEndInfo(temp_mid)
      
    def managing_measurement(self, type_req, thread_list):
       if type_req == MEASUREMENT_START:
@@ -150,7 +158,7 @@ class Measurement(State):
       self.meas_status = MEASUREMENT_FREE
    
    def measure(self, freq, in_power):
-      retVal = dummy_val_tracking(freq, in_power)
+      retVal = dummy_val_tracking(freq, in_power, self.ptr_to_database)
       return retVal
 
    def sweeping_mode(self):
@@ -164,12 +172,12 @@ class Measurement(State):
       tmp_power = self.power
       scanning_scope = abs(self.stop_freq - self.start_freq)
       best_result = 0
-      slid_val = self.read_from_database(SLIDER_CONTAINER, "slider_val")
+      slid_val = self.read_recent_slider_val()
 
       while self.meas_status == MEASUREMENT_START:
          time.sleep(self.time_stamp)
 
-         if first_time or (slid_val != read_from_database(SLIDER_CONTAINER, "slider_val")):
+         if first_time or (slid_val != self.read_recent_slider_val()):
             print("[TRACKING] Fast scanning results: ")
             SCANNING_RESULT.clear()
 
@@ -177,11 +185,9 @@ class Measurement(State):
                tmp_freq_iter = tmp_freq+iter
                received_power = self.measure(tmp_freq_iter, tmp_power)
                SCANNING_RESULT.append((received_power, tmp_freq_iter))
-            
-            # write_to_database(SLIDER_CONTAINER, "slider_val", slid_val)
-            self.write_to_database(SLIDER_CONTAINER, "slider_val", slid_val)
-            
+
             if first_time:
+               
                best_result = min(SCANNING_RESULT)
                first_time = False
                self.write_to_database(DATA_BASE, "isScanAvalaible", True)
@@ -238,9 +244,6 @@ class Idle(Measurement):
    """ State of being in hibernation after powered on """
    name = "idle"
    allowed = ['off', 'on', 'measurement']
-
-   def __init__(self):
-      pass
 
 class Guard(object):
    """ A class representing a guardian """

@@ -25,9 +25,6 @@ DATA_BASE = {
 
 SCANNING_RESULT = list()
 
-SLIDER_CONTAINER = {
-   'slider_val': 2500
-}
 
 def write_to_database(db, sett, val):
    print("CLIENT: Write to DB")
