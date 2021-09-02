@@ -123,14 +123,9 @@ class Measurement(State):
    time_stamp = 0
    reset_tracing_period = 0
    freq_step = 0
-   ptr_to_db = None
-
-   #debug var
-   value_to_inject = 0
 
    def __init__(self, ptr_to_db) -> None:
       self.update_settings(DATA_BASE)
-      self.ptr_to_db = ptr_to_db
       
       # Ustawienie wierzcholka funkcji kwadratowej posrodku czestotliwosci poczatkowej a koncowej
       temp_mid = (self.stop_freq + self.start_freq)/2
