@@ -1,3 +1,4 @@
+from statemachine import DataBase
 from dashApp.models import Frequency, FrontEndInfo, Temperature, Ustawienia
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
@@ -11,10 +12,7 @@ dataFreq = {
     'TurnOn': 1,
 }
 
-def write_to_db_alchemy(data):
-    Ustawienia(meas_mode=0, start_freq=data[0], stop_freq=0, power=data[1], time_stemp=data[2])
-    db.session.add(Ustawienia(meas_mode=0, start_freq=data[0], stop_freq=0, power=data[1], time_stemp=data[2]))
-    db.session.commit()
+Global_DataBase = DataBase(db)
 
 def save_param(param):
     print("Ustawienia pomiaru do zapisania: {}".format(param))
@@ -124,11 +122,8 @@ def register_callbacks(dashapp):
         )
     def display_value(drag_value, value):
 
-        tmp_recent_slider_val = (db.session.query(FrontEndInfo).order_by(FrontEndInfo.id.desc()).first()).get_slider()
-
-        if value != tmp_recent_slider_val:
-            db.session.add(FrontEndInfo(slider_val=value))
-            db.session.commit()
+        if value != Global_DataBase.read_recent_slider_val():
+            Global_DataBase.write_to_database_FrontEndInfo(value)
 
         return 'drag_value: {} | value: {}'.format(drag_value, value)
 
