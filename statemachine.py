@@ -132,6 +132,7 @@ class Measurement(State):
       self.update_settings(DATA_BASE)
       self.ptr_to_db = ptr_to_db
       
+      # Ustawienie wierzcholka funkcji kwadratowej posrodku czestotliwosci poczatkowej a koncowej
       temp_mid = (self.stop_freq + self.start_freq)/2
       self.write_to_database_FrontEndInfo(temp_mid)
      
@@ -187,7 +188,6 @@ class Measurement(State):
                SCANNING_RESULT.append((received_power, tmp_freq_iter))
 
             if first_time:
-               
                best_result = min(SCANNING_RESULT)
                first_time = False
                self.write_to_database(DATA_BASE, "isScanAvalaible", True)
