@@ -197,8 +197,6 @@ class Measurement(State):
 
             up_freq_res = (self.measure(tmp_freq, tmp_power), tmp_freq) 
 
-            time.sleep(1)
-
             # Krok w dol
             tmp_freq = best_result[1] - 1
             if(tmp_freq <= self.start_freq):
