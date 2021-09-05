@@ -34,7 +34,10 @@ class DataBase(object):
       for el in records:
          print(el.get())
 
-   
+   # Funkcja odczytujaca podana ilosc rekordow w podanej tabeli
+   def read_last_records(self, type, nmb_of_rec):
+      return self.ptr_to_database.session.query(type).order_by(type.time_of_measurement.desc()).limit(nmb_of_rec).all()
+
    def read_recent_slider_val(self):
       return (self.ptr_to_database.session.query(FrontEndInfo).order_by(FrontEndInfo.id.desc()).first()).get_slider()
    

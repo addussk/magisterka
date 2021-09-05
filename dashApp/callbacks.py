@@ -15,7 +15,7 @@ dataFreq = {
 Global_DataBase = DataBase(db)
 
 def save_param(param):
-    print("Ustawienia pomiaru do zapisania: {}".format(param))
+    # print("Ustawienia pomiaru do zapisania: {}".format(param))
     if param[0] == 0:
         write_to_database(DATA_BASE, "mode", param[0])
         write_to_database(DATA_BASE, "start_freq", param[1][1])
@@ -42,12 +42,10 @@ def register_callbacks(dashapp):
         Input('interval-component', 'n_intervals'))
     def update_graph_live(n):
         # get all users in database
-        frequency_measurement = db.session.query(Frequency).order_by(Frequency.time_of_measurement.desc()).limit(20).all()
-        last_measurement = db.session.query(Frequency).order_by(Frequency.id.desc()).first()
-        if last_measurement.get()[1] != dataFreq['Time']:
-            temp_y = [ el.get()[0] for el in frequency_measurement]
-            temp_x = [ el.get()[1] for el in frequency_measurement]
-            dataFreq['Time'] = temp_x[-1]
+        frequency_measurement = Global_DataBase.read_last_records(Frequency, 20)
+
+        temp_y = [ el.get()[0] for el in frequency_measurement]
+        temp_x = [ el.get()[1] for el in frequency_measurement]
 
         fig={
                 "data": [
