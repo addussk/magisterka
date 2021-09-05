@@ -54,13 +54,18 @@ class Ustawienia(db.Model):
 class FrontEndInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     slider_val = db.Column(db.Integer, nullable=False)
+    tool_status = db.Column(db.Boolean)
 
     def __repr__(self):
         return '<Slider Value: {}>'.format(self.slider_val)
-    
+
+    def get_tool_status(self):
+        return self.tool_status
+
     def get_record(self):
         return (self.id, self.slider_val)
 
     def get_slider(self):
         return self.slider_val
+   
 

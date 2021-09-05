@@ -41,8 +41,8 @@ class DataBase(object):
    def read_recent_slider_val(self):
       return (self.ptr_to_database.session.query(FrontEndInfo).order_by(FrontEndInfo.id.desc()).first()).get_slider()
    
-   def write_to_database_FrontEndInfo(self, sliderVal=2500):
-      self.ptr_to_database.session.add(FrontEndInfo(slider_val=sliderVal))
+   def write_to_database_FrontEndInfo(self, sliderVal=2500, toolStatus=False):
+      self.ptr_to_database.session.add(FrontEndInfo(slider_val=sliderVal, tool_status=toolStatus))
       self.ptr_to_database.session.commit()
    
    def write_to_database_Frequency(self, freq=17, power=1, tim = datetime.datetime.now()):
