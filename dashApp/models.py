@@ -59,11 +59,11 @@ class FrontEndInfo(db.Model):
     def __repr__(self):
         return '<Slider Value: {}>'.format(self.slider_val)
 
+    def get(self):
+        return (self.id, self.slider_val, self.tool_status)
+
     def get_tool_status(self):
         return self.tool_status
-
-    def get_record(self):
-        return (self.id, self.slider_val)
 
     def get_slider(self):
         return self.slider_val
