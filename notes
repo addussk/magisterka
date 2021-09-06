@@ -14,3 +14,8 @@
 #### Co ostatnio zostalo zrobione###
 - stworzenie funckji generujacej dummy wartosci
 - dodanie slidera do przesuwania minimum
+
+
+### Rzeczy do zrobienia ###
+1) update_pwr_supply_btn stworzenie definow dla off i on stanu, reprezentowac powinny boolean
+2) class Init(State): w init funckji, stworzyc mechanism sprawdzania czy tablice zawiaraja record, jesli nie utworzyc default record, jesli nie przejsc dalej.
