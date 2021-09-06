@@ -67,5 +67,8 @@ class FrontEndInfo(db.Model):
 
     def get_slider(self):
         return self.slider_val
+
+    def change_tool_status(self, value):
+        self.tool_status = value
    
 

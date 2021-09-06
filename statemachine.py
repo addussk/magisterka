@@ -49,6 +49,13 @@ class DataBase(object):
       self.ptr_to_database.session.add(Frequency(measured_freq=freq, measured_power=power, time_of_measurement=tim))
       self.ptr_to_database.session.commit()
 
+   def update_setting(self, typeTable, typeKey, val):
+      self.ptr_to_database.session.query(typeTable).filter(typeTable.id==1).update({typeKey: val})
+      self.ptr_to_database.session.commit()
+
+      # for row in self.ptr_to_database.session.query(typeTable).all():
+      #    print(row.get())
+
 class State(DataBase):
 
    name = "state"
