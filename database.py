@@ -11,7 +11,6 @@ MEASUREMENT_STOP = 7
 DATA_BASE = {
    "init_status": None,
    "calib_status" : False,
-   "tool_status" : TURN_OFF,
    "meas_req": None,
    "mode" : 0,
    "start_freq" : 0,
