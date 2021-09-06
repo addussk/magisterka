@@ -29,9 +29,6 @@ class DataBase(object):
       else:
          raise Exception("Key isn't in dictionary")
 
-   def read_from_Alchemy(self, table):
-      records = self.ptr_to_database.session.query(table).order_by(table.time_of_measurement.desc()).limit(20).all()
-
    # Funkcja odczytujaca podana ilosc rekordow w podanej tabeli
    def read_last_records(self, type, nmb_of_rec):
       return self.ptr_to_database.session.query(type).order_by(type.time_of_measurement.desc()).limit(nmb_of_rec).all()
@@ -303,7 +300,6 @@ class Guard(object):
    def change_state(self, state):
       """ Change state """
       self.state.switch(state, self.db.get_database_ptr())
-      self.db.read_from_Alchemy(Frequency)
    
    def change_settings(self, key, value):
       if key in self.settings.keys():

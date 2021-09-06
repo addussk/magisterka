@@ -22,7 +22,6 @@ class Frequency(db.Model):
     def get(self):
         return (self.measured_power, self.time_of_measurement)
     
-
 class Temperature(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     measured_temp = db.Column(db.Integer, nullable=False)
