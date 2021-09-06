@@ -62,7 +62,11 @@ class FrontEndInfo(db.Model):
     def get(self, member):
         if member == "slider_val":
             return self.slider_val
-        return (self.id, self.slider_val, self.tool_status)
+
+        elif member == "tool_status":
+            return self.tool_status
+
+        else: return "invalid name"
 
     def get_tool_status(self):
         return self.tool_status
@@ -72,5 +76,3 @@ class FrontEndInfo(db.Model):
 
     def change_tool_status(self, value):
         self.tool_status = value
-   
-
