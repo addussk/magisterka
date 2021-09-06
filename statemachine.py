@@ -31,12 +31,14 @@ class DataBase(object):
 
    def read_from_Alchemy(self, table):
       records = self.ptr_to_database.session.query(table).order_by(table.time_of_measurement.desc()).limit(20).all()
-      for el in records:
-         print(el.get())
 
    # Funkcja odczytujaca podana ilosc rekordow w podanej tabeli
    def read_last_records(self, type, nmb_of_rec):
       return self.ptr_to_database.session.query(type).order_by(type.time_of_measurement.desc()).limit(nmb_of_rec).all()
+   
+   def read_record(self, typeTable, typeKey):
+      record = self.ptr_to_database.session.query(typeTable).order_by(typeTable.id).first()
+      return record.get(typeKey)
 
    def read_recent_slider_val(self):
       return (self.ptr_to_database.session.query(FrontEndInfo).order_by(FrontEndInfo.id).first()).get_slider()
@@ -110,22 +112,19 @@ class Calibration(State):
    
 class Off(State):
    name = "off"
-   allowed = ['on']
+   allowed = ['on', 'idle']
 
    def turn_off(self):
       print("Turn on process")
 
-      return False
 
 class On(State):
    """ State of being powered on and working """
    name = "on"
-   allowed = ['off','measurement','idle']
+   allowed = ['off','idle']
 
    def turn_on(self):
       print("Turn on process")
-
-      return True
 
 class Measurement(State):
    name = "measurement"
@@ -263,7 +262,6 @@ class Guard(object):
    settings = {
       "init_status": None,
       "calib_status" : False,
-      "tool_status" : TURN_OFF,
       "meas_req": MEASUREMENT_FREE,
       "mode" : 0,
       "start_freq" : 0,
@@ -273,6 +271,11 @@ class Guard(object):
       "reset_tracing_period" : 0,
       "freq_step": 0,
       "isScanAvalaible": False,
+   }
+
+   new_settings = {
+      "slider_val":2500,
+      "tool_status" : False,
    }
 
    def __init__(self, in_name='Main', database_ptr = None):
@@ -309,10 +312,24 @@ class Guard(object):
 
       self.write_to_db(DATA_BASE, self.settings)
    
+   def isChangeInSetting(self):
+      # rzeczy ktore zawiera baza danych w alchemy
+      for key in ["tool_status"]:
+
+         read_record = self.db.read_record(FrontEndInfo, key)
+         if read_record == "invalid name":
+            raise Exception("invalid name")
+
+         if read_record != self.new_settings[key]:
+            return True
+
+      return False
+         
    def check(self):
       read_settings = self.read_db()
+      isChanged = self.isChangeInSetting()
 
-      if read_settings == self.settings:
+      if (read_settings == self.settings) and not isChanged:
          print("Nothing change, stay in IDLE")
          if self.state.__class__ != Idle and self.state.__class__ != Measurement:
             self.change_state(Idle)       
@@ -320,19 +337,20 @@ class Guard(object):
       else:
          print("Take action")
          # If settings has been changed, choose requested action
-         if self.settings["tool_status"] != read_settings["tool_status"]:
+         db_tool_status = self.db.read_record(FrontEndInfo,"tool_status")
+         if self.new_settings["tool_status"] != db_tool_status:
 
-            if read_settings["tool_status"] == True:
+            if db_tool_status == True:
                print("ON MODE")
                self.change_state(On)
-               retStatus = self.state.turn_on()
-               self.change_settings("tool_status", retStatus)
+               self.state.turn_on()
+               self.new_settings["tool_status"] = True
 
-            elif read_settings["tool_status"] == False:
+            elif db_tool_status == False:
                print("OFF MODE")
                self.change_state(Off)
-               retStatus = self.state.turn_off()
-               self.change_settings("tool_status", retStatus)
+               self.state.turn_off()
+               self.new_settings["tool_status"] = False
 
             else: raise Exception("Wrong tool status")
 
