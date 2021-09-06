@@ -121,7 +121,7 @@ def register_callbacks(dashapp):
     def display_value(drag_value, value):
 
         if value != Global_DataBase.read_recent_slider_val():
-            Global_DataBase.write_to_database_FrontEndInfo(value)
+            Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.slider_val, value)
 
         return 'drag_value: {} | value: {}'.format(drag_value, value)
 
@@ -240,10 +240,10 @@ def register_callbacks(dashapp):
     def update_pwr_supply_btn(n_click, btnText):
         if n_click:
             if btnText == "TURN ON":
-                write_to_database(DATA_BASE, "tool_status", TURN_ON)
+                Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, True)
                 return "TURN OFF"
             elif btnText == "TURN OFF":
-                write_to_database(DATA_BASE, "tool_status", TURN_OFF)
+                Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, False)
                 return "TURN ON"
             else: raise Exception("Error with power button")
         else:

@@ -39,7 +39,7 @@ class DataBase(object):
       return self.ptr_to_database.session.query(type).order_by(type.time_of_measurement.desc()).limit(nmb_of_rec).all()
 
    def read_recent_slider_val(self):
-      return (self.ptr_to_database.session.query(FrontEndInfo).order_by(FrontEndInfo.id.desc()).first()).get_slider()
+      return (self.ptr_to_database.session.query(FrontEndInfo).order_by(FrontEndInfo.id).first()).get_slider()
    
    def write_to_database_FrontEndInfo(self, sliderVal=2500, toolStatus=False):
       self.ptr_to_database.session.add(FrontEndInfo(slider_val=sliderVal, tool_status=toolStatus))
@@ -115,7 +115,7 @@ class Off(State):
    def turn_off(self):
       print("Turn on process")
 
-      return TURN_OFF
+      return False
 
 class On(State):
    """ State of being powered on and working """
@@ -125,7 +125,7 @@ class On(State):
    def turn_on(self):
       print("Turn on process")
 
-      return TURN_ON
+      return True
 
 class Measurement(State):
    name = "measurement"
@@ -145,7 +145,7 @@ class Measurement(State):
       
       # Ustawienie wierzcholka funkcji kwadratowej posrodku czestotliwosci poczatkowej a koncowej
       temp_mid = (self.stop_freq + self.start_freq)/2
-      self.write_to_database_FrontEndInfo(temp_mid)
+      self.update_setting(FrontEndInfo, FrontEndInfo.slider_val, temp_mid)
      
    def managing_measurement(self, type_req, thread_list):
       if type_req == MEASUREMENT_START:
@@ -322,13 +322,13 @@ class Guard(object):
          # If settings has been changed, choose requested action
          if self.settings["tool_status"] != read_settings["tool_status"]:
 
-            if read_settings["tool_status"] == TURN_ON:
+            if read_settings["tool_status"] == True:
                print("ON MODE")
                self.change_state(On)
                retStatus = self.state.turn_on()
                self.change_settings("tool_status", retStatus)
 
-            elif read_settings["tool_status"] == TURN_OFF:
+            elif read_settings["tool_status"] == False:
                print("OFF MODE")
                self.change_state(Off)
                retStatus = self.state.turn_off()
