@@ -176,7 +176,7 @@ class Measurement(State):
       print("Tracking mode")
 
       first_time = True
-      tmp_freq = self.start_freq
+      scan_freq = self.start_freq
       tmp_power = self.power
       scanning_scope = abs(self.stop_freq - self.start_freq)
       best_result = 0
@@ -190,31 +190,39 @@ class Measurement(State):
             SCANNING_RESULT.clear()
 
             for iter in range(scanning_scope):
-               tmp_freq_iter = tmp_freq+iter
-               received_power = self.measure(tmp_freq_iter, tmp_power)
-               SCANNING_RESULT.append((received_power, tmp_freq_iter))
+               iter_freq = scan_freq+iter
+               received_power = self.measure(iter_freq, tmp_power)
+               SCANNING_RESULT.append((received_power, iter_freq))
 
             if first_time:
                best_result = min(SCANNING_RESULT)
                first_time = False
                self.write_to_database(DATA_BASE, "isScanAvalaible", True)
 
+            # przywracanie defaultowych parametrow do kolejnego skanowania
+            slid_val = self.read_recent_slider_val()
+            scan_freq = self.start_freq
+
          else:
             print("[TRACKING] Measuring..")
+            
+            # Aktualizacja minimum przy zmianie f0
+            best_result = (self.measure(best_result[1], tmp_power), best_result[1])
+            print(best_result) 
 
             # Krok w gore
-            tmp_freq = best_result[1] + self.freq_step
-            if(tmp_freq > self.stop_freq):
-                  tmp_freq =  best_result[1]
+            meas_freq = best_result[1] + self.freq_step
+            if(meas_freq > self.stop_freq):
+                  meas_freq =  best_result[1]
 
-            up_freq_res = (self.measure(tmp_freq, tmp_power), tmp_freq) 
+            up_freq_res = (self.measure(meas_freq, tmp_power), meas_freq) 
 
             # Krok w dol
-            tmp_freq = best_result[1] - 1
-            if(tmp_freq <= self.start_freq):
-               tmp_freq = best_result[1]
+            meas_freq = best_result[1] - 1
+            if(meas_freq <= self.start_freq):
+               meas_freq = best_result[1]
 
-            less_freq_res = (self.measure(tmp_freq, tmp_power), tmp_freq) 
+            less_freq_res = (self.measure(meas_freq, tmp_power), meas_freq) 
 
             print("[TRACKING] Scanning results: {}".format([up_freq_res, less_freq_res, best_result]))
             best_result = min([up_freq_res, less_freq_res, best_result])
