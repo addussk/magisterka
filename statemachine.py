@@ -74,7 +74,7 @@ class DataBase(object):
       self.ptr_to_database.session.commit()
 
    # Funkcja do utworzenia record w tablicy MeasSettings przechowujacej ustawienie pomiaru
-   def create_MeasSettings(self, choosenMode=0, measStatus=0, startFreq=2400, stopFreq=2400, pwr=10, fStep=1, tStep=5):
+   def create_MeasSettings(self, choosenMode=0, measStatus=MEASUREMENT_FREE, startFreq=2400, stopFreq=2400, pwr=10, fStep=1, tStep=5):
       self.ptr_to_database.session.add(MeasSettings(mode=choosenMode, state=measStatus, start_freq=startFreq, stop_freq=stopFreq, power=pwr, freq_step=fStep, time_step=tStep))
       self.ptr_to_database.session.commit()
 
@@ -144,7 +144,6 @@ class Off(State):
    def turn_off(self):
       print("Turn on process")
 
-
 class On(State):
    """ State of being powered on and working """
    name = "on"
@@ -157,18 +156,16 @@ class Measurement(State):
    name = "measurement"
    allowed = ['idle']
 
-   meas_status = 0
    mode = 0
+   state = 0
    start_freq = 0
    stop_freq = 0
    power = 0
-   time_stamp = 0
-   reset_tracing_period = 0
+   time_step = 0
    freq_step = 0
 
    def __init__(self, ptr_to_db) -> None:
-      self.update_settings(DATA_BASE)
-      self.create_MeasSettings()
+      self.update_settings()
       # Ustawienie wierzcholka funkcji kwadratowej posrodku czestotliwosci poczatkowej a koncowej
       temp_mid = (self.stop_freq + self.start_freq)/2
       self.update_setting(FrontEndInfo, FrontEndInfo.slider_val, temp_mid)
@@ -212,8 +209,8 @@ class Measurement(State):
       best_result = 0
       slid_val = self.read_recent_slider_val()
 
-      while self.meas_status == MEASUREMENT_START:
-         time.sleep(self.time_stamp)
+      while self.state == MEASUREMENT_START:
+         time.sleep(self.time_step)
 
          if first_time or (slid_val != self.read_recent_slider_val()):
             print("[TRACKING] Fast scanning results: ")
@@ -264,24 +261,23 @@ class Measurement(State):
             best_result = (best_result[0] + random.random(), best_result[1])
 
    def fixed__freq_mode(self):
-      while self.meas_status == MEASUREMENT_START:
+      while self.state == MEASUREMENT_START:
          print("Fixed measurement")
-         time.sleep(self.time_stamp)
+         time.sleep(self.time_step)
 
          retVal = self.measure(self.start_freq, self.power)
 
          self.ptr_to_database.session.add(Frequency(measured_freq=self.start_freq, measured_power=retVal, time_of_measurement=datetime.datetime.now()))
          self.ptr_to_database.session.commit()
          
-   def update_settings(self, db):
-      self.mode = read_from_database(db, "mode")
-      self.start_freq = read_from_database(db, "start_freq")
-      self.stop_freq = read_from_database(db, "stop_freq")
-      self.power = read_from_database(db, "power")
-      self.time_stamp = read_from_database(db, "time_stamp")
-      self.reset_tracing_period = read_from_database(db, "reset_tracing_period")
-      self.meas_status = read_from_database(db, "meas_req")
-      self.freq_step = read_from_database(db, "freq_step")
+   def update_settings(self):
+      self.mode = self.read_record(MeasSettings, "mode")
+      self.state = self.read_record(MeasSettings, "state")
+      self.start_freq = self.read_record(MeasSettings, "start_freq")
+      self.stop_freq = self.read_record(MeasSettings, "stop_freq")
+      self.power = self.read_record(MeasSettings, "power")
+      self.freq_step = self.read_record(MeasSettings, "freq_step")
+      self.time_step = self.read_record(MeasSettings, "time_step")
 
 class Idle(Measurement):
    """ State of being in hibernation after powered on """
@@ -297,14 +293,6 @@ class Guard(object):
    settings = {
       "init_status": None,
       "calib_status" : False,
-      "meas_req": MEASUREMENT_FREE,
-      "mode" : 0,
-      "start_freq" : 0,
-      "stop_freq" : 0,
-      "power" : 0,
-      "time_stamp" : 0,
-      "reset_tracing_period" : 0,
-      "freq_step": 0,
       "isScanAvalaible": False,
    }
 
@@ -313,11 +301,22 @@ class Guard(object):
       "tool_status" : False,
    }
 
+   measurement_form = {
+      "mode": 0,
+      "state": MEASUREMENT_FREE,
+      "start_freq": 2400,
+      "stop_freq": 2400,
+      "power": 10,
+      "freq_step": 1,
+      "time_step": 5,
+   }
+
    def __init__(self, in_name='Main', database_ptr = None):
       self.name = in_name
       # State of the guard - default is init.
       self.state = Init(database_ptr)
       self.db = DataBase(database_ptr)
+      self.db.create_MeasSettings()
    
    # setter functions
    def set_status(self, status):
@@ -346,23 +345,32 @@ class Guard(object):
 
       self.write_to_db(DATA_BASE, self.settings)
    
+   # funkcja sprawdza czy ustawienia ulegly zmianie - do refactoringu, ulepszyc dodawanie kolejnych ustawien
    def isChangeInSetting(self):
       # rzeczy ktore zawiera baza danych w alchemy
       for key in ["tool_status"]:
 
          read_record = self.db.read_record(FrontEndInfo, key)
          if read_record == "invalid name":
-            raise Exception("invalid name")
+            raise Exception("Wrong member")
 
          if read_record != self.new_settings[key]:
             return True
+         
+      for key in ["mode", "state"]:
+         read_record = self.db.read_record(MeasSettings, key)
+
+         if read_record == "invalid name":
+            raise Exception("Wrong member")
+         
+         if read_record != self.measurement_form[key]:
+            return True
 
       return False
-         
+
    def check(self):
       read_settings = self.read_db()
       read_mes_set = self.db.read_table(MeasSettings)
-      print(read_mes_set.get())
 
       isChanged = self.isChangeInSetting()
 
@@ -373,6 +381,8 @@ class Guard(object):
       
       else:
          print("Take action")
+         #  stworzyc zmienna przechowujaca setup w bazie danych
+         state_from_db = read_mes_set.get_state()
          # If settings has been changed, choose requested action
          db_tool_status = self.db.read_record(FrontEndInfo,"tool_status")
          if self.new_settings["tool_status"] != db_tool_status:
@@ -391,21 +401,21 @@ class Guard(object):
 
             else: raise Exception("Wrong tool status")
 
-         if self.settings["meas_req"] != read_settings["meas_req"]:
+         if self.measurement_form["state"] != read_mes_set.get_state():
             print("MEASUREMENT MODE")
-            if read_settings["meas_req"] == MEASUREMENT_START:
+            if read_mes_set.get_state() == MEASUREMENT_START:
                self.change_state(Measurement)
-               self.state.managing_measurement(read_settings["meas_req"], self.scheduler)
+               self.state.managing_measurement(read_mes_set.get_state(), self.scheduler)
                for task in self.scheduler:
                   task.start()
 
-               self.settings["meas_req"] = MEASUREMENT_ONGOING
-               self.change_settings("meas_req", MEASUREMENT_ONGOING)
-            elif read_settings["meas_req"] == MEASUREMENT_STOP:
+               self.measurement_form["state"] = MEASUREMENT_ONGOING
+               self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_ONGOING)
+            elif read_mes_set.get_state() == MEASUREMENT_STOP:
                self.change_state(Measurement)
                self.scheduler.pop()
-               self.state.managing_measurement(read_settings["meas_req"], self.scheduler)
-               self.change_settings("meas_req", MEASUREMENT_FREE)
+               self.state.managing_measurement(read_mes_set.get_state(), self.scheduler)
+               self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_FREE)
                self.change_state(Idle)
 
    def read_db(self):

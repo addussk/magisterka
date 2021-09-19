@@ -188,11 +188,12 @@ def register_callbacks(dashapp):
         ]
     )   # set_bn ilosc klikniec, mode - wybrany tryb (0 fixed mode), store state
     def set_value_setter_store(set_btn, input, mode, store):
+        print( store)
         res = [mode]
-        status_measurement = read_from_database(DATA_BASE, "meas_req")
-
+        state_measurement = Global_DataBase.read_table(MeasSettings)
+        print(state_measurement.get_state())
         # sprawdz czy mozna zaczac nowy pomiar
-        if status_measurement in [None, MEASUREMENT_FREE]:
+        if state_measurement.get_state() in [None, MEASUREMENT_FREE]:
             # rozpakowanie htmla aby dotrzec do parametrow z formularza
             for x in input:
                 x = x["props"]
@@ -214,11 +215,11 @@ def register_callbacks(dashapp):
 
             # zapisujemy do bazy danych, rozne od None zeby dochodzilo do zapisu po kliknieciu buttonu a nie przy inicjalizaci.
             if set_btn != None:
-                save_param(res)
                 Global_DataBase.configure_measurement(res)
         else:
             #TBD : komunikat ze trwa aktualnie pomiar
             pass
+
         # fragment odpowiedzialny za ustawianie wartosci w formularzu
         if set_btn is None:
             return store
@@ -258,9 +259,10 @@ def register_callbacks(dashapp):
     )
     def stop_btn(n_click):
         if n_click:
-            meas_status = read_from_database(DATA_BASE, "meas_req")
-            if meas_status == MEASUREMENT_ONGOING:
-                write_to_database(DATA_BASE, "meas_req", MEASUREMENT_STOP)
+            meas_state = Global_DataBase.read_table(MeasSettings).get_state()
+
+            if meas_state == MEASUREMENT_ONGOING:
+                Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
                 return "True"
             else: "False"
         else: return "else"
