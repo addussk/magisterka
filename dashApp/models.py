@@ -39,7 +39,7 @@ class Temperature(db.Model):
 class MeasSettings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     mode = db.Column(db.Integer, nullable=False)
-    state = db.Column(db.Integer)
+    state = db.Column(db.Integer, nullable=False)
     start_freq = db.Column(db.Integer, nullable=False)
     stop_freq = db.Column(db.Integer, nullable=False)
     power = db.Column(db.Integer, nullable=False)
@@ -48,10 +48,37 @@ class MeasSettings(db.Model):
 
     def __repr__(self):
         return '<Mode {}>'.format(self.state)
-    
-    def get(self):
-        return (self.id, self.mode, self.state, self.start_freq, self.stop_freq, self.power, self.freq_step, self.time_step)
+        
+    def get(self, member):
+        if member == "mode":
+            return self.mode
 
+        elif member == "state":
+            return self.state
+        
+        elif member == "start_freq":
+            return self.start_freq
+
+        elif member == "stop_freq":
+            return self.stop_freq
+        
+        elif member == "power":
+            return self.power
+
+        elif member == "freq_step":
+            return self.freq_step
+        
+        elif member == "time_step":
+            return self.time_step
+
+        else: return "invalid name"
+
+    def get_state(self):
+        return self.state
+    
+    def get_all(self):
+        return self.id, self.mode, self.state, self.start_freq, self.stop_freq, self.power, self.freq_step, self.time_step
+    
 class FrontEndInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     slider_val = db.Column(db.Integer, nullable=False)
