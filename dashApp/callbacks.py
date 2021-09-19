@@ -216,7 +216,9 @@ def register_callbacks(dashapp):
             if set_btn != None:
                 save_param(res)
                 Global_DataBase.configure_measurement(res)
-
+        else:
+            #TBD : komunikat ze trwa aktualnie pomiar
+            pass
         # fragment odpowiedzialny za ustawianie wartosci w formularzu
         if set_btn is None:
             return store
