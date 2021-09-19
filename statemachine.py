@@ -2,7 +2,7 @@ import time, datetime, random
 from scripts import dummy_val_tracking
 from database import *
 import threading
-from dashApp.models import Frequency, FrontEndInfo
+from dashApp.models import Frequency, FrontEndInfo, MeasSettings
 
 class DataBase(object):
    ptr_to_database = None
@@ -29,9 +29,34 @@ class DataBase(object):
       else:
          raise Exception("Key isn't in dictionary")
 
+   # funkcja do ustawienia parametrow pomiarow
+   def configure_measurement(self, parm):
+      # FIXED MODE 
+      if parm[0] == 0:
+         self.update_setting(MeasSettings, MeasSettings.mode, parm[0])
+         self.update_setting(MeasSettings, MeasSettings.start_freq, parm[1][1])
+         self.update_setting(MeasSettings, MeasSettings.power, parm[2][1])
+         self.update_setting(MeasSettings, MeasSettings.time_step, parm[3][1])
+         self.update_setting(MeasSettings, MeasSettings.state, parm[4])
+
+      # TRACKING MODE 
+      if parm[0] == 1:
+         self.update_setting(MeasSettings, MeasSettings.mode, parm[0])
+         self.update_setting(MeasSettings, MeasSettings.start_freq, parm[1][1])
+         self.update_setting(MeasSettings, MeasSettings.stop_freq, parm[2][1])
+         self.update_setting(MeasSettings, MeasSettings.power, parm[3][1])
+         self.update_setting(MeasSettings, MeasSettings.freq_step, parm[4][1])
+         self.update_setting(MeasSettings, MeasSettings.time_step, parm[5][1])
+         self.update_setting(MeasSettings, MeasSettings.state, parm[6])
+      
+      # SWEEPING MODE - TBD
+
    # Funkcja odczytujaca podana ilosc rekordow w podanej tabeli
    def read_last_records(self, type, nmb_of_rec):
       return self.ptr_to_database.session.query(type).order_by(type.time_of_measurement.desc()).limit(nmb_of_rec).all()
+
+   def read_table(self, typeTable):
+      return self.ptr_to_database.session.query(typeTable).order_by(typeTable.id).first()
    
    def read_record(self, typeTable, typeKey):
       record = self.ptr_to_database.session.query(typeTable).order_by(typeTable.id).first()
@@ -44,8 +69,13 @@ class DataBase(object):
       self.ptr_to_database.session.add(FrontEndInfo(slider_val=sliderVal, tool_status=toolStatus))
       self.ptr_to_database.session.commit()
    
-   def write_to_database_Frequency(self, freq=17, power=1, tim = datetime.datetime.now()):
+   def write_to_database_Frequency(self, freq=17, power=1, tim=datetime.datetime.now()):
       self.ptr_to_database.session.add(Frequency(measured_freq=freq, measured_power=power, time_of_measurement=tim))
+      self.ptr_to_database.session.commit()
+
+   # Funkcja do utworzenia record w tablicy MeasSettings przechowujacej ustawienie pomiaru
+   def create_MeasSettings(self, choosenMode=0, measStatus=0, startFreq=2400, stopFreq=2400, pwr=10, fStep=1, tStep=5):
+      self.ptr_to_database.session.add(MeasSettings(mode=choosenMode, state=measStatus, start_freq=startFreq, stop_freq=stopFreq, power=pwr, freq_step=fStep, time_step=tStep))
       self.ptr_to_database.session.commit()
 
    def update_setting(self, typeTable, typeKey, val):
@@ -138,7 +168,7 @@ class Measurement(State):
 
    def __init__(self, ptr_to_db) -> None:
       self.update_settings(DATA_BASE)
-      
+      self.create_MeasSettings()
       # Ustawienie wierzcholka funkcji kwadratowej posrodku czestotliwosci poczatkowej a koncowej
       temp_mid = (self.stop_freq + self.start_freq)/2
       self.update_setting(FrontEndInfo, FrontEndInfo.slider_val, temp_mid)
@@ -331,6 +361,9 @@ class Guard(object):
          
    def check(self):
       read_settings = self.read_db()
+      read_mes_set = self.db.read_table(MeasSettings)
+      print(read_mes_set.get())
+
       isChanged = self.isChangeInSetting()
 
       if (read_settings == self.settings) and not isChanged:

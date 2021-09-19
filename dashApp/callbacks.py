@@ -1,5 +1,5 @@
 from statemachine import DataBase
-from dashApp.models import Frequency, FrontEndInfo, Temperature, Ustawienia
+from dashApp.models import Frequency, FrontEndInfo, Temperature, MeasSettings
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 from dashApp.templates import *
@@ -215,6 +215,7 @@ def register_callbacks(dashapp):
             # zapisujemy do bazy danych, rozne od None zeby dochodzilo do zapisu po kliknieciu buttonu a nie przy inicjalizaci.
             if set_btn != None:
                 save_param(res)
+                Global_DataBase.configure_measurement(res)
 
         # fragment odpowiedzialny za ustawianie wartosci w formularzu
         if set_btn is None:

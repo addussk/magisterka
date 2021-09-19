@@ -36,19 +36,21 @@ class Temperature(db.Model):
     def get_temperature(self):
         return self.measured_temp
 
-class Ustawienia(db.Model):
+class MeasSettings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    meas_mode = db.Column(db.Integer, nullable=False)
+    mode = db.Column(db.Integer, nullable=False)
+    state = db.Column(db.Integer)
     start_freq = db.Column(db.Integer, nullable=False)
     stop_freq = db.Column(db.Integer, nullable=False)
     power = db.Column(db.Integer, nullable=False)
-    time_stemp = db.Column(db.Integer, nullable=False)
+    freq_step = db.Column(db.Integer, nullable=False)
+    time_step = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
-        return '<Mode {}>'.format(self.meas_mode)
+        return '<Mode {}>'.format(self.state)
     
     def get(self):
-        return (self.id, self.meas_mode, self.start_freq, self.stop_freq, self.power, self.time_stemp)
+        return (self.id, self.mode, self.state, self.start_freq, self.stop_freq, self.power, self.freq_step, self.time_step)
 
 class FrontEndInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
