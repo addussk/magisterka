@@ -4,7 +4,7 @@ from scripts import dummy_temperature
 from dashApp.webapp import create_app
 from statemachine import Guard, Idle, Calibration, State
 from database import *
-from dashApp.models import  Ustawienia, Temperature, Frequency
+from dashApp.models import  MeasSettings, Temperature, Frequency
 app = Flask(__name__, instance_relative_config=False)
 
 app, db = create_app(app)
@@ -20,7 +20,7 @@ def made_measurement():
     comp.state.initialization()
     # Initialization process
     if comp.state.isInitialized():
-        comp.change_settings("init_status", COMPLETED)
+        comp.set_init_status(COMPLETED)
 
         if comp.isCalibrated():
             comp.change_state(Idle)
@@ -28,7 +28,7 @@ def made_measurement():
         else:
             comp.change_state(Calibration)
             comp.state.calibration()
-            comp.change_settings("calib_status", comp.get_status())
+            comp.set_calib_status(COMPLETED)
 
             if comp.isCalibrated() == False:
                 raise Exception("Problem with calibration")

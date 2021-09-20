@@ -286,10 +286,10 @@ class Guard(object):
    status = None
    db = None
    scheduler = list()
+   isInitStatus = False
+   isCalibratedStatus = False
    
    settings = {
-      "init_status": None,
-      "calib_status" : False,
       "isScanAvalaible": False,
    }
 
@@ -320,14 +320,17 @@ class Guard(object):
       self.status = status
    
    def set_calib_status(self, status):
-      self.settings["calib_status"] = status
+      self.isCalibratedStatus = status
+
+   def set_init_status(self, status):
+      self.isInitStatus = status
 
    # getter functions
    def get_status(self):
       return self.state.status
 
    def isCalibrated(self):
-      return self.settings["calib_status"]
+      return self.isCalibratedStatus
 
    # rest functions
    def change_state(self, state):
