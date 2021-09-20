@@ -190,7 +190,7 @@ class Measurement(State):
 
    def stop_measurement(self):
       print("Stopped measurement")
-      self.meas_status = MEASUREMENT_FREE
+      self.state = MEASUREMENT_FREE
    
    def measure(self, freq, in_power):
       retVal = dummy_val_tracking(freq, in_power, self.ptr_to_database)
@@ -375,7 +375,7 @@ class Guard(object):
       isChanged = self.isChangeInSetting()
 
       if (read_settings == self.settings) and not isChanged:
-         print("Nothing change, stay in IDLE")
+         print("Nothing change, stay in ", self.state.__class__)
          if self.state.__class__ != Idle and self.state.__class__ != Measurement:
             self.change_state(Idle)       
       
@@ -416,6 +416,7 @@ class Guard(object):
                self.scheduler.pop()
                self.state.managing_measurement(read_mes_set.get_state(), self.scheduler)
                self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_FREE)
+               self.measurement_form["state"] = MEASUREMENT_FREE
                self.change_state(Idle)
 
    def read_db(self):
