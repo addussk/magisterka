@@ -82,9 +82,6 @@ class DataBase(object):
       self.ptr_to_database.session.query(typeTable).filter(typeTable.id==1).update({typeKey: val})
       self.ptr_to_database.session.commit()
 
-      # for row in self.ptr_to_database.session.query(typeTable).all():
-      #    print(row.get())
-
 class State(DataBase):
 
    name = "state"
@@ -327,7 +324,6 @@ class Guard(object):
 
    # getter functions
    def get_status(self):
-      print("Status of {}: ".format(self.state.name))
       return self.state.status
 
    def isCalibrated(self):
@@ -357,7 +353,7 @@ class Guard(object):
          if read_record != self.new_settings[key]:
             return True
          
-      for key in ["mode", "state"]:
+      for key in [ "state"]:
          read_record = self.db.read_record(MeasSettings, key)
 
          if read_record == "invalid name":
@@ -369,20 +365,16 @@ class Guard(object):
       return False
 
    def check(self):
-      read_settings = self.read_db()
       read_mes_set = self.db.read_table(MeasSettings)
 
-      isChanged = self.isChangeInSetting()
-
-      if (read_settings == self.settings) and not isChanged:
+      if  not self.isChangeInSetting():
          print("Nothing change, stay in ", self.state.__class__)
          if self.state.__class__ != Idle and self.state.__class__ != Measurement:
             self.change_state(Idle)       
       
       else:
          print("Take action")
-         #  stworzyc zmienna przechowujaca setup w bazie danych
-         state_from_db = read_mes_set.get_state()
+
          # If settings has been changed, choose requested action
          db_tool_status = self.db.read_record(FrontEndInfo,"tool_status")
          if self.new_settings["tool_status"] != db_tool_status:
@@ -418,10 +410,6 @@ class Guard(object):
                self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_FREE)
                self.measurement_form["state"] = MEASUREMENT_FREE
                self.change_state(Idle)
-
-   def read_db(self):
-      print("Reading database")
-      return DATA_BASE
 
    def write_to_db(self, db, *args):
       print("Write to DB")

@@ -14,24 +14,6 @@ dataFreq = {
 
 Global_DataBase = DataBase(db)
 
-def save_param(param):
-    # print("Ustawienia pomiaru do zapisania: {}".format(param))
-    if param[0] == 0:
-        write_to_database(DATA_BASE, "mode", param[0])
-        write_to_database(DATA_BASE, "start_freq", param[1][1])
-        write_to_database(DATA_BASE, "power", param[2][1])
-        write_to_database(DATA_BASE, "time_stamp", param[3][1])
-        write_to_database(DATA_BASE, "meas_req", param[4])
-    if param[0] == 1:
-        write_to_database(DATA_BASE, "mode", param[0])
-        write_to_database(DATA_BASE, "start_freq", param[1][1])
-        write_to_database(DATA_BASE, "stop_freq", param[2][1])
-        write_to_database(DATA_BASE, "power", param[3][1])
-        write_to_database(DATA_BASE, "freq_step", param[4][1])
-        write_to_database(DATA_BASE, "time_stamp", param[5][1])
-        write_to_database(DATA_BASE, "meas_req", param[6])
-    #write_to_db(param)
-
 def register_callbacks(dashapp):
     fixed_freq_input = daq.NumericInput(
         id="fixed_freq_input", value=100, className="setting-input", size=200, max=9999999
@@ -188,10 +170,9 @@ def register_callbacks(dashapp):
         ]
     )   # set_bn ilosc klikniec, mode - wybrany tryb (0 fixed mode), store state
     def set_value_setter_store(set_btn, input, mode, store):
-        print( store)
         res = [mode]
         state_measurement = Global_DataBase.read_table(MeasSettings)
-        print(state_measurement.get_state())
+
         # sprawdz czy mozna zaczac nowy pomiar
         if state_measurement.get_state() in [None, MEASUREMENT_FREE]:
             # rozpakowanie htmla aby dotrzec do parametrow z formularza
