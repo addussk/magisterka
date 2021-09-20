@@ -83,7 +83,8 @@ class FrontEndInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     slider_val = db.Column(db.Integer, nullable=False)
     tool_status = db.Column(db.Boolean)
-
+    isScanAvalaible = db.Column(db.Boolean)
+    
     def __repr__(self):
         return '<Slider Value: {}>'.format(self.slider_val)
 
@@ -93,6 +94,10 @@ class FrontEndInfo(db.Model):
 
         elif member == "tool_status":
             return self.tool_status
+        
+        elif member == "isScanAvalaible":
+            return self.isScanAvalaible
+
 
         else: return "invalid name"
 
