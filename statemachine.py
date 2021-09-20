@@ -296,6 +296,7 @@ class Guard(object):
    new_settings = {
       "slider_val":2500,
       "tool_status" : False,
+      "isScanAvalaible": False,
    }
 
    measurement_form = {
@@ -336,13 +337,6 @@ class Guard(object):
    def change_state(self, state):
       """ Change state """
       self.state.switch(state, self.db.get_database_ptr())
-   
-   def change_settings(self, key, value):
-      if key in self.settings.keys():
-         self.settings[key] = value
-      else: raise Exception("Key doesn't exist!")
-
-      self.write_to_db(DATA_BASE, self.settings)
    
    # funkcja sprawdza czy ustawienia ulegly zmianie - do refactoringu, ulepszyc dodawanie kolejnych ustawien
    def isChangeInSetting(self):
@@ -414,8 +408,4 @@ class Guard(object):
                self.measurement_form["state"] = MEASUREMENT_FREE
                self.change_state(Idle)
 
-   def write_to_db(self, db, *args):
-      print("Write to DB")
-      for el in args:
-         db.update(el)
 
