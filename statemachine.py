@@ -221,7 +221,7 @@ class Measurement(State):
             if first_time:
                best_result = min(SCANNING_RESULT)
                first_time = False
-               self.write_to_database(DATA_BASE, "isScanAvalaible", True)
+               self.update_setting(FrontEndInfo, FrontEndInfo.isScanAvalaible, True)
 
             # przywracanie defaultowych parametrow do kolejnego skanowania
             slid_val = self.read_recent_slider_val()
@@ -288,10 +288,6 @@ class Guard(object):
    scheduler = list()
    isInitStatus = False
    isCalibratedStatus = False
-   
-   settings = {
-      "isScanAvalaible": False,
-   }
 
    new_settings = {
       "slider_val":2500,
@@ -406,6 +402,7 @@ class Guard(object):
                self.state.managing_measurement(read_mes_set.get_state(), self.scheduler)
                self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_FREE)
                self.measurement_form["state"] = MEASUREMENT_FREE
+               self.db.update_setting(FrontEndInfo, FrontEndInfo.isScanAvalaible, False)
                self.change_state(Idle)
 
 

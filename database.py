@@ -8,12 +8,6 @@ MEASUREMENT_ONGOING = 5
 MEASUREMENT_HOLD = 6
 MEASUREMENT_STOP = 7
 
-DATA_BASE = {
-   "init_status": None,
-   "calib_status" : False,
-   "isScanAvalaible": False
-}
-
 SCANNING_RESULT = list()
 
 
