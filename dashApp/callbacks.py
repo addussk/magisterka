@@ -64,12 +64,17 @@ def register_callbacks(dashapp):
         if Global_DataBase.read_record(FrontEndInfo, "isScanAvalaible") == True:
             x_data = [ el[1] for el in SCANNING_RESULT]
             y_data = [ el[0] for el in SCANNING_RESULT]
+            minimum_val = min(SCANNING_RESULT)
+
             return dcc.Graph(
                         id='scanning-result-graph',
                         figure={
                             'data': [
                                 {'x': x_data, 
                                 'y': y_data, 
+                                'type': 'lines+markers', },
+                                {'x': [minimum_val[1], minimum_val[1]], 
+                                'y': [abs(minimum_val[0]), (-1)*abs(minimum_val[1])], 
                                 'type': 'lines+markers', },
                             ],
                             'layout': {
