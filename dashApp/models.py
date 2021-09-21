@@ -73,6 +73,9 @@ class MeasSettings(db.Model):
 
         else: return "invalid name"
 
+    def get_mode(self):
+        return self.mode
+        
     def get_state(self):
         return self.state
     
