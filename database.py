@@ -10,16 +10,3 @@ MEASUREMENT_STOP = 7
 
 SCANNING_RESULT = list()
 
-
-def write_to_database(db, sett, val):
-   print("CLIENT: Write to DB")
-   if sett in db.keys():
-      db[sett] = val
-   else:
-      raise Exception("Key isn't in dictionary")
-
-def read_from_database(db, sett):
-   if sett in db.keys():
-      return db[sett]
-   else:
-      raise Exception("Key isn't in dictionary")

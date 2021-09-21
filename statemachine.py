@@ -16,19 +16,6 @@ class DataBase(object):
    def get_database_ptr(self):
       return self.ptr_to_database
 
-   def write_to_database(self, db, sett, val):
-      print("CLIENT: Write to DB")
-      if sett in db.keys():
-         db[sett] = val
-      else:
-         raise Exception("Key isn't in dictionary")
-
-   def read_from_database(self, db, sett):
-      if sett in db.keys():
-         return db[sett]
-      else:
-         raise Exception("Key isn't in dictionary")
-
    # funkcja do ustawienia parametrow pomiarow
    def configure_measurement(self, parm):
       # FIXED MODE 
