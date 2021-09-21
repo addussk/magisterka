@@ -5,6 +5,7 @@ import dash_html_components as html
 from dashApp.templates import *
 from dashApp.extensions import db
 from database import *
+import dash
 
 dataFreq = { 
     'Freq': [],
@@ -80,10 +81,20 @@ def register_callbacks(dashapp):
 
     @dashapp.callback(
         Output("slider_min_pointer", "children"),
-        Input("value-setter-set-btn", "n_clicks"),
+        [
+            Input("value-setter-set-btn", "n_clicks"),
+            Input("value-setter-view-btn", "n_clicks"),
+        ]
     )
-    def create_slider(clicked):
-        if clicked:
+    def create_slider(show_slider, hide_slider):
+        ctx = dash.callback_context
+
+        if not ctx.triggered:
+            button_id = 'No clicks yet'
+        else:
+            button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if button_id == "value-setter-set-btn":
             return [
                 dcc.Slider( 
                     id="slider-drag",
