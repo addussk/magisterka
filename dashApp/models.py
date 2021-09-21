@@ -45,6 +45,9 @@ class MeasSettings(db.Model):
     power = db.Column(db.Integer, nullable=False)
     freq_step = db.Column(db.Integer, nullable=False)
     time_step = db.Column(db.Integer, nullable=False)
+    best_scan_freq = db.Column(db.Integer)
+    best_scan_power = db.Column(db.Integer)
+
 
     def __repr__(self):
         return '<Mode {}>'.format(self.state)
@@ -79,6 +82,9 @@ class MeasSettings(db.Model):
     def get_state(self):
         return self.state
     
+    def get_minimum(self):
+        return [self.best_scan_power, self.best_scan_freq]
+
     def get_all(self):
         return self.id, self.mode, self.state, self.start_freq, self.stop_freq, self.power, self.freq_step, self.time_step
     

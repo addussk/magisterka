@@ -243,6 +243,8 @@ class Measurement(State):
             self.ptr_to_database.session.commit()
 
             best_result = (best_result[0] + random.random(), best_result[1])
+            self.update_setting(MeasSettings, MeasSettings.best_scan_freq, best_result[1])
+            self.update_setting(MeasSettings, MeasSettings.best_scan_power, best_result[0])
 
    def fixed__freq_mode(self):
       while self.state == MEASUREMENT_START:

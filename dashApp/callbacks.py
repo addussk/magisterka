@@ -65,7 +65,9 @@ def register_callbacks(dashapp):
             x_data = [ el[1] for el in SCANNING_RESULT]
             y_data = [ el[0] for el in SCANNING_RESULT]
             minimum_val = min(SCANNING_RESULT)
-
+            meas_set = Global_DataBase.read_table(MeasSettings)
+            measured_min = meas_set.get_minimum()
+            
             return dcc.Graph(
                         id='scanning-result-graph',
                         figure={
@@ -74,6 +76,9 @@ def register_callbacks(dashapp):
                                 'y': y_data, 
                                 'type': 'lines+markers', },
                                 {'x': [minimum_val[1], minimum_val[1]], 
+                                'y': [abs(minimum_val[0]), (-1)*abs(minimum_val[1])], 
+                                'type': 'lines+markers', },
+                                {'x': [measured_min[1], measured_min[1]], 
                                 'y': [abs(minimum_val[0]), (-1)*abs(minimum_val[1])], 
                                 'type': 'lines+markers', },
                             ],
