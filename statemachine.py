@@ -222,6 +222,7 @@ class Measurement(State):
                best_result = min(SCANNING_RESULT)
                first_time = False
                self.write_to_database(DATA_BASE, "isScanAvalaible", True)
+               self.update_setting(FrontEndInfo, FrontEndInfo.isScanAvalaible, True)
 
             # przywracanie defaultowych parametrow do kolejnego skanowania
             slid_val = self.read_recent_slider_val()

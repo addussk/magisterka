@@ -59,6 +59,7 @@ def register_callbacks(dashapp):
         Input('interval-component', 'n_intervals'),
     )
     def create_scanning_graph(n_interval):
+        print(Global_DataBase.read_record(FrontEndInfo, "isScanAvalaible"))
         if read_from_database(DATA_BASE, "isScanAvalaible"):
             x_data = [ el[1] for el in SCANNING_RESULT]
             y_data = [ el[0] for el in SCANNING_RESULT]
