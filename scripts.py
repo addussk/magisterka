@@ -14,6 +14,6 @@ def dummy_val_fixed_meas(freq):
     return abs(math.sin(freq))
 
 def dummy_val_tracking(freq, in_power, db):
-    a, p = 1/10, (100 * in_power)
+    a, p = 1/10, 100
     mid_freq= (db.session.query(FrontEndInfo).order_by(FrontEndInfo.id).first()).get_slider()
     return (a*(freq - mid_freq)**2 - p) * math.sin(math.radians(math.pi*freq)*1.5)
