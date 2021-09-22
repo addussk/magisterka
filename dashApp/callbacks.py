@@ -136,7 +136,10 @@ def register_callbacks(dashapp):
     def update_therm_col(val):
         last_measurement = db.session.query(Temperature).order_by(Temperature.id.desc()).first()
 
-        return int(last_measurement.get_temperature())
+        if last_measurement == None:
+            pass
+        else:
+            return int(last_measurement.get_temperature())
 
     @dashapp.callback(
         [Output("app-content", "children"), Output("interval-component", "n_intervals")],
