@@ -51,6 +51,15 @@ class MeasSettings(db.Model):
 
     def __repr__(self):
         return '<Mode {}>'.format(self.state)
+    
+    def set_default(self):
+        self.mode = 0
+        self.state = 3 # MEASUREMENT_FREE
+        self.start_freq = 2400
+        self.stop_freq = 2400
+        self.power = 10
+        self.freq_step = 1
+        self.time_step = 5
         
     def get(self, member):
         if member == "mode":
@@ -96,6 +105,11 @@ class FrontEndInfo(db.Model):
     
     def __repr__(self):
         return '<Slider Value: {}>'.format(self.slider_val)
+
+    def set_default(self):
+        self.slider_val = 2500
+        self.tool_status = False
+        self.isScanAvalaible = False
 
     def get(self, member):
         if member == "slider_val":
