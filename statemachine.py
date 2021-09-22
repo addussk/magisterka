@@ -38,6 +38,9 @@ class DataBase(object):
       
       # SWEEPING MODE - TBD
 
+   def read_record_all(self, typeTable):
+      return self.ptr_to_database.session.query(typeTable).order_by(typeTable.id).all()
+
    # Funkcja odczytujaca podana ilosc rekordow w podanej tabeli
    def read_last_records(self, type, nmb_of_rec):
       return self.ptr_to_database.session.query(type).order_by(type.time_of_measurement.desc()).limit(nmb_of_rec).all()
@@ -65,6 +68,7 @@ class DataBase(object):
       self.ptr_to_database.session.add(MeasSettings(mode=choosenMode, state=measStatus, start_freq=startFreq, stop_freq=stopFreq, power=pwr, freq_step=fStep, time_step=tStep))
       self.ptr_to_database.session.commit()
 
+   # Funkcja odpowiedzialna za aktualizacje konkretnej pozycji w wskazanym rekordzie
    def update_setting(self, typeTable, typeKey, val):
       self.ptr_to_database.session.query(typeTable).filter(typeTable.id==1).update({typeKey: val})
       self.ptr_to_database.session.commit()
@@ -98,10 +102,10 @@ class Init(State):
       print("Init Instance")
       self.status = False
       self.set_database_ptr(ptrToDB)
-      self.write_to_database_FrontEndInfo()
-      self.write_to_database_Frequency()
-   
+
    def initialization(self):
+
+      self.db_init()
       print("TODO: initialization things")
 
       print("Initialization completed")
@@ -109,6 +113,28 @@ class Init(State):
    
    def isInitialized(self):
       return self.status
+
+   def db_init(self):
+      try:
+         front_table = self.read_record_all(FrontEndInfo)
+         front_table[0].set_default()
+      except :
+         self.write_to_database_FrontEndInfo()
+
+      try:
+         meassett_table = self.read_record_all(MeasSettings)
+         meassett_table[0].set_default()
+      except:
+         self.create_MeasSettings()
+
+      # Sprawdz czy istnieje rekord w Frequqncy, jesli nie, utworz, jesli istnieje
+      if len(self.read_record_all(Frequency)) == 0:
+         self.write_to_database_Frequency()
+      else:
+         # dla czestotliwosci nie jest potrzebne wprowadzanie zadnej wartosci
+         pass
+      
+
 
 class Calibration(State):
    name = "calibration"
@@ -299,7 +325,6 @@ class Guard(object):
       # State of the guard - default is init.
       self.state = Init(database_ptr)
       self.db = DataBase(database_ptr)
-      self.db.create_MeasSettings()
    
    # setter functions
    def set_status(self, status):
