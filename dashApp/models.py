@@ -32,6 +32,9 @@ class Results(db.Model):
     def get_trans_pwr(self):
         return self.transmited_power
     
+    def get_data_meas(self):
+        return self.time_of_measurement
+    
 class Temperature(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     obj_temp = db.Column(db.Integer)
