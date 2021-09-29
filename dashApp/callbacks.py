@@ -26,15 +26,22 @@ def register_callbacks(dashapp):
     def update_graph_live(n):
         # get all users in database
         frequency_measurement = Global_DataBase.read_last_records(Results, 20)
-
-        temp_y = [ el.get()[0] for el in frequency_measurement]
-        temp_x = [ el.get()[1] for el in frequency_measurement]
+        freq = [ el.get_meas_freq() for el in frequency_measurement]
+        transmitted_pwr = [ el.get_trans_pwr() for el in frequency_measurement]
+        received_pwr = [ el.get_meas_pwr() for el in frequency_measurement]
+        data_meas = [ el.get_data_meas() for el in frequency_measurement]
 
         fig={
                 "data": [
                     {
-                        "x": temp_x,
-                        "y": temp_y,
+                        "x": data_meas,
+                        "y": transmitted_pwr,
+                        "mode": "lines+markers",
+                        'type': 'scatter'
+                    },
+                    {
+                        "x": data_meas,
+                        "y": received_pwr,
                         "mode": "lines+markers",
                         'type': 'scatter'
                     }
