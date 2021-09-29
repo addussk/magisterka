@@ -1,5 +1,5 @@
 from statemachine import DataBase
-from dashApp.models import Frequency, FrontEndInfo, Temperature, MeasSettings
+from dashApp.models import Results, FrontEndInfo, Temperature, MeasSettings
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 from dashApp.templates import *
@@ -25,7 +25,7 @@ def register_callbacks(dashapp):
         Input('interval-component', 'n_intervals'))
     def update_graph_live(n):
         # get all users in database
-        frequency_measurement = Global_DataBase.read_last_records(Frequency, 20)
+        frequency_measurement = Global_DataBase.read_last_records(Results, 20)
 
         temp_y = [ el.get()[0] for el in frequency_measurement]
         temp_x = [ el.get()[1] for el in frequency_measurement]

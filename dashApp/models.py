@@ -10,7 +10,7 @@ class User(db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username) 
 
-class Frequency(db.Model):
+class Results(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     measured_freq = db.Column(db.Integer, nullable=False)
     measured_power = db.Column(db.Integer, nullable=False)

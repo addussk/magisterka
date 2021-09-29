@@ -2,7 +2,7 @@ import time, datetime, random
 from scripts import dummy_val_tracking
 from database import *
 import threading
-from dashApp.models import Frequency, FrontEndInfo, MeasSettings
+from dashApp.models import Results, FrontEndInfo, MeasSettings
 
 class DataBase(object):
    ptr_to_database = None
@@ -60,7 +60,7 @@ class DataBase(object):
       self.ptr_to_database.session.commit()
    
    def write_to_database_Frequency(self, freq=17, power=1, tim=datetime.datetime.now()):
-      self.ptr_to_database.session.add(Frequency(measured_freq=freq, measured_power=power, time_of_measurement=tim))
+      self.ptr_to_database.session.add(Results(measured_freq=freq, measured_power=power, time_of_measurement=tim))
       self.ptr_to_database.session.commit()
 
    # Funkcja do utworzenia record w tablicy MeasSettings przechowujacej ustawienie pomiaru
@@ -128,7 +128,7 @@ class Init(State):
          self.create_MeasSettings()
 
       # Sprawdz czy istnieje rekord w Frequqncy, jesli nie, utworz, jesli istnieje
-      if len(self.read_record_all(Frequency)) == 0:
+      if len(self.read_record_all(Results)) == 0:
          self.write_to_database_Frequency()
       else:
          # dla czestotliwosci nie jest potrzebne wprowadzanie zadnej wartosci
@@ -265,7 +265,7 @@ class Measurement(State):
             best_result = min([up_freq_res, less_freq_res, best_result])
             print("[TRACKING] Update the best setting: Freq:{}, R_Power: {}".format(best_result[1], best_result[0]))
 
-            self.ptr_to_database.session.add(Frequency(measured_freq=best_result[1], measured_power=best_result[0], time_of_measurement=datetime.datetime.now()))
+            self.ptr_to_database.session.add(Results(measured_freq=best_result[1], measured_power=best_result[0], time_of_measurement=datetime.datetime.now()))
             self.ptr_to_database.session.commit()
 
             best_result = (best_result[0] + random.random(), best_result[1])
@@ -279,7 +279,7 @@ class Measurement(State):
 
          retVal = self.measure(self.start_freq, self.power)
 
-         self.ptr_to_database.session.add(Frequency(measured_freq=self.start_freq, measured_power=retVal, time_of_measurement=datetime.datetime.now()))
+         self.ptr_to_database.session.add(Results(measured_freq=self.start_freq, measured_power=retVal, time_of_measurement=datetime.datetime.now()))
          self.ptr_to_database.session.commit()
          
    def update_settings(self):
