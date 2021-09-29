@@ -134,8 +134,6 @@ class Init(State):
          # dla czestotliwosci nie jest potrzebne wprowadzanie zadnej wartosci
          pass
       
-
-
 class Calibration(State):
    name = "calibration"
    allowed = ["idle"]
