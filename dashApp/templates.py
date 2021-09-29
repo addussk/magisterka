@@ -244,11 +244,11 @@ def build_chart_panel():
                 dcc.Checklist(
                     id="trace_checklist",
                     options=[
-                        {'label': 'Transmit Power', 'value': 'tp'},
-                        {'label': 'Received Power', 'value': 'rp'},
-                        {'label': 'System Temperature', 'value': 'systemp'},
+                        {'label': 'Transmit Power', 'value': 'transmit_pwr'},
+                        {'label': 'Received Power', 'value': 'received_pwr'},
+                        {'label': 'System Temperature', 'value': 'sys_temp'},
                     ],
-                    value=["tp"],
+                    value=["transmit_pwr"],
                     labelStyle={'display': 'inline'}
                 ),]
             ),
