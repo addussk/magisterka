@@ -59,8 +59,8 @@ class DataBase(object):
       self.ptr_to_database.session.add(FrontEndInfo(slider_val=sliderVal, tool_status=toolStatus))
       self.ptr_to_database.session.commit()
    
-   def write_to_database_Frequency(self, freq=17, power=1, tim=datetime.datetime.now()):
-      self.ptr_to_database.session.add(Results(measured_freq=freq, measured_power=power, time_of_measurement=tim))
+   def create_table_Results(self, freq=17, power=1, tim=datetime.datetime.now()):
+      self.ptr_to_database.session.add(Results(measured_freq=freq, measured_power=power,transmited_power=power, time_of_measurement=tim))
       self.ptr_to_database.session.commit()
 
    # Funkcja do utworzenia record w tablicy MeasSettings przechowujacej ustawienie pomiaru
@@ -129,7 +129,7 @@ class Init(State):
 
       # Sprawdz czy istnieje rekord w Frequqncy, jesli nie, utworz, jesli istnieje
       if len(self.read_record_all(Results)) == 0:
-         self.write_to_database_Frequency()
+         self.create_table_Results()
       else:
          # dla czestotliwosci nie jest potrzebne wprowadzanie zadnej wartosci
          pass
