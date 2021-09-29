@@ -120,6 +120,14 @@ body {
 
 .section-banner {
     color: darkgray;
+    font-size: 2rem;
+    text-align: center;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #4b5460;
+}
+
+.section-checklist {
+    color: darkgray;
     font-size: 1.5rem;
     text-align: left;
     padding: 1rem 2rem;

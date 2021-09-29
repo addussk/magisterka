@@ -240,15 +240,15 @@ def build_chart_panel():
         className="twelve columns",
         children=[
             generate_section_banner("Live Measurement Chart"),
-            html.Div(className="section-banner", children=[
+            html.Div(className="section-checklist", children=[
                 dcc.Checklist(
                     options=[
                         {'label': 'Transmit Power', 'value': 'tp'},
                         {'label': 'Received Power', 'value': 'rp'},
                         {'label': 'System Temperature', 'value': 'systemp'},
                     ],
-                    value=["rp"],
-                    labelStyle={'display': 'inline-block'}
+                    value=["tp"],
+                    labelStyle={'display': 'inline'}
                 ),]
             ),
             dcc.Graph(
