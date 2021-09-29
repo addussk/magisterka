@@ -1,5 +1,5 @@
 import time, datetime, random
-from scripts import dummy_val_tracking
+from scripts import dummy_val_tracking, dummy_val_tracking_received_pwr
 from database import *
 import threading
 from dashApp.models import Results, FrontEndInfo, MeasSettings
@@ -59,6 +59,11 @@ class DataBase(object):
       self.ptr_to_database.session.add(FrontEndInfo(slider_val=sliderVal, tool_status=toolStatus))
       self.ptr_to_database.session.commit()
    
+   def write_to_database_Results(self, freq, pwr_transmitted, pwr_received):
+      tim=datetime.datetime.now()
+      self.ptr_to_database.session.add(Results(measured_freq=freq, measured_power=pwr_transmitted,transmited_power=pwr_received, time_of_measurement=tim))
+      self.ptr_to_database.session.commit()
+
    def create_table_Results(self, freq=17, power=1, tim=datetime.datetime.now()):
       self.ptr_to_database.session.add(Results(measured_freq=freq, measured_power=power,transmited_power=power, time_of_measurement=tim))
       self.ptr_to_database.session.commit()
@@ -202,6 +207,9 @@ class Measurement(State):
    
    def measure(self, freq, in_power):
       retVal = dummy_val_tracking(freq, in_power, self.ptr_to_database)
+      receivedVal = dummy_val_tracking_received_pwr(retVal)
+      self.write_to_database_Results(freq, retVal, receivedVal)
+      
       return retVal
 
    def sweeping_mode(self):
@@ -276,9 +284,6 @@ class Measurement(State):
          time.sleep(self.time_step)
 
          retVal = self.measure(self.start_freq, self.power)
-
-         self.ptr_to_database.session.add(Results(measured_freq=self.start_freq, measured_power=retVal, time_of_measurement=datetime.datetime.now()))
-         self.ptr_to_database.session.commit()
          
    def update_settings(self):
       self.mode = self.read_record(MeasSettings, "mode")
