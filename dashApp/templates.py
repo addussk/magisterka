@@ -242,6 +242,7 @@ def build_chart_panel():
             generate_section_banner("Live Measurement Chart"),
             html.Div(className="section-checklist", children=[
                 dcc.Checklist(
+                    id="trace_checklist",
                     options=[
                         {'label': 'Transmit Power', 'value': 'tp'},
                         {'label': 'Received Power', 'value': 'rp'},
