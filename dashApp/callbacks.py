@@ -139,7 +139,7 @@ def register_callbacks(dashapp):
         if last_measurement == None:
             pass
         else:
-            return int(last_measurement.get_temperature())
+            return int(last_measurement.get_sys_temperature())
 
     @dashapp.callback(
         [Output("app-content", "children"), Output("interval-component", "n_intervals")],

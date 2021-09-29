@@ -12,8 +12,9 @@ class User(db.Model):
 
 class Results(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    measured_freq = db.Column(db.Integer, nullable=False)
-    measured_power = db.Column(db.Integer, nullable=False)
+    measured_freq = db.Column(db.Integer)
+    measured_power = db.Column(db.Integer)
+    transmited_power = db.Column(db.Integer)
     time_of_measurement = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
 
     def __repr__(self):
@@ -22,19 +23,29 @@ class Results(db.Model):
     def get(self):
         return (self.measured_power, self.time_of_measurement)
     
+    def get_meas_freq(self):
+        return self.measured_freq
+    
+    def get_meas_pwr(self):
+        return self.measured_power
+
+    def get_trans_pwr(self):
+        return self.transmited_power
+    
 class Temperature(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    measured_temp = db.Column(db.Integer, nullable=False)
+    obj_temp = db.Column(db.Integer)
+    sys_temp = db.Column(db.Integer)
     time_of_measurement = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
     
     def get(self):
-        return (self.measured_temp, self.time_of_measurement)
+        return (self.sys_temp, self.time_of_measurement)
     
-    def get_temperature(self):
-        return self.measured_temp
+    def get_sys_temperature(self):
+        return self.sys_temp
 
 class MeasSettings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
