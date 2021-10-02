@@ -22,8 +22,11 @@ def register_callbacks(dashapp):
     # Multiple components can update everytime interval gets fired.
     @dashapp.callback(
         Output('control-chart-live', 'figure'),
-        Input('interval-component', 'n_intervals'))
-    def update_graph_live(n):
+        [
+            Input('interval-component', 'n_intervals'),
+            Input('trace_checklist', 'value'),
+        ])
+    def update_graph_live(n, checkbox_list):
         # get all users in database
         frequency_measurement = Global_DataBase.read_last_records(Results, 20)
         freq = [ el.get_meas_freq() for el in frequency_measurement]
@@ -31,21 +34,32 @@ def register_callbacks(dashapp):
         received_pwr = [ el.get_meas_pwr() for el in frequency_measurement]
         data_meas = [ el.get_data_meas() for el in frequency_measurement]
 
+        fig_dict = dict()
+
+        for el in checkbox_list:
+            if el == "transmit_pwr":
+                fig_dict[el] = {
+                    "x" : data_meas,
+                    "y" : transmitted_pwr,
+                        "mode": "lines+markers",
+                        'type': 'scatter',
+                    'name': el,
+                }
+            elif el == "received_pwr":
+                fig_dict[el] = {
+                    "x" : data_meas,
+                    "y" : received_pwr,
+                    "mode": "lines+markers",
+                    'type': 'scatter',
+                    'name': el,
+                }
+            elif el == "sys_temp":
+                # dodac odczyt temperatury i zapisanie do listy dict
+                pass
+
+
         fig={
-                "data": [
-                    {
-                        "x": data_meas,
-                        "y": transmitted_pwr,
-                        "mode": "lines+markers",
-                        'type': 'scatter'
-                    },
-                    {
-                        "x": data_meas,
-                        "y": received_pwr,
-                        "mode": "lines+markers",
-                        'type': 'scatter'
-                    }
-                ],
+                "data": [ fig_dict[el] for el in fig_dict ],
                 "layout": {
                     "paper_bgcolor": "rgba(0,0,0,0)",
                     "plot_bgcolor": "rgba(0,0,0,0)",

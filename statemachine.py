@@ -61,7 +61,7 @@ class DataBase(object):
    
    def write_to_database_Results(self, freq, pwr_transmitted, pwr_received):
       tim=datetime.datetime.now()
-      self.ptr_to_database.session.add(Results(measured_freq=freq, measured_power=pwr_transmitted,transmited_power=pwr_received, time_of_measurement=tim))
+      self.ptr_to_database.session.add(Results(measured_freq=freq, measured_power=pwr_received,transmited_power=pwr_transmitted, time_of_measurement=tim))
       self.ptr_to_database.session.commit()
 
    def create_table_Results(self, freq=17, power=1, tim=datetime.datetime.now()):
