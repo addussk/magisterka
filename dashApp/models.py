@@ -35,12 +35,15 @@ class Results(db.Model):
     def get_data_meas(self):
         return self.time_of_measurement
 
-class Measurement(db.Model):
+class MeasurementInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), unique=True )
+    name = db.Column(db.String(255) )
     beginning = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     finish = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    
+
+    def get_all(self):
+        return self.id, self.name, self.beginning, self.finish
+
 class Temperature(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     obj_temp = db.Column(db.Integer)
