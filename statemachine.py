@@ -2,7 +2,7 @@ import time, datetime, random
 from scripts import dummy_val_tracking, dummy_val_tracking_received_pwr
 from database import *
 import threading
-from dashApp.models import Results, FrontEndInfo, MeasSettings
+from dashApp.models import Results, FrontEndInfo, MeasSettings, MeasurementInfo
 
 class DataBase(object):
    ptr_to_database = None
@@ -73,6 +73,10 @@ class DataBase(object):
       self.ptr_to_database.session.add(MeasSettings(mode=choosenMode, state=measStatus, start_freq=startFreq, stop_freq=stopFreq, power=pwr, freq_step=fStep, time_step=tStep))
       self.ptr_to_database.session.commit()
 
+   def create_Measurement(self, name="init", b_date=datetime.datetime.now(), f_date=datetime.datetime.now()):
+      self.ptr_to_database.session.add(MeasurementInfo(name=name, beginning=b_date, finish=f_date))
+      self.ptr_to_database.session.commit()
+
    # Funkcja odpowiedzialna za aktualizacje konkretnej pozycji w wskazanym rekordzie
    def update_setting(self, typeTable, typeKey, val):
       self.ptr_to_database.session.query(typeTable).filter(typeTable.id==1).update({typeKey: val})
@@ -131,6 +135,17 @@ class Init(State):
          meassett_table[0].set_default()
       except:
          self.create_MeasSettings()
+      
+      try:
+         measurementInfo = self.read_record_all(MeasurementInfo)
+         if measurementInfo == []:
+            # przejdz do obslugi wyjatku
+            raise Exception
+         else:
+            # nie rob nic, tablica zawiera dane
+            pass
+      except:
+         self.create_Measurement()
 
       # Sprawdz czy istnieje rekord w Frequqncy, jesli nie, utworz, jesli istnieje
       if len(self.read_record_all(Results)) == 0:
@@ -377,6 +392,8 @@ class Guard(object):
    def check(self):
       read_mes_set = self.db.read_table(MeasSettings)
 
+      print(self.db.read_record_all(MeasurementInfo))
+
       if  not self.isChangeInSetting():
          print("Nothing change, stay in ", self.state.__class__)
          if self.state.__class__ != Idle and self.state.__class__ != Measurement:
@@ -384,7 +401,7 @@ class Guard(object):
       
       else:
          print("Take action")
-
+         
          # If settings has been changed, choose requested action
          db_tool_status = self.db.read_record(FrontEndInfo,"tool_status")
          if self.new_settings["tool_status"] != db_tool_status:
