@@ -1,11 +1,12 @@
 from statemachine import DataBase
-from dashApp.models import Results, FrontEndInfo, Temperature, MeasSettings
+from dashApp.models import Results, FrontEndInfo, Temperature, MeasSettings, MeasurementInfo
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 from dashApp.templates import *
 from dashApp.extensions import db
 from database import *
 import dash
+import datetime
 
 dataFreq = { 
     'Freq': [],
@@ -243,6 +244,7 @@ def register_callbacks(dashapp):
             # zapisujemy do bazy danych, rozne od None zeby dochodzilo do zapisu po kliknieciu buttonu a nie przy inicjalizaci.
             if set_btn != None:
                 Global_DataBase.configure_measurement(res)
+                Global_DataBase.create_Measurement("badanie {}".format(set_btn), datetime.datetime.now())
         else:
             #TBD : komunikat ze trwa aktualnie pomiar
             pass
