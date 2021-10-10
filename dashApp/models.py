@@ -34,6 +34,12 @@ class Results(db.Model):
     
     def get_data_meas(self):
         return self.time_of_measurement
+
+class Measurement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), unique=True )
+    beginning = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    finish = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     
 class Temperature(db.Model):
     id = db.Column(db.Integer, primary_key=True)
