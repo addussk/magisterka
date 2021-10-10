@@ -73,13 +73,21 @@ class DataBase(object):
       self.ptr_to_database.session.add(MeasSettings(mode=choosenMode, state=measStatus, start_freq=startFreq, stop_freq=stopFreq, power=pwr, freq_step=fStep, time_step=tStep))
       self.ptr_to_database.session.commit()
 
-   def create_Measurement(self, name="init", b_date=datetime.datetime.now(), f_date=datetime.datetime.now()):
+   def create_MeasurementInfo(self, name="init", b_date=datetime.datetime.now(), f_date=datetime.datetime.now()):
       self.ptr_to_database.session.add(MeasurementInfo(name=name, beginning=b_date, finish=f_date))
       self.ptr_to_database.session.commit()
 
    # Funkcja odpowiedzialna za aktualizacje konkretnej pozycji w wskazanym rekordzie
    def update_setting(self, typeTable, typeKey, val):
+      print("Jestem@@@@@@")
+      print(type(self.ptr_to_database.session.query(typeTable).filter(typeTable.id==1)))
       self.ptr_to_database.session.query(typeTable).filter(typeTable.id==1).update({typeKey: val})
+      self.ptr_to_database.session.commit()
+   
+   def update_last_record(self, typeTable, typeKey, val):
+      print("asdasd@@@")
+      print(type(self.ptr_to_database.session.query(typeTable).order_by(typeTable.id.desc()).first()))
+      self.ptr_to_database.session.query(typeTable).order_by(typeTable.id.desc()).first().update({typeKey: val})
       self.ptr_to_database.session.commit()
 
 class State(DataBase):
@@ -145,7 +153,7 @@ class Init(State):
             # nie rob nic, tablica zawiera dane
             pass
       except:
-         self.create_Measurement()
+         self.create_MeasurementInfo()
 
       # Sprawdz czy istnieje rekord w Frequqncy, jesli nie, utworz, jesli istnieje
       if len(self.read_record_all(Results)) == 0:
@@ -391,8 +399,10 @@ class Guard(object):
 
    def check(self):
       read_mes_set = self.db.read_table(MeasSettings)
-
-      print(self.db.read_record_all(MeasurementInfo))
+      
+      self.db.update_last_record(MeasurementInfo, MeasurementInfo.finish, datetime.datetime.now())
+      for el in self.db.read_record_all(MeasurementInfo):
+         print(el.get_all())
 
       if  not self.isChangeInSetting():
          print("Nothing change, stay in ", self.state.__class__)
