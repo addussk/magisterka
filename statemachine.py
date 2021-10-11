@@ -86,8 +86,6 @@ class DataBase(object):
 
    # Funkcja odpowiedzialna za aktualizacje konkretnej pozycji w wskazanym rekordzie
    def update_setting(self, typeTable, typeKey, val):
-      print("Jestem@@@@@@")
-      print(type(self.ptr_to_database.session.query(typeTable).filter(typeTable.id==1)))
       self.ptr_to_database.session.query(typeTable).filter(typeTable.id==1).update({typeKey: val})
       self.ptr_to_database.session.commit()
    
