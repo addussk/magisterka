@@ -53,6 +53,9 @@ class MeasurementInfo(db.Model):
 
     def get_all(self):
         return self.id, self.name, self.beginning, self.finish
+    
+    def get_time_scope(self):
+        return [self.beginning, self.finish]
 
 class Temperature(db.Model):
     id = db.Column(db.Integer, primary_key=True)
