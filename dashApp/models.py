@@ -40,6 +40,16 @@ class MeasurementInfo(db.Model):
     name = db.Column(db.String(255) )
     beginning = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     finish = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    
+    def update(self, key, value):
+        if key.key == "name":
+            self.name = value
+        elif key.key == "beginning":
+            self.beginning = value
+        elif key.key == "finish":
+            self.finish = value
+        else:
+            print("else@@@@")
 
     def get_all(self):
         return self.id, self.name, self.beginning, self.finish
