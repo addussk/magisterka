@@ -43,10 +43,17 @@ class DataBase(object):
 
    # Funkcja odczytujaca podana ilosc rekordow w podanej tabeli
    def read_last_records(self, type, nmb_of_rec):
-      return self.ptr_to_database.session.query(type).order_by(type.time_of_measurement.desc()).limit(nmb_of_rec).all()
+      return self.ptr_to_database.session.query(type).order_by(type.id.desc()).limit(nmb_of_rec).all()
+   
+   def read_last_record(self, typeTable):
+      return self.ptr_to_database.session.query(typeTable).order_by(typeTable.id.desc()).first()
 
    def read_table(self, typeTable):
       return self.ptr_to_database.session.query(typeTable).order_by(typeTable.id).first()
+
+   def read_filtered_table(self, timeScope):
+      table = self.ptr_to_database.session.query(Results).filter( Results.time_of_measurement >= timeScope[0] ).all()
+      return table
    
    def read_record(self, typeTable, typeKey):
       record = self.ptr_to_database.session.query(typeTable).order_by(typeTable.id).first()
@@ -73,13 +80,18 @@ class DataBase(object):
       self.ptr_to_database.session.add(MeasSettings(mode=choosenMode, state=measStatus, start_freq=startFreq, stop_freq=stopFreq, power=pwr, freq_step=fStep, time_step=tStep))
       self.ptr_to_database.session.commit()
 
-   def create_Measurement(self, name="init", b_date=datetime.datetime.now(), f_date=datetime.datetime.now()):
+   def create_MeasurementInfo(self, name="init", b_date=datetime.datetime.now(), f_date=datetime.datetime.now()):
       self.ptr_to_database.session.add(MeasurementInfo(name=name, beginning=b_date, finish=f_date))
       self.ptr_to_database.session.commit()
 
    # Funkcja odpowiedzialna za aktualizacje konkretnej pozycji w wskazanym rekordzie
    def update_setting(self, typeTable, typeKey, val):
       self.ptr_to_database.session.query(typeTable).filter(typeTable.id==1).update({typeKey: val})
+      self.ptr_to_database.session.commit()
+   
+   # Funkcja aktualizuje dana kolumne w wskazanej tablicy ostatnio dodanego rekordu
+   def update_last_record(self, typeTable, typeKey, val):
+      self.ptr_to_database.session.query(typeTable).order_by(typeTable.id.desc()).first().update(typeKey, val)
       self.ptr_to_database.session.commit()
 
 class State(DataBase):
@@ -145,7 +157,7 @@ class Init(State):
             # nie rob nic, tablica zawiera dane
             pass
       except:
-         self.create_Measurement()
+         self.create_MeasurementInfo()
 
       # Sprawdz czy istnieje rekord w Frequqncy, jesli nie, utworz, jesli istnieje
       if len(self.read_record_all(Results)) == 0:
@@ -392,8 +404,6 @@ class Guard(object):
    def check(self):
       read_mes_set = self.db.read_table(MeasSettings)
 
-      print(self.db.read_record_all(MeasurementInfo))
-
       if  not self.isChangeInSetting():
          print("Nothing change, stay in ", self.state.__class__)
          if self.state.__class__ != Idle and self.state.__class__ != Measurement:
@@ -433,6 +443,7 @@ class Guard(object):
             elif read_mes_set.get_state() == MEASUREMENT_STOP:
                self.change_state(Measurement)
                self.scheduler.pop()
+               self.db.update_last_record(MeasurementInfo, MeasurementInfo.finish, datetime.datetime.now())
                self.state.managing_measurement(read_mes_set.get_state(), self.scheduler)
                self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_FREE)
                self.measurement_form["state"] = MEASUREMENT_FREE
