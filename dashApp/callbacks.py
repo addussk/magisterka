@@ -28,8 +28,8 @@ def register_callbacks(dashapp):
             Input('trace_checklist', 'value'),
         ])
     def update_graph_live(n, checkbox_list):
-        # get all users in database
-        frequency_measurement = Global_DataBase.read_last_records(Results, 20)
+        time_scope_last_meas = Global_DataBase.read_last_record(MeasurementInfo).get_time_scope()
+        frequency_measurement = Global_DataBase.read_filtered_table(time_scope_last_meas)
         freq = [ el.get_meas_freq() for el in frequency_measurement]
         transmitted_pwr = [ el.get_trans_pwr() for el in frequency_measurement]
         received_pwr = [ el.get_meas_pwr() for el in frequency_measurement]
@@ -244,7 +244,7 @@ def register_callbacks(dashapp):
             # zapisujemy do bazy danych, rozne od None zeby dochodzilo do zapisu po kliknieciu buttonu a nie przy inicjalizaci.
             if set_btn != None:
                 Global_DataBase.configure_measurement(res)
-                Global_DataBase.create_Measurement("badanie {}".format(set_btn), datetime.datetime.now())
+                Global_DataBase.create_MeasurementInfo("badanie {}".format(set_btn), datetime.datetime.now())
         else:
             #TBD : komunikat ze trwa aktualnie pomiar
             pass
