@@ -257,7 +257,8 @@ class Measurement(State):
 
          if first_time or (slid_val != self.read_recent_slider_val()):
             print("[TRACKING] Fast scanning results: ")
-            SCANNING_RESULT.clear()
+            if slid_val != self.read_recent_slider_val():
+               SCANNING_RESULT.clear()
 
             for iter in range(scanning_scope):
                iter_freq = scan_freq+iter
