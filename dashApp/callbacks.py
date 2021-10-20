@@ -29,7 +29,7 @@ def register_callbacks(dashapp):
         ])
     def update_graph_live(n, checkbox_list):
         time_scope_last_meas = Global_DataBase.read_last_record(MeasurementInfo).get_time_scope()
-        frequency_measurement = Global_DataBase.read_filtered_table(time_scope_last_meas)
+        frequency_measurement = Global_DataBase.read_filtered_table_live(time_scope_last_meas)
         freq = [ el.get_meas_freq() for el in frequency_measurement]
         transmitted_pwr = [ el.get_trans_pwr() for el in frequency_measurement]
         received_pwr = [ el.get_meas_pwr() for el in frequency_measurement]

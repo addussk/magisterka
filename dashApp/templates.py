@@ -4,13 +4,22 @@ import dash_core_components as dcc
 import dash_daq as daq
 from dash_html_components.P import P
 import plotly.graph_objs as go
+from dashApp.extensions import db
+from statemachine import DataBase
+from dashApp.models import  MeasurementInfo
 
+Global_DataBase = DataBase(db)
 
 meas_modes = {
     "Fixed Frequency": 0,
     'Tracking': 1,
     'Sweeping': 2,
 }
+
+suffix_row = "_row"
+suffix_button_id = "_button"
+suffix_sparkline_graph = "_sparkline_graph"
+suffix_date = "_date"
 
 def init_value_setter_store():
     # Initialize store data - will be implemented
@@ -69,6 +78,118 @@ def build_banner():
             ),
         ],
     )
+
+# Build header
+def generate_metric_row(id, style, col1, col2, col3):
+    if style is None:
+        style = {"height": "8rem", "width": "100%"}
+
+    return html.Div(
+        id=id,
+        className="row metric-row",
+        style=style,
+        children=[
+            html.Div(
+                id=col1["id"],
+                className="one column",
+                style={"margin-right": "2.5rem", "minWidth": "50px"},
+                children=col1["children"],
+            ),
+            html.Div(
+                id=col2["id"],
+                style={"textAlign": "center"},
+                className="two column",
+                children=col2["children"],
+            ),
+            html.Div(
+                id=col3["id"],
+                style={"height": "100%"},
+                className="four columns",
+                children=col3["children"],
+            ),
+        ],
+    )
+
+def generate_metric_list_header():
+    return generate_metric_row(
+        "metric_header",
+        {"height": "3rem", "margin": "1rem 0", "textAlign": "center"},
+        {"id": "m_header_1", "children": html.Div("Name")},
+        {"id": "m_header_2", "children": html.Div("Date")},
+        {"id": "m_header_3", "children": html.Div("Sparkline")},
+    )
+
+def generate_metric_row_helper(row_info):
+    x_axis = list()
+    y_axis = list()
+    results_table = Global_DataBase.read_filtered_table(row_info.get_time_scope())
+    
+    for record in results_table:
+        x_axis.append(record.get_meas_pwr())
+        y_axis.append(len(x_axis))
+
+    return generate_metric_row (
+        ("row_" + str(row_info.get_id())), 
+        None,
+        # kolumna z nazwa
+        {
+            "id": ("div_button_" + str(row_info.get_id())),
+            "className": "metric-row-button-text",
+            "children": html.Button(
+                id=(str(row_info.get_id()) + suffix_button_id),
+                className="metric-row-button",
+                children=row_info.get_name(),
+                # title pojawia sie po najechaniu na przycisk
+                title="Click to visualize live SPC chart",
+                n_clicks=0,
+            ),
+        },
+        # kolumna z data
+        {"id": (str(row_info.get_id()) + suffix_date), "children": (row_info.get_time_scope()[0].date())},
+        # kolumna z wykresem
+        {
+            "id": str(row_info.get_id()) + "_sparkline",
+            "children": dcc.Graph(
+                id=(str(row_info.get_id()) + suffix_sparkline_graph),
+                style={"width": "100%", "height": "95%"},
+                config={
+                    "staticPlot": False,
+                    "editable": False,
+                    "displayModeBar": False,
+                },
+                figure=go.Figure(
+                    {
+                        "data": [
+                            {
+                                "x": y_axis,
+                                "y": x_axis,
+                                "mode": "lines+markers",
+                                "name": row_info.get_name(),
+                                "line": {"color": "#f4d44d"},
+                            }
+                        ],
+                        "layout": {
+                            "uirevision": True,
+                            "margin": dict(l=0, r=0, t=4, b=4, pad=0),
+                            "xaxis": dict(
+                                showline=False,
+                                showgrid=False,
+                                zeroline=False,
+                                showticklabels=False,
+                            ),
+                            "yaxis": dict(
+                                showline=False,
+                                showgrid=False,
+                                zeroline=False,
+                                showticklabels=False,
+                            ),
+                            "paper_bgcolor": "rgba(0,0,0,0)",
+                            "plot_bgcolor": "rgba(0,0,0,0)",
+                        },
+                    }
+                ),
+            ),
+        },)
 
 def build_tabs():
     return html.Div(
@@ -287,13 +408,20 @@ def build_bottom_panel():
         children=[
             # Table with all chapters
             html.Div(
-                id="all-charts-tab",
+                id="metric-summary-session",
                 className="eight columns",
                 children=[
-                    generate_section_banner("All measurement: "),
+                    generate_section_banner("Measurements list: "),
                     html.Div(
-                        id="all-charts-div",
+                        id="metric-div",
                         children=[
+                            generate_metric_list_header(),
+                            html.Div(
+                                id="metric-rows",
+                                children=[
+                                    generate_metric_row_helper(el) for el in Global_DataBase.read_record_all(MeasurementInfo)
+                                ],
+                            ),
                         ],
                     )
                 ],

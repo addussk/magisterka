@@ -52,7 +52,11 @@ class DataBase(object):
       return self.ptr_to_database.session.query(typeTable).order_by(typeTable.id).first()
 
    def read_filtered_table(self, timeScope):
-      table = self.ptr_to_database.session.query(Results).filter( Results.time_of_measurement >= timeScope[0] ).all()
+      table = self.ptr_to_database.session.query(Results).filter( (Results.time_of_measurement >= timeScope[0]) & (Results.time_of_measurement <= timeScope[1])).all()
+      return table
+   
+   def read_filtered_table_live(self, timeScope):
+      table = self.ptr_to_database.session.query(Results).filter( (Results.time_of_measurement >= timeScope[0]) ).all()
       return table
    
    def read_record(self, typeTable, typeKey):
