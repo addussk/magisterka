@@ -1,5 +1,5 @@
 from statemachine import DataBase
-from dashApp.models import Results, FrontEndInfo, Temperature, MeasSettings, MeasurementInfo
+from dashApp.models import FrontEndInfo, Temperature, MeasSettings, MeasurementInfo
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 from dashApp.templates import *
@@ -8,18 +8,10 @@ from database import *
 import dash
 import datetime
 
-dataFreq = { 
-    'Freq': [],
-    'Time': [],
-    'TurnOn': 1,
-}
 
 Global_DataBase = DataBase(db)
 
 def register_callbacks(dashapp):
-    fixed_freq_input = daq.NumericInput(
-        id="fixed_freq_input", value=100, className="setting-input", size=200, max=9999999
-    )
     # Multiple components can update everytime interval gets fired.
     @dashapp.callback(
         Output('control-chart-live', 'figure'),
