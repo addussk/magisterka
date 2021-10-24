@@ -20,6 +20,21 @@ layout_main = html.Div(
                 html.Div(id="app-content"),
             ],
         ),
+        html.Div(
+            id="dialogBox",
+            className="modal",
+            children=[
+                html.Div(
+                    id="dialog_container",
+                    className="modal-content",
+                    children=[                        
+                        html.Button("X", id="exit_btn", className="close"),
+                        html.H1("Are you confirm?"),
+                        html.Button("Confirm", id="confirm_btn", className="confirm"),
+                    ],
+                )
+            ],
+        ),
         dcc.Store(id="value-setter-store", data=init_value_setter_store()),
         dcc.Store(id="n-interval-stage", data=50),
     ], style={'text-align':'center'}

@@ -75,6 +75,61 @@ body {
     margin-top: 0px;
     margin-right: 150px;
 }
+  
+/* Dialog banner */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 2; /* Sit on top */
+    color: #f8f8f0;
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: #474e5d;
+    padding-top: 50px;
+    background: rgba(0, 0, 0, .4)
+}
+
+/* Modal Content/Box */
+.modal-content {
+    position:relative;
+    background-color: #1e2130;
+    margin: 5% auto 15% auto; 
+    border: 1px solid darkgray;
+    width: 30%;
+    opacity: 1; 
+}
+
+/* The Modal Confirm Button (enter) */
+.modal .confirm{
+    background-color: #0a0b11;
+    color: #f8f8f0;
+    margin-bottom: 10px;
+    border: 1px solid darkgray;
+}
+
+.confirm:hover {
+    color: #c8f10f;
+    border: 1px solid #c8f10f;
+}
+
+/* The Modal Close Button (x) */
+.close {
+    position: absolute;
+    left: 90%;
+    align-items: right;
+    font-size: 20px;
+    font-weight: bold;
+    border: rgb(10, 10, 10);
+  }
+
+  .close:hover,
+  .close:focus {
+    color: #f44336;
+    cursor: pointer;
+  }
 
 /* Tabs
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -227,7 +282,7 @@ body {
 #control-chart-container {
     flex-direction: row;
     position: relative;
-    z-index: 4;
+    z-index: 1;
     width: 100%;
     border-top: #1E2130 solid 0.8rem;
 }
