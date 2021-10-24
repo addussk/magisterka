@@ -1,6 +1,8 @@
 import dash_core_components as dcc
 import dash_html_components as html
 from dashApp.templates import *
+from dash_extensions import Keyboard
+import dash_daq as daq
 
 layout_main = html.Div(
     id="big-app-conteiner",
@@ -35,6 +37,8 @@ layout_main = html.Div(
                 )
             ],
         ),
+        html.Div([Keyboard(id="keyboard"), html.Div(id="output")]),
+        html.Div(id="hide_part", children=[daq.BooleanSwitch(id='isDiagWindShow', on=False)],  style={'display':'none'}),
         dcc.Store(id="value-setter-store", data=init_value_setter_store()),
         dcc.Store(id="n-interval-stage", data=50),
     ], style={'text-align':'center'}

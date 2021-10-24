@@ -7,11 +7,53 @@ from dashApp.extensions import db
 from database import *
 import dash
 import datetime
-
+import json
 
 Global_DataBase = DataBase(db)
 
 def register_callbacks(dashapp):
+
+    @dashapp.callback(
+        Output("isDiagWindShow", "on"),
+        [
+            Input("keyboard", "keydown"),
+            Input("exit_btn", "n_clicks"),
+            Input("confirm_btn", "n_clicks"),
+            Input("dialog-btn", "n_clicks"),
+        ], prevent_initial_call=True
+    )
+    def change_diagWind_state(keyb, ex_btn, conf_btn, dial_btn):
+        ctx = dash.callback_context
+        trigger_by = ctx.triggered[0]['prop_id'].split('.')[0]
+        print(trigger_by)
+        if trigger_by == "dialog-btn":
+            if dial_btn > 0:
+                return True
+            else: return False
+
+        elif trigger_by == "keyboard":
+            if keyb['key'].lower() == "enter":
+                return False
+                return {"display": "none"}
+            elif keyb['key'].lower() == "escape":
+                return False
+                return {"display": "none"}
+
+        elif trigger_by in ["exit_btn", "confirm_btn"]:
+            return False
+            return {"display": "none"}
+        else: return dash.no_update
+        
+    
+    @dashapp.callback(
+        Output("dialogBox", "style"), 
+        Input("isDiagWindShow", "on"), prevent_initial_call=True
+        )
+    def keydown(isOn):
+        print("show dialog window")
+        return {"display": "block"} if isOn else {"display": "none"}
+        
+        
     # Multiple components can update everytime interval gets fired.
     @dashapp.callback(
         Output('control-chart-live', 'figure'),
@@ -272,6 +314,7 @@ def register_callbacks(dashapp):
                 return "TURN ON"
             else: raise Exception("Error with power button")
         else:
+            # initial state: dodac odczyt stanu dla zasilacza
             return btnText
     
     @dashapp.callback(
