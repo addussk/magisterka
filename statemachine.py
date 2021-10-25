@@ -41,6 +41,13 @@ class DataBase(object):
    def read_record_all(self, typeTable):
       return self.ptr_to_database.session.query(typeTable).order_by(typeTable.id).all()
 
+   # funkcja odczytuje dany rzad w wskazanej tablicy
+   def read_specific_row(self, typeTable, numRow):
+      for el in self.read_record_all(typeTable):
+         if el.get_id() == numRow:
+            return el
+      return None
+
    # Funkcja odczytujaca podana ilosc rekordow w podanej tabeli
    def read_last_records(self, type, nmb_of_rec):
       return self.ptr_to_database.session.query(type).order_by(type.id.desc()).limit(nmb_of_rec).all()
