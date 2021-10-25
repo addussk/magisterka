@@ -62,6 +62,11 @@ def register_callbacks(dashapp):
             Input('trace_checklist', 'value'),
         ])
     def update_graph_live(n, checkbox_list):
+        meas_state = Global_DataBase.read_table(MeasSettings).get_state()
+
+        if meas_state != MEASUREMENT_ONGOING:
+            return dash.no_update
+
         time_scope_last_meas = Global_DataBase.read_last_record(MeasurementInfo).get_time_scope()
         frequency_measurement = Global_DataBase.read_filtered_table_live(time_scope_last_meas)
         freq = [ el.get_meas_freq() for el in frequency_measurement]
