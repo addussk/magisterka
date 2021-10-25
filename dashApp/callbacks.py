@@ -11,6 +11,31 @@ import json
 
 Global_DataBase = DataBase(db)
 
+def generate_graph(axis_x, axis_y, name):
+    fig={
+                "data": [
+                    {
+                        "x" : axis_x,
+                        "y" : axis_y,
+                        "mode": "lines+markers",
+                        'type': 'scatter',
+                        'name': name,}
+                ],
+                "layout": {
+                    "paper_bgcolor": "rgba(0,0,0,0)",
+                    "plot_bgcolor": "rgba(0,0,0,0)",
+                    "xaxis": dict(
+                        showline=False, showgrid=False, zeroline=False
+                    ),
+                    "yaxis": dict(
+                        showgrid=False, showline=False, zeroline=False
+                    ),
+                    "autosize": True,
+                },
+            }
+    # fig = go.Figure(data=[go.Scatter(x=axis_x, y=axis_y)])
+    return fig
+
 def register_callbacks(dashapp):
 
     @dashapp.callback(
@@ -25,7 +50,7 @@ def register_callbacks(dashapp):
     def change_diagWind_state(keyb, ex_btn, conf_btn, dial_btn):
         ctx = dash.callback_context
         trigger_by = ctx.triggered[0]['prop_id'].split('.')[0]
-        print(trigger_by)
+
         if trigger_by == "dialog-btn":
             if dial_btn > 0:
                 return True
@@ -50,9 +75,7 @@ def register_callbacks(dashapp):
         Input("isDiagWindShow", "on"), prevent_initial_call=True
         )
     def keydown(isOn):
-        print("show dialog window")
         return {"display": "block"} if isOn else {"display": "none"}
-        
         
     # Multiple components can update everytime interval gets fired.
     @dashapp.callback(
@@ -60,9 +83,30 @@ def register_callbacks(dashapp):
         [
             Input('interval-component', 'n_intervals'),
             Input('trace_checklist', 'value'),
+            Input('1_buttonss', "n_clicks"),
+            Input('2_buttonss', "n_clicks"),
+            Input('3_buttonss', "n_clicks"),
+            Input('4_buttonss', "n_clicks"),
+            Input('5_buttonss', "n_clicks"),
         ])
-    def update_graph_live(n, checkbox_list):
+    def update_graph_live(n, checkbox_list, btn1, btn2, btn3, btn4, btn5):
+        
         meas_state = Global_DataBase.read_table(MeasSettings).get_state()
+
+        ctx = dash.callback_context
+        if ctx.triggered:
+            # Get most recently triggered id and prop_type
+            splitted = ctx.triggered[0]["prop_id"].split(".")
+            prop_id = splitted[0]
+            prop_type = splitted[1]
+
+            if prop_type == "n_clicks":
+                meas_info = Global_DataBase.read_specific_row(MeasurementInfo, int(prop_id[0]))
+                results_table = Global_DataBase.read_filtered_table(meas_info.get_time_scope())
+   
+                transmitted_pwr = [ el.get_trans_pwr() for el in results_table]
+                data_meas = [ el.get_data_meas() for el in results_table]
+                return generate_graph( data_meas, transmitted_pwr, "stub")
 
         if meas_state != MEASUREMENT_ONGOING:
             return dash.no_update

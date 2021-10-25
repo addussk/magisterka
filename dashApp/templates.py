@@ -15,7 +15,7 @@ meas_modes = {
 }
 
 suffix_row = "_row"
-suffix_button_id = "_button"
+suffix_button_id = "_buttonss"
 suffix_sparkline_graph = "_sparkline_graph"
 suffix_date = "_date"
 
@@ -348,7 +348,10 @@ def build_quick_stats_panel():
             ),
             html.Div(
                 id="utility-card",
-                children=[daq.StopButton(id="pwr-on-off-buton",  buttonText='TURN ON', size=160, n_clicks=0)],
+                children=[
+                        daq.StopButton(id="pwr-on-off-buton",  buttonText='TURN ON', size=160, n_clicks=0),
+                        daq.StopButton(id="dialog-btn",  buttonText='SHOW', size=160, n_clicks=0)
+                    ],
             ),
         ],
     )
