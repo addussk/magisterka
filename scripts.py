@@ -1,13 +1,15 @@
-import random, math, datetime
+import random, math
 from dashApp.models import FrontEndInfo
- 
-def dummy_temperature(min_temp=0, max_temp=100):
-    sum = 0 
-    
-    for x in range(5):
-        sum += round(random.uniform(min_temp, max_temp), 1)
+import time
+from w1thermsensor import W1ThermSensor
 
-    return int(sum/5)
+
+def dummy_temperature(min_temp=0, max_temp=100):
+    
+    sensor = W1ThermSensor()
+    temp = sensor.get_temperature()
+    print(temp)
+    return temp
 
 
 def dummy_val_fixed_meas(freq):
