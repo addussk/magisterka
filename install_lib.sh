@@ -9,3 +9,5 @@
 pip install dash
 pip install Flask
 pip install w1thermsensor
+pip install board
+pip install adafruit-blinka
