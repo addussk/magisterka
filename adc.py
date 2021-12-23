@@ -18,7 +18,8 @@ class LTDZ():
 
         # znalezienie portu do ktorego wpiete jest urzadzenie
         for com in available_coms:
-            if com[3] == "CH340":
+            print(com)
+            if com[3] == "CH340" or com[0] == "/dev/ttyUSB0":
                 self.com_port = com[0]
 
     def config_serial(self, in_baudrate=9600, in_bytesize=8, in_timout=2, in_stopbits=serial.STOPBITS_ONE):
