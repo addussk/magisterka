@@ -19,7 +19,7 @@ class LTDZ():
         # znalezienie portu do ktorego wpiete jest urzadzenie
         for com in available_coms:
             print(com)
-            if com[3] == "CH340" or com[0] == "/dev/ttyUSB0":
+            if com[-2] == "CH340" or com[0] == "/dev/ttyUSB0":
                 self.com_port = com[0]
 
     def config_serial(self, in_baudrate=9600, in_bytesize=8, in_timout=2, in_stopbits=serial.STOPBITS_ONE):
@@ -82,23 +82,25 @@ class LTDZ():
         if (in_freq is None) or (len(str(in_freq)) > 10):
             raise Exception("Warning: Wartosc czestotliwosci jest zbyt duza, zakres 10cyft")
 
-        self.send_command("R.{}_".format(in_freq), in_serialPort)
+        self.send_command("F.{}_".format(in_freq), in_serialPort)
 
 x = LTDZ()
 
 x.find_device()
 
-# x.turn_RF_out_off(x.config_serial())
+x.turn_RF_out_off(x.config_serial())
+
+# x.turn_chip_off(x.config_serial())
 
 # x.turn_chip_on(x.config_serial())
 
 # x.turn_RF_out_on(x.config_serial())
 
-# x.set_power(x.config_serial(), 0)
+# x.set_power(x.config_serial(), 2)
 
 # x.set_freq(x.config_serial(), 102000000)
 
-
+ 
 
 
 
