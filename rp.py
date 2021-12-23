@@ -28,9 +28,24 @@ ser = serial.Serial(
     write_timeout=1,
 )
 
+try:
+    ser.write(b'C.1_')
+except:
+    print("Write timeout. Continue...")
+
 while True:
-    print("writing")
-    try:
-        ser.write(b'hello')
-    except:
-        print("Write
+    # Wait until there is data waiting in the serial buffer
+    if ser.in_waiting > 0:
+        # Read data out of the buffer until a carraige return / new line is found
+        serialString = ser.readline()
+
+        # Print the contents of the serial data
+        try:
+            print(serialString.decode("Ascii"))
+            if serialString.decode("Ascii")[:2] == "@.":
+                print("ustawienie sie powiodlo\n")
+                break
+            else:
+                print("Cos poszlo nie tak: {} \n".format(serialString.decode("Ascii")))
+        except:
+            raise Exception("Transmission error while reading msg via UART")
