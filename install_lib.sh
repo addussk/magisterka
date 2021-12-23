@@ -11,3 +11,4 @@ pip install Flask
 pip install w1thermsensor
 pip install board
 pip install adafruit-blinka
+pip install serial
