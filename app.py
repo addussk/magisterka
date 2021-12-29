@@ -3,8 +3,6 @@ from flask import Flask
 from dashApp.webapp import create_app
 from statemachine import Guard, Idle, Calibration, State
 from database import *
-# import board
-# import busio
 
 app = Flask(__name__, instance_relative_config=False)
 
@@ -167,19 +165,6 @@ class MeasurementInfo(db.Model):
     def get_all(self):
         return self.id, self.name, self.beginning, self.finish
 
-
-# def adc_measurement():
-#     import board
-#     import busio
-#     import adafruit_ads1x15.ads1115 as ADS
-#     from adafruit_ads1x15.analog_in import AnalogIn
-
-#     i2c = busio.I2C(board.SCL, board.SDA)
-#     ads = ADS.ADS1115(i2c)
-#     #Single Ended Mode
-#     chan = AnalogIn(ads, ADS.P0)
-
-#     print(chan.value, chan.voltage)
 
 def made_measurement():
     comp = Guard(State, db)
