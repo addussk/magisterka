@@ -3,7 +3,6 @@ from flask import Flask
 from dashApp.webapp import create_app
 from statemachine import Guard, Idle, Calibration, State
 from database import *
-from dashApp.models import  Temperature
 # import board
 # import busio
 
