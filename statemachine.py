@@ -319,7 +319,7 @@ class Measurement(State):
             self.update_setting(MeasSettings, MeasSettings.best_scan_power, best_result[0])
 
    def fixed__freq_mode(self):
-
+      MHz = 1000000000
       try:
          # skonfigurowanie polaczenia z syntezatorem czestotliwosci
          x = LTDZ()
@@ -329,9 +329,9 @@ class Measurement(State):
          x.turn_chip_on(x.config_serial())
          x.turn_RF_out_on(x.config_serial())
          x.set_power(x.config_serial(), self.power)
-         x.set_freq(x.config_serial(), self.start_freq)
+         x.set_freq(x.config_serial(), self.start_freq * MHz)
       except:
-         print("Warning: DEBUG version, communication has been crashed")
+         print("Warning: NO COMMUNICATION with LTDZ")
          pass
 
 
