@@ -209,14 +209,12 @@ def made_measurement():
     comp.state.print_state()
 
     while(True):
-        # print("Endless loop")
         # comp.state.print_state()
         comp.check()
         time.sleep(5)
 
         print("Measure temperature...")
         comp.measure_temperature()
-        # gen_dummy_temp()
 
         #adc_measurement()
         
