@@ -207,6 +207,7 @@ class On(State):
 class Measurement(State):
    name = "measurement"
    allowed = ['idle']
+   MHz = 1000000000
 
    mode = 0
    state = 0
@@ -243,6 +244,19 @@ class Measurement(State):
    def stop_measurement(self):
       print("Stopped measurement")
       self.state = MEASUREMENT_FREE
+      try:
+         # skonfigurowanie polaczenia z syntezatorem czestotliwosci
+         x = LTDZ()
+         x.find_device()
+
+         # wylaczenie syntezatora
+         x.set_power(x.config_serial(), 0)
+         x.set_freq(x.config_serial(), 0)
+         x.turn_RF_out_off(x.config_serial())
+         x.turn_chip_off(x.config_serial())
+      except:
+         print("Warning:LTDZ has not been power down")
+         pass
    
    def measure(self, freq, in_power):
       retVal = dummy_val_tracking(freq, in_power, self.ptr_to_database)
@@ -319,7 +333,7 @@ class Measurement(State):
             self.update_setting(MeasSettings, MeasSettings.best_scan_power, best_result[0])
 
    def fixed__freq_mode(self):
-      MHz = 1000000000
+      
       try:
          # skonfigurowanie polaczenia z syntezatorem czestotliwosci
          x = LTDZ()
@@ -329,11 +343,10 @@ class Measurement(State):
          x.turn_chip_on(x.config_serial())
          x.turn_RF_out_on(x.config_serial())
          x.set_power(x.config_serial(), self.power)
-         x.set_freq(x.config_serial(), self.start_freq * MHz)
+         x.set_freq(x.config_serial(), self.start_freq * self.MHz)
       except:
          print("Warning: NO COMMUNICATION with LTDZ")
          pass
-
 
       while self.state == MEASUREMENT_START:
          print("Fixed measurement")
