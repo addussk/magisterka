@@ -3,6 +3,7 @@ from scripts import dummy_val_tracking, dummy_val_tracking_received_pwr
 from database import *
 import threading
 from dashApp.models import Results, FrontEndInfo, MeasSettings, MeasurementInfo
+from drivers import LTDZ
 
 class DataBase(object):
    ptr_to_database = None
@@ -318,6 +319,22 @@ class Measurement(State):
             self.update_setting(MeasSettings, MeasSettings.best_scan_power, best_result[0])
 
    def fixed__freq_mode(self):
+
+      try:
+         # skonfigurowanie polaczenia z syntezatorem czestotliwosci
+         x = LTDZ()
+         x.find_device()
+
+         # wlaczenie syntezatora
+         x.turn_chip_on(x.config_serial())
+         x.turn_RF_out_on(x.config_serial())
+         x.set_power(x.config_serial(), self.power)
+         x.set_freq(x.config_serial(), self.start_freq)
+      except:
+         print("Warning: DEBUG version, communication has been crashed")
+         pass
+
+
       while self.state == MEASUREMENT_START:
          print("Fixed measurement")
          time.sleep(self.time_step)
