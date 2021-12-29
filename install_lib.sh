@@ -12,3 +12,5 @@ pip install w1thermsensor
 pip install board
 pip install adafruit-blinka
 pip install serial
+pip install Flask-SQLAlchemy
+pip install dash-daq
