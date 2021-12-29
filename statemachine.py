@@ -2,8 +2,8 @@ import time, datetime, random
 from scripts import dummy_val_tracking, dummy_val_tracking_received_pwr
 from database import *
 import threading
-from dashApp.models import Results, FrontEndInfo, MeasSettings, MeasurementInfo
-from drivers import LTDZ
+from dashApp.models import Results, FrontEndInfo, MeasSettings, MeasurementInfo, Temperature
+from drivers import LTDZ, DS1820
 
 class DataBase(object):
    ptr_to_database = None
@@ -429,6 +429,13 @@ class Guard(object):
             return True
 
       return False
+
+   # funkcja dokonuje pomiaru temperatury za pomoca classy DS1820
+   def measure_temperature(self):
+      tmpSensor = DS1820()
+      
+      self.db.ptr_to_database.session.add(Temperature(obj_temp=tmpSensor.read_temp(), sys_temp=tmpSensor.read_temp(), time_of_measurement=datetime.datetime.now()))
+      self.db.ptr_to_database.session.commit()
 
    def check(self):
       read_mes_set = self.db.read_table(MeasSettings)

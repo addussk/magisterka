@@ -1,12 +1,11 @@
-import datetime, time, threading, psutil
+import datetime, time, threading
 from flask import Flask
-from scripts import dummy_temperature
 from dashApp.webapp import create_app
 from statemachine import Guard, Idle, Calibration, State
 from database import *
-from dashApp.models import  MeasSettings, Temperature, Results
-import board
-import busio
+from dashApp.models import  Temperature
+# import board
+# import busio
 
 app = Flask(__name__, instance_relative_config=False)
 
@@ -169,22 +168,19 @@ class MeasurementInfo(db.Model):
     def get_all(self):
         return self.id, self.name, self.beginning, self.finish
 
-def gen_dummy_temp():
-    db.session.add(Temperature(obj_temp=dummy_temperature(), sys_temp=dummy_temperature(), time_of_measurement=datetime.datetime.now()))
-    db.session.commit()
 
-def adc_measurement():
-    import board
-    import busio
-    import adafruit_ads1x15.ads1115 as ADS
-    from adafruit_ads1x15.analog_in import AnalogIn
+# def adc_measurement():
+#     import board
+#     import busio
+#     import adafruit_ads1x15.ads1115 as ADS
+#     from adafruit_ads1x15.analog_in import AnalogIn
 
-    i2c = busio.I2C(board.SCL, board.SDA)
-    ads = ADS.ADS1115(i2c)
-    #Single Ended Mode
-    chan = AnalogIn(ads, ADS.P0)
+#     i2c = busio.I2C(board.SCL, board.SDA)
+#     ads = ADS.ADS1115(i2c)
+#     #Single Ended Mode
+#     chan = AnalogIn(ads, ADS.P0)
 
-    print(chan.value, chan.voltage)
+#     print(chan.value, chan.voltage)
 
 def made_measurement():
     comp = Guard(State, db)
@@ -219,9 +215,10 @@ def made_measurement():
         time.sleep(5)
 
         print("Measure temperature...")
-        gen_dummy_temp()
+        comp.measure_temperature()
+        # gen_dummy_temp()
 
-        adc_measurement()
+        #adc_measurement()
         
         # print("task completed")
 

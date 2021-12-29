@@ -108,7 +108,7 @@ class LTDZ():
 
 class DS1820():
 
-    def read_temp(in_min_temp=0, in_max_temp=100):
+    def read_temp(self):
         # odczyt temperatury dziala przy podlaczeniu odpowiedniego czujnika, w innym przypadku dane zostana wygenerowane
         try:
             # powoduje wyswietlenie warningu: The system cannot find the path specified na PC
@@ -118,13 +118,14 @@ class DS1820():
             print(temp)
             return temp
         except:
-            sum = 0 
+            sum, in_min_temp, in_max_temp =0, 0, 100
+
             for x in range(5):
                 sum += round(random.uniform(in_min_temp, in_max_temp), 1)
 
             return int(sum/5)
 
-            
+
 class ADC_driver():
     
     def read_voltage():
