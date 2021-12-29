@@ -8,4 +8,11 @@ GPIO4 - 1WIRE dla czujnika temperatury
 sudo raspi-config
 -> Interface option -> wlaczyc i2c i 1-wire
 
+2) sciagnac repo
+
+#Przed odpaleniem skryptu nalezy wpisac w konsoli otwartej w glownych pliku repo:
+3)sudo chmod u+x install_lib.sh
+# wystartowac skrypt
+4)sudo ./install_lib.sh
+
 in progress.... :)
