@@ -63,12 +63,14 @@ class LTDZ():
                     else:
                         print("Cos poszlo nie tak: {} \n".format(serialString.decode("Ascii")))
                 except:
+                    print("WARNING: Transmission error while reading msg via UART")
                     raise Exception("Transmission error while reading msg via UART")
             else:
                 time.sleep(1)
                 timeout_counter-=1
         
         if not timeout_counter:
+            print("WARNING: Error: ACK didn't receive")
             raise Exception("Error: ACK didn't receive")
 
     def turn_chip_on(self, in_serialPort):
@@ -96,6 +98,7 @@ class LTDZ():
         if (len(str(in_freq)) == 10):
             self.send_command("F.{}".format(in_freq), in_serialPort)
         else:
+            print('jestem')
             self.send_command("F.{}_".format(in_freq), in_serialPort)
 
     #kod do testow klasy

@@ -347,7 +347,7 @@ class Measurement(State):
          print("set power:")
          x.set_power(x.config_serial(), self.power)
          print("set freq")
-         x.set_freq(x.config_serial(), self.start_freq * self.MHz)
+         x.set_freq(x.config_serial(), (self.start_freq * self.MHz))
       except:
          print("Warning: NO COMMUNICATION with LTDZ")
 
