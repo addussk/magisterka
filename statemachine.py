@@ -207,7 +207,7 @@ class On(State):
 class Measurement(State):
    name = "measurement"
    allowed = ['idle']
-   MHz = 1000000000
+   MHz = 1000000
 
    mode = 0
    state = 0
@@ -338,7 +338,10 @@ class Measurement(State):
          # skonfigurowanie polaczenia z syntezatorem czestotliwosci
          x = LTDZ()
          x.find_device()
+      except:
+         print("Warning: NO COMMUNICATION with LTDZ")
 
+      try:
          # wlaczenie syntezatora
          print("turn chip")
          x.turn_chip_on(x.config_serial())
@@ -349,7 +352,7 @@ class Measurement(State):
          print("set freq")
          x.set_freq(x.config_serial(), self.start_freq * self.MHz)
       except:
-         print("Warning: NO COMMUNICATION with LTDZ")
+         print("Warning: LTDZ has not been configured properly")
 
       while self.state == MEASUREMENT_START:
          print("Fixed measurement")
