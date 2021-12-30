@@ -207,7 +207,7 @@ class On(State):
 class Measurement(State):
    name = "measurement"
    allowed = ['idle']
-   MHz = 1000000000
+   MHz = 1000000
 
    mode = 0
    state = 0
