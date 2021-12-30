@@ -340,13 +340,16 @@ class Measurement(State):
          x.find_device()
 
          # wlaczenie syntezatora
+         print("turn chip")
          x.turn_chip_on(x.config_serial())
+         print("turn RF out")
          x.turn_RF_out_on(x.config_serial())
+         print("set power:")
          x.set_power(x.config_serial(), self.power)
+         print("set freq")
          x.set_freq(x.config_serial(), self.start_freq * self.MHz)
       except:
          print("Warning: NO COMMUNICATION with LTDZ")
-         pass
 
       while self.state == MEASUREMENT_START:
          print("Fixed measurement")
