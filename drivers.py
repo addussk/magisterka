@@ -94,7 +94,7 @@ class LTDZ():
     def set_freq(self, in_serialPort, in_freq):
         if (in_freq is None) or (len(str(in_freq)) > 10):
             raise Exception("Warning: Wartosc czestotliwosci jest zbyt duza, zakres 10cyft")
-        
+        print(in_freq, " @@@ ", len(str(in_freq)) )
         if (len(str(in_freq)) == 10):
             self.send_command("F.{}".format(in_freq), in_serialPort)
         else:
