@@ -496,7 +496,6 @@ class Guard(object):
                self.measurement_form["state"] = MEASUREMENT_ONGOING
                self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_ONGOING)
             elif read_mes_set.get_state() == MEASUREMENT_STOP:
-               self.change_state(Measurement)
                self.scheduler.pop()
                self.db.update_last_record(MeasurementInfo, MeasurementInfo.finish, datetime.datetime.now())
                self.state.managing_measurement(read_mes_set.get_state(), self.scheduler)
