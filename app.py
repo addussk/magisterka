@@ -166,7 +166,7 @@ class MeasurementInfo(db.Model):
         return self.id, self.name, self.beginning, self.finish
 
 
-def made_measurement():
+def make_measurement():
     comp = Guard(State, db)
 
     comp.state.print_state()
@@ -202,9 +202,9 @@ def made_measurement():
 
         #adc_measurement()
         
-        # print("task completed")
+        print("task completed")
 
-t2 = threading.Thread(target=made_measurement)
+t2 = threading.Thread(target=make_measurement)
 t2.start()
 
 if __name__ == '__main__':
