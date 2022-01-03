@@ -435,7 +435,8 @@ class Guard(object):
          if read_record == "invalid name":
             raise Exception("Wrong member")
 
-         if read_record != self.new_settings[key]:
+         if read_record != self.new_settings[key]: 
+            print("Diff tool_status ", read_record , " ", self.new_settings[key])
             return True
          
       for key in [ "state"]:
@@ -445,12 +446,14 @@ class Guard(object):
             raise Exception("Wrong member")
          
          if read_record != self.measurement_form[key]:
+            print("Diff state ", read_record , " ", self.measurement_form[key])
             return True
 
       return False
 
    # funkcja dokonuje pomiaru temperatury za pomoca classy DS1820
    def measure_temperature(self):
+      print("Measure temperature...")
       tmpSensor = DS1820()
       
       self.db.ptr_to_database.session.add(Temperature(obj_temp=tmpSensor.read_temp(), sys_temp=tmpSensor.read_temp(), time_of_measurement=datetime.datetime.now()))
@@ -495,6 +498,7 @@ class Guard(object):
 
                self.measurement_form["state"] = MEASUREMENT_ONGOING
                self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_ONGOING)
+
             elif read_mes_set.get_state() == MEASUREMENT_STOP:
                self.scheduler.pop()
                self.db.update_last_record(MeasurementInfo, MeasurementInfo.finish, datetime.datetime.now())
@@ -503,5 +507,8 @@ class Guard(object):
                self.measurement_form["state"] = MEASUREMENT_FREE
                self.db.update_setting(FrontEndInfo, FrontEndInfo.isScanAvalaible, False)
                self.change_state(Idle)
+            
+            elif read_mes_set.get_state() == MEASUREMENT_ONGOING:
+               self.measurement_form["state"] = MEASUREMENT_ONGOING
 
 
