@@ -116,13 +116,17 @@ class LTDZ():
 
         x.set_freq(x.config_serial(), 102000000)
 
+try:
+    # powoduje wyswietlenie warningu: The system cannot find the path specified na PC
+    from w1thermsensor import W1ThermSensor
+except:
+    print("w1thermsensor didn't include")
 class DS1820():
 
     def read_temp(self):
         # odczyt temperatury dziala przy podlaczeniu odpowiedniego czujnika, w innym przypadku dane zostana wygenerowane
         try:
-            # powoduje wyswietlenie warningu: The system cannot find the path specified na PC
-            from w1thermsensor import W1ThermSensor
+            print("read temp function \n")
             sensor = W1ThermSensor()
             temp = sensor.get_temperature()
             print(temp)
