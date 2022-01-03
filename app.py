@@ -209,7 +209,7 @@ t2.start()
 
 if __name__ == '__main__':
     db.create_all()
-    app.run_server(debug=True)
+    app.run_server(host='192.168.1.106', port=8080,debug=True)
     t2.join()
     # t1 = threading.Thread(target=app.run_server)
     # t1.start()
