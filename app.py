@@ -193,6 +193,9 @@ def make_measurement():
     comp.state.print_state()
 
     while(True):
+        print("task started")
+        print("the number of Thread objects currently alive: ", threading.active_count())
+        print("current thread: ", threading.current_thread())
         # comp.state.print_state()
         comp.check()
         time.sleep(5)

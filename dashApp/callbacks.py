@@ -8,6 +8,7 @@ from database import *
 import dash
 import datetime
 import json
+import threading
 
 Global_DataBase = DataBase(db)
 
@@ -90,7 +91,7 @@ def register_callbacks(dashapp):
             Input('5_buttonss', "n_clicks"),
         ])
     def update_graph_live(n, checkbox_list, btn1, btn2, btn3, btn4, btn5):
-        
+        print("graph: ", threading.current_thread())
         meas_state = Global_DataBase.read_table(MeasSettings).get_state()
 
         ctx = dash.callback_context
