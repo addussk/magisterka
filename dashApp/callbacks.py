@@ -1,7 +1,7 @@
 from statemachine import DataBase
 from dashApp.models import FrontEndInfo, Temperature, MeasSettings, MeasurementInfo
 from dash.dependencies import Input, Output, State
-import dash_html_components as html
+from dash import html
 from dashApp.templates import *
 from dashApp.extensions import db
 from database import *
