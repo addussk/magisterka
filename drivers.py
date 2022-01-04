@@ -126,9 +126,9 @@ class DS1820():
     def read_temp(self):
         # odczyt temperatury dziala przy podlaczeniu odpowiedniego czujnika, w innym przypadku dane zostana wygenerowane
         try:
-            print("read temp function \n")
             sensor = W1ThermSensor()
             temp = sensor.get_temperature()
+            print("read temp function:")
             print(temp)
             return temp
         except:
