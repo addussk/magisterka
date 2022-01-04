@@ -250,8 +250,6 @@ class Measurement(State):
          x.find_device()
 
          # wylaczenie syntezatora
-         x.set_power(x.config_serial(), 0)
-         x.set_freq(x.config_serial(), 0)
          x.turn_RF_out_off(x.config_serial())
          x.turn_chip_off(x.config_serial())
       except:
