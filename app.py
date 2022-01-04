@@ -197,7 +197,6 @@ def make_measurement():
         comp.check()
         time.sleep(5)
 
-        print("Measure temperature...")
         comp.measure_temperature()
 
         #adc_measurement()
