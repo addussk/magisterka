@@ -140,7 +140,8 @@ class Init(State):
 
       self.db_init()
       print("TODO: initialization things")
-
+      print("the number of Thread objects currently alive: ", threading.active_count())
+      print("current thread: ", threading.current_thread())
       print("Initialization completed")
       self.status = True
    
@@ -456,7 +457,7 @@ class Guard(object):
       print("Measure temperature...")
       tmpSensor = DS1820()
       read_temp=tmpSensor.read_temp()
-      
+
       self.db.ptr_to_database.session.add(Temperature(obj_temp=read_temp, sys_temp=(read_temp+5), time_of_measurement=datetime.datetime.now()))
       self.db.ptr_to_database.session.commit()
 
