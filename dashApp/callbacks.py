@@ -76,20 +76,20 @@ def register_callbacks(dashapp):
         )
     def keydown(isOn):
         return {"display": "block"} if isOn else {"display": "none"}
-        
+    
+    inputs = [ Input('interval-component', 'n_intervals'),
+            Input('trace_checklist', 'value'),]
+    el_counter = 0
+    print(len(Global_DataBase.read_record_all(MeasurementInfo)))
+    for el in range(1,len(Global_DataBase.read_record_all(MeasurementInfo))+1):
+        inputs.append(Input('{}_buttonss'.format(el), "n_clicks"),)
+
     # Multiple components can update everytime interval gets fired.
     @dashapp.callback(
         Output('control-chart-live', 'figure'),
-        [
-            Input('interval-component', 'n_intervals'),
-            Input('trace_checklist', 'value'),
-            Input('1_buttonss', "n_clicks"),
-            Input('2_buttonss', "n_clicks"),
-            Input('3_buttonss', "n_clicks"),
-            Input('4_buttonss', "n_clicks"),
-            Input('5_buttonss', "n_clicks"),
-        ])
-    def update_graph_live(n, checkbox_list, btn1, btn2, btn3, btn4, btn5):
+        inputs,
+        )
+    def update_graph_live(n, checkbox_list, *args):
         
         meas_state = Global_DataBase.read_table(MeasSettings).get_state()
 
