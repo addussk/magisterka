@@ -4,6 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 def create_app(app):
+
+    db = SQLAlchemy(app)
+    db.init_app(app)
+    app.app_context().push()
+
     # inject Dash
     app = dash.Dash(
     __name__,
@@ -22,6 +27,5 @@ def create_app(app):
     from dashApp.callbacks import register_callbacks
     register_callbacks(app)
 
-    db = SQLAlchemy(app.server)
 
     return app, db

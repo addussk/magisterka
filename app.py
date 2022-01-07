@@ -193,6 +193,13 @@ def make_measurement():
     comp.state.print_state()
 
     while(True):
+        print("task started")
+        print("the number of Thread objects currently alive: ", threading.active_count())
+        print("current thread: ", threading.current_thread())
+        now = datetime.datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+        print("Current Time is :", current_time)
+        
         # comp.state.print_state()
         comp.check()
         time.sleep(5)
@@ -207,9 +214,7 @@ t2 = threading.Thread(target=make_measurement)
 t2.start()
 
 if __name__ == '__main__':
-    db.create_all()
-    app.run_server(host='192.168.1.106', port=8080,debug=True)
+    app.run_server(host='192.168.1.106', port=8080, debug=False, threaded=True)
     t2.join()
     # t1 = threading.Thread(target=app.run_server)
     # t1.start()
-    
