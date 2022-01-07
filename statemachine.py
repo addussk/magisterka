@@ -506,8 +506,8 @@ class Guard(object):
                self.measurement_form["state"] = MEASUREMENT_FREE
                self.db.update_setting(FrontEndInfo, FrontEndInfo.isScanAvalaible, False)
                self.change_state(Idle)
-            
-            elif read_mes_set.get_state() == MEASUREMENT_ONGOING:
-               self.measurement_form["state"] = MEASUREMENT_ONGOING
+            # do testow
+            # elif read_mes_set.get_state() == MEASUREMENT_ONGOING:
+            #    self.measurement_form["state"] = MEASUREMENT_ONGOING
 
 
