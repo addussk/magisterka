@@ -119,11 +119,14 @@ def generate_metric_list_header():
 def generate_metric_row_helper(row_info):
     x_axis = list()
     y_axis = list()
+    samples_counter = 0
+
     results_table = Global_DataBase.read_filtered_table(row_info.get_time_scope())
-    
+    print(results_table)
     for record in results_table:
-        x_axis.append(record.get_meas_pwr())
-        y_axis.append(len(x_axis))
+        x_axis.append(samples_counter)
+        y_axis.append(record.get_meas_pwr())
+        samples_counter +=1
 
     return generate_metric_row (
         ("row_" + str(row_info.get_id())), 
@@ -158,8 +161,8 @@ def generate_metric_row_helper(row_info):
                     {
                         "data": [
                             {
-                                "x": y_axis,
-                                "y": x_axis,
+                                "x": x_axis,
+                                "y": y_axis,
                                 "mode": "lines+markers",
                                 "name": row_info.get_name(),
                                 "line": {"color": "#f4d44d"},
