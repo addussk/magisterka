@@ -3,7 +3,7 @@ from scripts import dummy_val_tracking, dummy_val_tracking_received_pwr
 from database import *
 import threading
 from dashApp.models import Results, FrontEndInfo, MeasSettings, MeasurementInfo, Temperature
-from drivers import LTDZ, DS1820
+from drivers import LTDZ, DS1820, ADC_driver
 
 class DataBase(object):
    ptr_to_database = None
@@ -216,13 +216,20 @@ class Measurement(State):
    power = 0
    time_step = 0
    freq_step = 0
+   ptrAdcDriver = None
 
    def __init__(self, ptr_to_db) -> None:
       self.update_settings()
       # Ustawienie wierzcholka funkcji kwadratowej posrodku czestotliwosci poczatkowej a koncowej
       temp_mid = (self.stop_freq + self.start_freq)/2
       self.update_setting(FrontEndInfo, FrontEndInfo.slider_val, temp_mid)
-     
+      try:
+         self.ptrAdcDriver = ADC_driver()
+      except:
+         print("Warning: ADC is unavailable")
+         self.ptrAdcDriver = None
+
+
    def managing_measurement(self, type_req, thread_list):
       if type_req == MEASUREMENT_START:
          if self.mode == 0:
@@ -255,17 +262,24 @@ class Measurement(State):
       except:
          print("Warning:LTDZ has not been power down")
          pass
-   
+
    def measure(self, freq, in_power):
-      retVal = dummy_val_tracking(freq, in_power, self.ptr_to_database)
-      receivedVal = dummy_val_tracking_received_pwr(retVal)
-      self.write_to_database_Results(freq, retVal, receivedVal)
-      
-      return retVal
+
+      if self.ptrAdcDriver == None:
+         print("Watch out! ADC is  unconnected, dummy data will be generated for measurement of received power")
+         transmittedPwr = dummy_val_tracking(freq, in_power, self.ptr_to_database)
+         receivedPwr = dummy_val_tracking_received_pwr(transmittedPwr)
+      else:
+         receivedPwr = self.ptrAdcDriver.read_voltage()
+         transmittedPwr = self.ptrAdcDriver.read_voltage()+1 # 1 tymczasowa wartosc, na razie mierzona wartosc za pomoca jednego channela. Wartosc dodany by rozroznic dwie wartosci
+
+      self.write_to_database_Results(freq, transmittedPwr, receivedPwr)
+
+      return transmittedPwr
 
    def sweeping_mode(self):
       print("Sweeping mode")
-   
+
    def tracking_mode(self):
       print("Tracking mode")
 
@@ -300,24 +314,24 @@ class Measurement(State):
 
          else:
             print("[TRACKING] Measuring..")
-            
+
             # Aktualizacja minimum przy zmianie f0
             best_result = (self.measure(best_result[1], tmp_power), best_result[1])
-            print(best_result) 
+            print(best_result)
 
             # Krok w gore
             meas_freq = best_result[1] + self.freq_step
             if(meas_freq > self.stop_freq):
                   meas_freq =  best_result[1]
 
-            up_freq_res = (self.measure(meas_freq, tmp_power), meas_freq) 
+            up_freq_res = (self.measure(meas_freq, tmp_power), meas_freq)
 
             # Krok w dol
             meas_freq = best_result[1] - 1
             if(meas_freq <= self.start_freq):
                meas_freq = best_result[1]
 
-            less_freq_res = (self.measure(meas_freq, tmp_power), meas_freq) 
+            less_freq_res = (self.measure(meas_freq, tmp_power), meas_freq)
 
             print("[TRACKING] Scanning results: {}".format([up_freq_res, less_freq_res, best_result]))
             best_result = min([up_freq_res, less_freq_res, best_result])
@@ -331,7 +345,7 @@ class Measurement(State):
             self.update_setting(MeasSettings, MeasSettings.best_scan_power, best_result[0])
 
    def fixed__freq_mode(self):
-      
+
       try:
          # skonfigurowanie polaczenia z syntezatorem czestotliwosci
          x = LTDZ()
@@ -357,7 +371,7 @@ class Measurement(State):
          time.sleep(self.time_step)
 
          retVal = self.measure(self.start_freq, self.power)
-         
+
    def update_settings(self):
       self.mode = self.read_record(MeasSettings, "mode")
       self.state = self.read_record(MeasSettings, "state")
@@ -401,11 +415,11 @@ class Guard(object):
       # State of the guard - default is init.
       self.state = Init(database_ptr)
       self.db = DataBase(database_ptr)
-   
+
    # setter functions
    def set_status(self, status):
       self.status = status
-   
+
    def set_calib_status(self, status):
       self.isCalibratedStatus = status
 
@@ -423,7 +437,7 @@ class Guard(object):
    def change_state(self, state):
       """ Change state """
       self.state.switch(state, self.db.get_database_ptr())
-   
+
    # funkcja sprawdza czy ustawienia ulegly zmianie - do refactoringu, ulepszyc dodawanie kolejnych ustawien
    def isChangeInSetting(self):
       # rzeczy ktore zawiera baza danych w alchemy
@@ -454,7 +468,7 @@ class Guard(object):
       print("Measure temperature...")
       tmpSensor = DS1820()
       read_temp=tmpSensor.read_temp()
-      
+
       self.db.ptr_to_database.session.add(Temperature(obj_temp=read_temp, sys_temp=(read_temp+5), time_of_measurement=datetime.datetime.now()))
       self.db.ptr_to_database.session.commit()
 
@@ -464,11 +478,11 @@ class Guard(object):
       if  not self.isChangeInSetting():
          print("Nothing change, stay in ", self.state.__class__)
          if self.state.__class__ != Idle and self.state.__class__ != Measurement:
-            self.change_state(Idle)       
-      
+            self.change_state(Idle)
+
       else:
          print("Take action")
-         
+
          # If settings has been changed, choose requested action
          db_tool_status = self.db.read_record(FrontEndInfo,"tool_status")
          if self.new_settings["tool_status"] != db_tool_status:

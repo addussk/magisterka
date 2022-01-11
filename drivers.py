@@ -4,14 +4,7 @@ import random
 #libs potrzebne dla LTDZ
 import serial.tools.list_ports as port_list
 import serial
-# libs need by ADC driver
-try:
-    import board
-    import busio
-    import adafruit_ads1x15.ads1115 as ADS
-    from adafruit_ads1x15.analog_in import AnalogIn
-except:
-    print("Warning: read by ADC is not possible")
+
 
 #Syntezator czestotliwosci
 class LTDZ():
@@ -143,6 +136,16 @@ class DS1820():
 class ADC_driver():
     voltage = None
     raw_value = None
+
+    def __init__(self) -> None:
+        # libs need by ADC driver
+        try:
+            import board
+            import busio
+            import adafruit_ads1x15.ads1115 as ADS
+            from adafruit_ads1x15.analog_in import AnalogIn
+        except:
+            raise Exception("Warning: read by ADC is not possible")
 
     # funckja do odczytu napiecia z czujnika via I2C
     def read_voltage(self):

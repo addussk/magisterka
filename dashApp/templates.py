@@ -120,13 +120,13 @@ def generate_metric_row_helper(row_info):
     x_axis = list()
     y_axis = list()
     results_table = Global_DataBase.read_filtered_table(row_info.get_time_scope())
-    
+
     for record in results_table:
         x_axis.append(record.get_meas_pwr())
         y_axis.append(len(x_axis))
 
     return generate_metric_row (
-        ("row_" + str(row_info.get_id())), 
+        ("row_" + str(row_info.get_id())),
         None,
         # kolumna z nazwa
         {
