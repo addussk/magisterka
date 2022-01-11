@@ -14,3 +14,5 @@ pip install adafruit-blinka
 pip install serial
 pip install Flask-SQLAlchemy
 pip install dash-daq
+pip install dash-extensions
+pip install pyserial
