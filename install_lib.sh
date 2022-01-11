@@ -19,5 +19,7 @@ sudo python3 -m pip install pyserial
 
 #configure ADC
 1) sudo raspi-config
-2) enable i2c intarface
-3) sudo i2cdetect -y 1 - to check whether i2c interface has been enabled properly
+2) enable i2c interface
+3) enable 1-wire interface (gpio4)
+4) sudo reboot 
+5) sudo i2cdetect -y 1 - to check whether i2c interface has been enabled properly
