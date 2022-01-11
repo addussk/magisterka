@@ -4,7 +4,14 @@ import random
 #libs potrzebne dla LTDZ
 import serial.tools.list_ports as port_list
 import serial
-
+#adc
+try:
+    import board
+    import busio
+    import adafruit_ads1x15.ads1115 as ADS
+    from adafruit_ads1x15.analog_in import AnalogIn
+except:
+    raise Exception("Warning: read by ADC is not possible")
 
 #Syntezator czestotliwosci
 class LTDZ():
@@ -138,7 +145,7 @@ class ADC_driver():
     raw_value = None
 
     def __init__(self) -> None:
-        # libs need by ADC driver
+        # libs need by ADC driver, check if it available if not raise Exception.
         try:
             import board
             import busio
