@@ -469,7 +469,7 @@ class Guard(object):
       tmpSensor = DS1820()
       read_temp=tmpSensor.read_temp()
 
-      self.db.ptr_to_database.session.add(Temperature(obj_temp=read_temp, sys_temp=(read_temp+5), time_of_measurement=datetime.datetime.now()))
+      self.db.ptr_to_database.session.add(Temperature(obj_temp=read_temp+5, sys_temp=read_temp, time_of_measurement=datetime.datetime.now()))
       self.db.ptr_to_database.session.commit()
 
    def check(self):
