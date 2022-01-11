@@ -11,7 +11,7 @@ try:
     import adafruit_ads1x15.ads1115 as ADS
     from adafruit_ads1x15.analog_in import AnalogIn
 except:
-    raise Exception("Warning: read by ADC is not possible")
+    pass
 
 #Syntezator czestotliwosci
 class LTDZ():
