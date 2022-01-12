@@ -83,7 +83,8 @@ def register_callbacks(dashapp):
     print(len(Global_DataBase.read_record_all(MeasurementInfo)))
     for el in range(1,len(Global_DataBase.read_record_all(MeasurementInfo))+1):
         inputs.append(Input('{}_buttonss'.format(el), "n_clicks"),)
-
+    print(inputs)
+    
     # Multiple components can update everytime interval gets fired.
     @dashapp.callback(
         Output('control-chart-live', 'figure'),
