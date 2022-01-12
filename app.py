@@ -215,6 +215,7 @@ t2.start()
 
 if __name__ == '__main__':
     app.run_server(host='192.168.0.94', port=8080, debug=False, threaded=True)
+    #app.run_server( debug=False, threaded=True)
     t2.join()
     # t1 = threading.Thread(target=app.run_server)
     # t1.start()
