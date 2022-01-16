@@ -256,3 +256,7 @@ class HMC624():
         retVal = self.read()
 
         print(retVal)
+
+x = HMC624()
+
+x.setAttenuation(32)
