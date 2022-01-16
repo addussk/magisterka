@@ -12,6 +12,8 @@ try:
     from adafruit_ads1x15.analog_in import AnalogIn
 except:
     print("Warning: read by ADC is not possible")
+#hmc
+import digitalio
 
 #Syntezator czestotliwosci
 class LTDZ():
@@ -167,3 +169,85 @@ class ADC_driver():
         self.raw_value = chan.value
 
         return chan.voltage
+
+class HMC624():
+    # General information: remember to set P/S pin to high to enable serial mode interface
+    ATTENUATION = {
+        32 : 0b000000,
+        16 : 0b011111,
+        8 : 0b101111,
+        4 : 0b110111,
+        2 : 0b111011,
+        1 : 0b111101,
+        0.5 : 0b111110,
+        0 : 0b111111,
+    }
+    
+
+    RECEIVER_BUFFER_SIZE = 1 # Number of bytes
+    LAST_MSGS = bytearray(RECEIVER_BUFFER_SIZE+1) # buffor to hold last received msg
+    spiDriver = None  # pointer to SPI object from busio libs
+    le = None # pointer to object represent gpio pin represents latch enable pin
+
+    def __init__(self) -> None:
+        # create the spi bus
+        self.spiDriver = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
+        # create the LE (latch pin)
+        self.le = digitalio.DigitalInOut(board.CE0)
+        self.le.direction = digitalio.Direction.OUTPUT
+        self.le.value = True # high level set on pin disenables configuration of attenuation
+        # configuration of SPI 
+        self.configureSpi()
+    
+    def configureSpi(self, inBaudrate=10000000, inPhase=0, inPolarity=0):
+        self.spiDriver.configure(baudrate=inBaudrate, phase=inPhase, polarity=inPolarity)
+
+    def write(self, msg):
+        if type(msg) != type(list):
+            raise Warning("Only array should be pass")
+        
+        while not self.spiDriver.try_lock():
+            pass
+        
+        try:
+            # low level allow to write data inside register
+            self.le.value = False
+
+            self.spiDriver.write(bytes(msg))
+
+            #LE must be toggled high to latch the new attenuation state into the device. 
+            self.le.value = True
+        finally:
+            busio.SPI.unlock()
+
+    def read(self):
+        receivedBuffer = bytearray(self.RECEIVER_BUFFER_SIZE)
+
+        while not self.spiDriver.try_lock():
+            pass
+        
+        try:
+            # low level allow to write data inside register
+            self.le.value = False
+
+            self.spiDriver.readinto(receivedBuffer)
+
+            #LE must be toggled high to latch the new attenuation state into the device. 
+            self.le.value = True
+        finally:
+            busio.SPI.unlock()
+
+        self.LAST_MSGS = receivedBuffer
+
+        return receivedBuffer
+    
+    # att value in dB
+    def setAttenuation(self, att):
+        if att not in self.ATTENUATION:
+            raise Warning("Picked wrong value of attenuation")
+        print([self.ATTENUATION[att]])
+        self.write([self.ATTENUATION[att]])
+
+obj = HMC624()
+
+obj.setAttenuation(obj.ATTENUATION[1])
