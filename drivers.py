@@ -254,14 +254,11 @@ class HMC624():
         self.write([self.ATTENUATION[att]])
 
         retVal = self.read()
-        print(retVal)
+        # convert to int value
         retVal = int.from_bytes(retVal,byteorder='big', signed=False)
-        print(retVal)
-        retVal = retVal << 2
-        print(retVal)
-        if self.ATTENUATION[att] == retVal:
-            print("equal")
-        else: print('diff')
+        # shift to right side, HMC sent only 6 bits
+        retVal = retVal >> 2
 
-x = HMC624()
-x.setAttenuation(32)
+        if self.ATTENUATION[att] == retVal:
+            print("Attenuation has been set succesfull")
+        else: print("Warning: Attenuation've not set!") # further implementation needed
