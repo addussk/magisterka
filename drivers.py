@@ -208,7 +208,7 @@ class HMC624():
             self.spiDriver.unlock()
 
     def write(self, msg):
-        if type(msg) != type(list):
+        if type(msg) != type(list()):
             raise Warning("Only array should be pass")
         
         while not self.spiDriver.try_lock():
@@ -252,3 +252,7 @@ class HMC624():
             raise Warning("Picked wrong value of attenuation")
 
         self.write([self.ATTENUATION[att]])
+
+        retVal = self.read()
+
+        print(retVal)
