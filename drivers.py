@@ -200,7 +200,13 @@ class HMC624():
         self.configureSpi()
     
     def configureSpi(self, inBaudrate=10000000, inPhase=0, inPolarity=0):
-        self.spiDriver.configure(baudrate=inBaudrate, phase=inPhase, polarity=inPolarity)
+        while not self.spiDriver.try_lock():
+            pass
+        try:
+            self.spiDriver.configure(baudrate=inBaudrate, phase=inPhase, polarity=inPolarity)
+
+        finally:
+            busio.SPI.unlock()
 
     def write(self, msg):
         if type(msg) != type(list):
