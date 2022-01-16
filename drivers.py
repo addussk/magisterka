@@ -171,7 +171,7 @@ class ADC_driver():
         return chan.voltage
 
 class HMC624():
-    # General information: remember to set P/S pin to high to enable serial mode interface
+    # General information: remember to set P/S pin to high to enable serial mode interface    
     ATTENUATION = {
         32 : 0b000000,
         16 : 0b011111,
@@ -182,7 +182,6 @@ class HMC624():
         0.5 : 0b111110,
         0 : 0b111111,
     }
-    
 
     RECEIVER_BUFFER_SIZE = 1 # Number of bytes
     LAST_MSGS = bytearray(RECEIVER_BUFFER_SIZE+1) # buffor to hold last received msg
@@ -249,11 +248,7 @@ class HMC624():
     
     # att value in dB
     def setAttenuation(self, att):
-        if att not in self.ATTENUATION:
+        if att not in self.ATTENUATION.values():
             raise Warning("Picked wrong value of attenuation")
-        print([self.ATTENUATION[att]])
+
         self.write([self.ATTENUATION[att]])
-
-obj = HMC624()
-
-obj.setAttenuation(obj.ATTENUATION[1])
