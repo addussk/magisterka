@@ -253,7 +253,7 @@ class HMC624():
 
         self.write([self.ATTENUATION[att]])
 
-        retVal = self.read()
+        retVal = int(self.read())
         print(retVal)
         retVal = retVal << 2
         print(retVal)
@@ -262,5 +262,4 @@ class HMC624():
         else: print('diff')
 
 x = HMC624()
-
 x.setAttenuation(32)
