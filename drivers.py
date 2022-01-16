@@ -253,7 +253,9 @@ class HMC624():
 
         self.write([self.ATTENUATION[att]])
 
-        retVal = int.from_bytes(self.read(),byteorder='big', signed=False)
+        retVal = self.read()
+        print(retVal)
+        retVal = int.from_bytes(retVal,byteorder='big', signed=False)
         print(retVal)
         retVal = retVal << 2
         print(retVal)
