@@ -23,3 +23,11 @@ sudo python3 -m pip install pyserial
 3) enable 1-wire interface (gpio4)
 4) sudo reboot 
 5) sudo i2cdetect -y 1 - to check whether i2c interface has been enabled properly
+
+#HMC
+0) used pins: MOSI-GPIO10, MISO-GPIO9, CLK-GPIO11, CS-GPIO8,  remember to set P/S pin to high to enable serial mode interface
+1) sudo raspi-config
+2) enable SPI interface
+3) Either reboot your Pi or run this command: sudo modprobe "spi-bcm2708" to load the kernel module
+4) ls -l /dev/spidev* - to check if you see two spi device
+
