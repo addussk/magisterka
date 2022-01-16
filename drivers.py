@@ -206,7 +206,7 @@ class HMC624():
             self.spiDriver.configure(baudrate=inBaudrate, phase=inPhase, polarity=inPolarity)
 
         finally:
-            busio.SPI.unlock()
+            self.spiDriver.unlock()
 
     def write(self, msg):
         if type(msg) != type(list):
@@ -224,7 +224,7 @@ class HMC624():
             #LE must be toggled high to latch the new attenuation state into the device. 
             self.le.value = True
         finally:
-            busio.SPI.unlock()
+            self.spiDriver.unlock()
 
     def read(self):
         receivedBuffer = bytearray(self.RECEIVER_BUFFER_SIZE)
@@ -241,7 +241,7 @@ class HMC624():
             #LE must be toggled high to latch the new attenuation state into the device. 
             self.le.value = True
         finally:
-            busio.SPI.unlock()
+            self.spiDriver.unlock()
 
         self.LAST_MSGS = receivedBuffer
 
