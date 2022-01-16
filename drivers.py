@@ -248,7 +248,7 @@ class HMC624():
     
     # att value in dB
     def setAttenuation(self, att):
-        if att not in self.ATTENUATION.values():
+        if att not in self.ATTENUATION.keys():
             raise Warning("Picked wrong value of attenuation")
 
         self.write([self.ATTENUATION[att]])
