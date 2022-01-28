@@ -350,22 +350,31 @@ def register_callbacks(dashapp):
                 raise NameError("Updating store error")
     
     @dashapp.callback(
-        Output( component_id='pwr-on-off-buton', component_property="buttonText"),
-        Input('pwr-on-off-buton', 'n_clicks'),
-        State( component_id='pwr-on-off-buton', component_property="buttonText"),
+        Output('powerbutton', 'on'),
+        [
+            Input('powerbutton', 'on')
+        ],
     )
-    def update_pwr_supply_btn(n_click, btnText):
-        if n_click:
-            if btnText == "TURN ON":
+    def power_supply_btn(state):
+        # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
+        ctx = dash.callback_context
+        ctx.triggered[0]['value']
+        
+        if ctx.triggered[0]['value']:
+            if state == True:
+                # zasilacz wlaczony
                 Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, True)
-                return "TURN OFF"
-            elif btnText == "TURN OFF":
+                return True
+            elif state == False:
+                # zasilacz wylaczony
                 Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, False)
-                return "TURN ON"
+                return False
             else: raise Exception("Error with power button")
         else:
-            # initial state: dodac odczyt stanu dla zasilacza
-            return btnText
+            # Odczytanie stanu zasilacza z maszyny stanow i ustawienie odpowiedniego stanu.
+            record = Global_DataBase.read_last_record(FrontEndInfo).get_tool_status()
+            return record
+        
     
     @dashapp.callback(
         Output( component_id="value-setter-view-btn", component_property="contextMenu"),
