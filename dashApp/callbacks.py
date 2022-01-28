@@ -391,6 +391,21 @@ def register_callbacks(dashapp):
         return retColor
 
     @dashapp.callback(
+        Output('stopbutton-quick-stats', "disabled"),
+        Input("stopbutton-quick-stats", 'n_clicks'),
+    )
+    def stop_btn(n_click):
+        # read meas status from state machine
+        meas_state = Global_DataBase.read_table(MeasSettings).get_state()
+
+        if meas_state == MEASUREMENT_ONGOING:
+            Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
+            # enable pressing button
+            return False
+        #  stop button cannot be pressed
+        else: return True
+
+    @dashapp.callback(
         Output( component_id="value-setter-view-btn", component_property="contextMenu"),
         Input("value-setter-view-btn", 'n_clicks'),
     )

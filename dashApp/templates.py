@@ -38,7 +38,7 @@ rootLayout = html.Div([
     ), html.Br(),
 
     daq.StopButton(
-        id='darktheme-daq-stopbutton',
+        id='stopbutton-quick-stats',
         disabled=True,
         size=180,
         style={'margin-left':'90px', 'margin-top': '80px'},
