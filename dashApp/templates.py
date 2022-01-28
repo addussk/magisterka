@@ -18,6 +18,44 @@ suffix_button_id = "_buttonss"
 suffix_sparkline_graph = "_sparkline_graph"
 suffix_date = "_date"
 
+# struktura konfigurujaca obiekt DarkThemeProvider(uzyty w  quick panel) 
+theme = {
+    'dark': True,
+    'detail': '#fa0606',
+    'primary': '#00EA64',
+    'secondary': '#fa0606',
+}
+
+# layout dla quick panelu 
+rootLayout = html.Div([
+
+    daq.Indicator(
+        id="measure-triggered", 
+        value=True,
+        color="#fa0000",
+        size=80,
+        label= {'label':"Measurement status", 'style':{'font-size': '3rem'}},
+    ), html.Br(),
+
+    daq.StopButton(
+        id='darktheme-daq-stopbutton',
+        disabled=True,
+        size=180,
+        style={'margin-left':'90px', 'margin-top': '80px'},
+        className='dark-theme-control',
+    ), html.Br(),
+
+    daq.PowerButton(
+        id='powerbutton',
+        on=False,
+        style={ 'margin-top': '80px'},
+        size=140,
+        label={'label':"Power Supply", 'style':{'font-size': '3rem'}},
+        color=theme['primary'],
+        className='dark-theme-control'
+    ), html.Br(),
+])
+
 def init_value_setter_store():
     # Initialize store data - will be implemented
     ret = {
@@ -318,40 +356,23 @@ def generate_indicator():
 def build_quick_stats_panel():
     return html.Div(
         id="quick-stats",
-        className="row",
         children=[
-            html.Div(
-                id="card-1",
-                children=[
-                    html.P("User ID"),
-                    daq.LEDDisplay(
-                        id="operator-led",
-                        value="999",
-                        color="#c8f10f",
-                        backgroundColor="#1e2130",
-                        size=50,
-                    ),
-                ],
-            ),
-            html.Div(
-                id="card-2",
-                children=[
-                    html.P("Time to the end of the measurement"),
-                    daq.Gauge(
-                        id="progress-gauge",
-                        max=100,
-                        min=0,
-                        showCurrentValue=True,  # default size 200 pixel
-                    ),
-                ],
-            ),
-            html.Div(
-                id="utility-card",
-                children=[
-                        daq.StopButton(id="pwr-on-off-buton",  buttonText='TURN ON', size=160, n_clicks=0),
-                        daq.StopButton(id="dialog-btn",  buttonText='SHOW', size=160, n_clicks=0)
-                    ],
-            ),
+            html.Div(id='dark-theme-components-1', children=[
+                daq.DarkThemeProvider(theme=theme, children=rootLayout)
+            ], style={
+                'border': 'solid 1px #A2B1C6',
+                'border-radius': '5px',
+                'padding': '50px',
+                'width':'100%',
+                'height':'100%',
+            }),
+
+            # html.Div(
+            #     id="utility-card",
+            #     children=[
+            #             daq.StopButton(id="dialog-btn",  buttonText='SHOW', size=160, n_clicks=0)
+            #         ],
+            # ),
         ],
     )
 
