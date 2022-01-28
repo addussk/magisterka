@@ -312,24 +312,6 @@ body {
     width: 100%;
 }
 
-#card-1, #card-2, #utility-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-}
-  
-#card-1 {
-    margin-bottom: 3rem;
-}
-
-#pwr-on-off-buton > div > button:hover {
-    color: #c8f10f !important;
-}
-
 #graphs-container {
     display: flex;
     flex-direction: column;
@@ -482,7 +464,6 @@ body {
     border-right: #1e2130 solid 0.8rem;
     border-top: #1e2130 solid 0.8rem;
     flex: 1 1;
-    padding: 2rem;
     max-width: 25%;
 }
 
@@ -501,37 +482,6 @@ body {
     flex-direction: row;
     justify-content: center;
 }
-
-
-/* Tab 2 Specs
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-
-#pwr-on-off-buton > div > button {
-    color: white !important;
-    background-color: #1d202d !important;
-    border: 1px solid #4B5460 !important;
-    border-radius: 4px;
-    height: 40px;
-    line-height: 40px;
-}
-  
-#pwr-on-off-buton > div > button:hover {
-    color: #c8f10f !important;
-    border-color: white !important;
-    background-color: #1d202d !important;
-}
-
-#card-1 P, #card-2 P {
-    margin: 2rem;
-    color: inherit;
-    font-weight: bold;
-    align-self: flex-start;
-}
-
-#card-2 .scale, #card-2 .needle, #card-2 .needle-knob {
-    display: none !important;
-}
-
 
 /* Tab 2 metric row
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
