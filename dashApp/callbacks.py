@@ -374,8 +374,22 @@ def register_callbacks(dashapp):
             # Odczytanie stanu zasilacza z maszyny stanow i ustawienie odpowiedniego stanu.
             record = Global_DataBase.read_last_record(FrontEndInfo).get_tool_status()
             return record
-        
-    
+
+    @dashapp.callback(
+        Output("measure-triggered", 'color'),
+        Input("measure-triggered", 'color')
+    )
+    def update_meas_indic(input):
+        retColor = None
+        meas_state = Global_DataBase.read_table(MeasSettings).get_state()
+
+        if meas_state == MEASUREMENT_ONGOING:
+            retColor = "#1cfa089d"
+        else:
+            retColor="#fa2c089d"
+
+        return retColor
+
     @dashapp.callback(
         Output( component_id="value-setter-view-btn", component_property="contextMenu"),
         Input("value-setter-view-btn", 'n_clicks'),

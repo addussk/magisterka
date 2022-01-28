@@ -32,7 +32,7 @@ rootLayout = html.Div([
     daq.Indicator(
         id="measure-triggered", 
         value=True,
-        color="#fa0000",
+        color="#0000",
         size=80,
         label= {'label':"Measurement status", 'style':{'font-size': '3rem'}},
     ), html.Br(),
