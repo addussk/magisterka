@@ -395,12 +395,15 @@ def register_callbacks(dashapp):
         Input("stopbutton-quick-stats", 'n_clicks'),
     )
     def stop_btn(n_click):
+
         # read meas status from state machine
         meas_state = Global_DataBase.read_table(MeasSettings).get_state()
-
         if meas_state == MEASUREMENT_ONGOING:
+            if n_click:
             Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
+                return True
             # enable pressing button
+            else:
             return False
         #  stop button cannot be pressed
         else: return True
