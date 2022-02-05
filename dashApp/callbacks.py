@@ -17,15 +17,15 @@ def generate_graph(axis_x, axis_y, name):
     # tworzenie funkcji w zaleznosci od wielkosci listy axis_y
     # case dla przypadku gdy axis_y jest pojedyncza lista
     if type(axis_y[0]) == type([]):
-    for el in axis_y:
-        temp_dict = {
-                        "x" : axis_x,
-            "y" : el,
-                        "mode": "lines+markers",
-                        'type': 'scatter',
-            'name': name,
-        }
-        all_fig.append(temp_dict)
+        for el in axis_y:
+            temp_dict = {
+                "x" : axis_x,
+                "y" : el,
+                "mode": "lines+markers",
+                'type': 'scatter',
+                'name': name,
+            }
+            all_fig.append(temp_dict)
     # case dla listy list dla wartosci y, w przypadku gdy wiecej niz jeden checkbox zostanie zaklikany
     else:
         temp_dict = {
@@ -36,7 +36,7 @@ def generate_graph(axis_x, axis_y, name):
             'name': name,
         }
         all_fig.append(temp_dict)
-
+    
     # ustawienia graphu
     fig={
                 "data": [ el for el in all_fig ],
@@ -104,81 +104,59 @@ def register_callbacks(dashapp):
         inputs.append(Input('{}_buttonss'.format(el), "n_clicks"),)
     print(inputs)
     
-    # Multiple components can update everytime interval gets fired.
+    # Wiele komponentów może się aktualizować za każdym razem, gdy zostanie uruchomiony interwał.
     @dashapp.callback(
         Output('control-chart-live', 'figure'),
         inputs,
         )
     def update_graph_live(n, checkbox_list, *args):
-        
+        x_ax = list()
+        y_ax = list()
+
+        # sprawdzic czy jest aktualnie pomiar
         meas_state = Global_DataBase.read_table(MeasSettings).get_state()
 
-        ctx = dash.callback_context
-        if ctx.triggered:
-            # Get most recently triggered id and prop_type
-            splitted = ctx.triggered[0]["prop_id"].split(".")
-            prop_id = splitted[0]
-            prop_type = splitted[1]
+        if meas_state == MEASUREMENT_ONGOING:
+            # jesli jest pomiar, wyswietlac dane na biezaco.
+            for el in checkbox_list:
+                time_scope_last_meas = Global_DataBase.read_last_record(MeasurementInfo).get_time_scope()
+                frequency_measurement = Global_DataBase.read_filtered_table_live(time_scope_last_meas)
+                
+                x_ax = [ el.get_data_meas() for el in frequency_measurement]
 
-            if prop_type == "n_clicks":
-                meas_info = Global_DataBase.read_specific_row(MeasurementInfo, int(prop_id[0]))
-                results_table = Global_DataBase.read_filtered_table(meas_info.get_time_scope())
-   
-                transmitted_pwr = [ el.get_trans_pwr() for el in results_table]
-                data_meas = [ el.get_data_meas() for el in results_table]
-                return generate_graph( data_meas, transmitted_pwr, "stub")
+                if el == "transmit_pwr":
+                    y_ax.append([ el.get_trans_pwr() for el in frequency_measurement])
 
-        if meas_state != MEASUREMENT_ONGOING:
-            return dash.no_update
+                elif el == "received_pwr":
+                    y_ax.append([ el.get_meas_pwr() for el in frequency_measurement])
 
-        time_scope_last_meas = Global_DataBase.read_last_record(MeasurementInfo).get_time_scope()
-        frequency_measurement = Global_DataBase.read_filtered_table_live(time_scope_last_meas)
-        freq = [ el.get_meas_freq() for el in frequency_measurement]
-        transmitted_pwr = [ el.get_trans_pwr() for el in frequency_measurement]
-        received_pwr = [ el.get_meas_pwr() for el in frequency_measurement]
-        data_meas = [ el.get_data_meas() for el in frequency_measurement]
+                elif el == "sys_temp":
+                    # dodac odczyt temperatury i zapisanie do listy dict
+                    pass
+            return generate_graph( x_ax, y_ax, "stub")
+        # jesli nie ma :
+        else:
+            ctx = dash.callback_context
+            # jesli zostal wybrane pomiary z listy wyswietlic je
+            if ctx.triggered:
+                # Uzyskaj ostatnio wywołane id i prop_type
+                splitted = ctx.triggered[0]["prop_id"].split(".")
+                prop_type = splitted[1]
 
-        fig_dict = dict()
+                if prop_type == "n_clicks":
+                    prop_id = splitted[0]
+                    meas_info = Global_DataBase.read_specific_row(MeasurementInfo, int(prop_id[0]))
+                    results_table = Global_DataBase.read_filtered_table(meas_info.get_time_scope())
+    
+                    transmitted_pwr = [ el.get_trans_pwr() for el in results_table]
+                    data_meas = [ el.get_data_meas() for el in results_table]
 
-        for el in checkbox_list:
-            if el == "transmit_pwr":
-                fig_dict[el] = {
-                    "x" : data_meas,
-                    "y" : transmitted_pwr,
-                        "mode": "lines+markers",
-                        'type': 'scatter',
-                    'name': el,
-                }
-            elif el == "received_pwr":
-                fig_dict[el] = {
-                    "x" : data_meas,
-                    "y" : received_pwr,
-                    "mode": "lines+markers",
-                    'type': 'scatter',
-                    'name': el,
-                }
-            elif el == "sys_temp":
-                # dodac odczyt temperatury i zapisanie do listy dict
-                pass
+                    return generate_graph( data_meas, transmitted_pwr, "stub")
+                else: return dash.no_update
 
+            # TBD: wyswietlic ostatni pomiar z listy    
+            else: return dash.no_update
 
-        fig={
-                "data": [ fig_dict[el] for el in fig_dict ],
-                "layout": {
-                    "paper_bgcolor": "rgba(0,0,0,0)",
-                    "plot_bgcolor": "rgba(0,0,0,0)",
-                    "xaxis": dict(
-                        showline=False, showgrid=False, zeroline=False
-                    ),
-                    "yaxis": dict(
-                        showgrid=False, showline=False, zeroline=False
-                    ),
-                    "autosize": True,
-                },
-            }
-
-
-        return fig
 
     @dashapp.callback(
         Output("chart_scannig_container", "children"),
@@ -419,11 +397,11 @@ def register_callbacks(dashapp):
         meas_state = Global_DataBase.read_table(MeasSettings).get_state()
         if meas_state == MEASUREMENT_ONGOING:
             if n_click:
-            Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
+                Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
                 return True
             # enable pressing button
             else:
-            return False
+                return False
         #  stop button cannot be pressed
         else: return True
 
