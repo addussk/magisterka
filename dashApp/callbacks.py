@@ -12,15 +12,22 @@ import json
 Global_DataBase = DataBase(db)
 
 def generate_graph(axis_x, axis_y, name):
-    fig={
-                "data": [
-                    {
+    all_fig = list()
+
+    # tworzenie funkcji w zaleznosci od wielkosci listy axis_y
+    for el in axis_y:
+        temp_dict = {
                         "x" : axis_x,
-                        "y" : axis_y,
+            "y" : el,
                         "mode": "lines+markers",
                         'type': 'scatter',
-                        'name': name,}
-                ],
+            'name': name,
+        }
+        all_fig.append(temp_dict)
+
+    # ustawienia graphu
+    fig={
+                "data": [ el for el in all_fig ],
                 "layout": {
                     "paper_bgcolor": "rgba(0,0,0,0)",
                     "plot_bgcolor": "rgba(0,0,0,0)",
@@ -33,7 +40,7 @@ def generate_graph(axis_x, axis_y, name):
                     "autosize": True,
                 },
             }
-    # fig = go.Figure(data=[go.Scatter(x=axis_x, y=axis_y)])
+
     return fig
 
 def register_callbacks(dashapp):
