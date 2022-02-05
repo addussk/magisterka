@@ -15,12 +15,24 @@ def generate_graph(axis_x, axis_y, name):
     all_fig = list()
 
     # tworzenie funkcji w zaleznosci od wielkosci listy axis_y
+    # case dla przypadku gdy axis_y jest pojedyncza lista
+    if type(axis_y[0]) == type([]):
     for el in axis_y:
         temp_dict = {
                         "x" : axis_x,
             "y" : el,
                         "mode": "lines+markers",
                         'type': 'scatter',
+            'name': name,
+        }
+        all_fig.append(temp_dict)
+    # case dla listy list dla wartosci y, w przypadku gdy wiecej niz jeden checkbox zostanie zaklikany
+    else:
+        temp_dict = {
+            "x" : axis_x,
+            "y" : axis_y,
+            "mode": "lines+markers",
+            'type': 'scatter',
             'name': name,
         }
         all_fig.append(temp_dict)
