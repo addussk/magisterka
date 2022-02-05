@@ -147,11 +147,21 @@ def register_callbacks(dashapp):
                     prop_id = splitted[0]
                     meas_info = Global_DataBase.read_specific_row(MeasurementInfo, int(prop_id[0]))
                     results_table = Global_DataBase.read_filtered_table(meas_info.get_time_scope())
-    
-                    transmitted_pwr = [ el.get_trans_pwr() for el in results_table]
-                    data_meas = [ el.get_data_meas() for el in results_table]
+                    x_ax = [ el.get_data_meas() for el in results_table]
 
-                    return generate_graph( data_meas, transmitted_pwr, "stub")
+                    for check_box_el in checkbox_list:
+                        if check_box_el == "transmit_pwr":
+                            y_ax.append([ el.get_trans_pwr() for el in results_table])
+
+                        elif check_box_el == "received_pwr":
+                            y_ax.append([ el.get_meas_pwr() for el in results_table])
+
+                        elif check_box_el == "sys_temp":
+                            # dodac odczyt temperatury i zapisanie do listy dict
+                            pass
+
+                    return generate_graph( x_ax, y_ax, "stub")
+                    
                 else: return dash.no_update
 
             # TBD: wyswietlic ostatni pomiar z listy    
