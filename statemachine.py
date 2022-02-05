@@ -140,7 +140,7 @@ class Init(State):
 
       self.db_init()
       print("TODO: initialization things")
-
+      self.update_setting(FrontEndInfo,FrontEndInfo.tool_status, True)
       print("Initialization completed")
       self.status = True
    

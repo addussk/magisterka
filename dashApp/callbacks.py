@@ -358,29 +358,29 @@ def register_callbacks(dashapp):
     
     @dashapp.callback(
         Output('powerbutton', 'on'),
-        [
-            Input('powerbutton', 'on')
-        ],
+        Input('powerbutton', 'on')
     )
     def power_supply_btn(state):
         # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
         ctx = dash.callback_context
-        ctx.triggered[0]['value']
-        
-        if ctx.triggered[0]['value']:
-            if state == True:
-                # zasilacz wlaczony
-                Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, True)
-                return True
-            elif state == False:
-                # zasilacz wylaczony
-                Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, False)
-                return False
-            else: raise Exception("Error with power button")
-        else:
+
+        if ctx.triggered[0]['value'] == None:
             # Odczytanie stanu zasilacza z maszyny stanow i ustawienie odpowiedniego stanu.
             record = Global_DataBase.read_last_record(FrontEndInfo).get_tool_status()
             return record
+        else:
+            tool_status = Global_DataBase.read_table(FrontEndInfo).get_tool_status()
+            print("@@@@@@@@@@@@@@@")
+            print(tool_status)
+            if tool_status:
+                # zasilacz byl wlaczony
+                Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, False)
+                return False
+            elif tool_status == False:
+                # zasilacz byl wylaczony
+                Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, True)
+                return True
+            else: raise Exception("Error with power button")
 
     @dashapp.callback(
         Output("measure-triggered", 'color'),
