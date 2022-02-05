@@ -161,7 +161,7 @@ def register_callbacks(dashapp):
                             pass
 
                     return generate_graph( x_ax, y_ax, "stub")
-                    
+
                 else: return dash.no_update
 
             # TBD: wyswietlic ostatni pomiar z listy    
@@ -397,6 +397,7 @@ def register_callbacks(dashapp):
 
         return retColor
 
+    # Live chart tab
     @dashapp.callback(
         Output('stopbutton-quick-stats', "disabled"),
         Input("stopbutton-quick-stats", 'n_clicks'),
@@ -415,6 +416,7 @@ def register_callbacks(dashapp):
         #  stop button cannot be pressed
         else: return True
 
+    # Measurements settings tab
     @dashapp.callback(
         Output( component_id="value-setter-view-btn", component_property="contextMenu"),
         Input("value-setter-view-btn", 'n_clicks'),
