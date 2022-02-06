@@ -256,6 +256,8 @@ body {
 #meas-sett-panel {
     padding-right: 5%;
     padding-left: 5%;
+    border : solid 1px #A2B1C6;
+    border-radius: 5px;
 }
 
 /* Ustawienia dla calego panelu zawierajacego opcje kalibracji urzadzen, znajduje sie w settings-menu kontenerze */
@@ -266,6 +268,13 @@ body {
 
 #metric-select-menu {
     margin-bottom: 5rem;
+}
+
+#metric-select-dropdown {
+    font-size: 2rem;
+    font-weight: normal;
+    width: 50%;
+    margin: auto
 }
 
 /* edytuja container przeznaczona dla buttonow */
@@ -355,13 +364,20 @@ body {
 }
 
 #value-setter-view-btn, #value-setter-set-btn {
-    border: 1px solid #4B5460;
-    color: darkgray;
+    border: 1px solid white;
+    color: white;
+    font-size: 1.8rem;
+    font-weight: normal;
 }
   
-#value-setter-set-btn:hover, #value-setter-view-btn:hover {
-    color: #91dfd2;
-    border-color: white;
+#value-setter-set-btn:hover  {
+    color: #09d413;
+    border-color: #09d413;
+}
+
+#value-setter-view-btn:hover {
+    color: #f44336;
+    border-color: #f44336;
 }
 
 #value-setter-panel .row {
