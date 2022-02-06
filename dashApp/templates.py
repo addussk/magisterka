@@ -265,7 +265,7 @@ def build_value_setter_line(line_num, label, value, col3):
     if line_num[-6:] == "header":
         row_style = {
             'color':'#c8f10f',
-            'font-size': '4rem',
+            'font-size': '3rem',
         }
     else:
         row_style = {
@@ -290,45 +290,62 @@ def build_tab_1():
         html.Div(
             id="settings-menu",
             children=[
-                # Div zawierajacy drop down list do wyboru trybu pomiaru
+                # Kolumna po lewej 7/12 szer, panel zawierajacy elementy z nastawa urzadzen
                 html.Div(
-                    id="metric-select-menu",
-                    # className='five columns',
+                    id="meas-sett-panel",
+                    className="seven columns",
                     children=[
-                        html.Label(id="metric-select-title", children="Select Measurement Mode"),
-                        html.Br(),
-                        dcc.Dropdown(
-                            id="metric-select-dropdown",
-                            options=list(
-                                {"label": mode, "value": DROP_LIST_MEAS_MODE[mode]} for mode in DROP_LIST_MEAS_MODE
-                            ),
-                            value=0,
-                        ),
-                    ],
-                ),
-                # Div zawierajacy elementy do ustawiania parametrow dla wybranego trybu, tworzone dynamicznie za pomoca callbackow
-                html.Div(
-                    id="value-setter-menu",
-                    # className='six columns',
-                    children=[
-                        html.Div(id="value-setter-panel"),
-                        html.Br(),
+                        # Div zawierajacy drop down list do wyboru trybu pomiaru
                         html.Div(
-                            id="button-div",
+                            id="metric-select-menu",
+                            # className='five columns',
                             children=[
-                                html.Button("Set new setup", id="value-setter-set-btn"),
-                                html.Button(
-                                    "Stop measurement",
-                                    id="value-setter-view-btn",
+                                html.Label(id="metric-select-title", children="Select Measurement Mode"),
+                                html.Br(),
+                                dcc.Dropdown(
+                                    id="metric-select-dropdown",
+                                    options=list(
+                                        {"label": mode, "value": DROP_LIST_MEAS_MODE[mode]} for mode in DROP_LIST_MEAS_MODE
+                                    ),
+                                    value=0,
+                                ),
+                            ],
+                        ),
+                        # Div zawierajacy elementy do ustawiania parametrow dla wybranego trybu, tworzone dynamicznie za pomoca callbackow
+                        html.Div(
+                            id="value-setter-menu",
+                            # className='six columns',
+                            children=[
+                                html.Div(id="value-setter-panel"),
+                                html.Br(),
+                                html.Div(
+                                    id="button-div",
+                                    children=[
+                                        html.Button("Set new setup", id="value-setter-set-btn"),
+                                        html.Button(
+                                            "Stop measurement",
+                                            id="value-setter-view-btn",
+                                        ),
+                                    ]
+                                ),
+                                html.Div(
+                                    id="value-setter-view-output", className="output-datatable"
                                 ),
                             ]
-                        ),
-                        html.Div(
-                            id="value-setter-view-output", className="output-datatable"
-                        ),
+                        )
+                    
                     ]
-                )
-            ]
+                ),
+                # Kolumna po prawej 5/12 szer, panel zawierajacy elementy z kalibracja urzadzen
+                html.Div(
+                    id="calib_panel",
+                    className="five columns",
+                    children=[
+                        html.P("TBD calibration panel"),
+                        
+                    ],
+                ),
+            ],
         ),
         # Dla symulacji przebiegu tracking mode - tymczasowy
         html.Div(
