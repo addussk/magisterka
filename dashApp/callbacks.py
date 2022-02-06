@@ -277,7 +277,7 @@ def register_callbacks(dashapp):
     
     @dashapp.callback(
         [
-        Output("value-setter-panel", "children"),
+            Output("value-setter-panel", "children"),
             Output("value-setter-panel", "style"),
         ],
         Input("metric-select-dropdown", "value"),
