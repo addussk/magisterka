@@ -276,17 +276,26 @@ def register_callbacks(dashapp):
         )
     
     @dashapp.callback(
+        [
         Output("value-setter-panel", "children"),
+            Output("value-setter-panel", "style"),
+        ],
         Input("metric-select-dropdown", "value"),
         State("value-setter-store", "data"),
     )
     def build_value_setter_panel(dd_sel_mode, state_value):
+        style = {
+            'display': 'flex',
+            'flex-direction': 'column',
+            'margin-top':'5rem',
+        }
+
         if dd_sel_mode is None:
             return  [] ,style
         if dd_sel_mode is DROP_LIST_MEAS_MODE["Fixed Frequency"]:
-            return  fix_meas_tab(state_value)
+            return  fix_meas_tab(state_value), style
         elif dd_sel_mode is DROP_LIST_MEAS_MODE["Tracking"]:
-            return track_meas_tab(state_value)
+            return track_meas_tab(state_value), style
         elif dd_sel_mode is DROP_LIST_MEAS_MODE["Sweeping"]:
             raise NameError('Do zaimplementowania')
             
