@@ -241,8 +241,12 @@ body {
 }
 
 #settings-menu {
+    /*To definiuje kontener flex; inline lub block w zależności od podanej wartości. 
+    !! Włącza kontekst flex dla wszystkich jego bezpośrednich dzieci.*/
     display: flex;
+    /* W ten sposób ustala się oś główną. Mozliwosci row | row-reverse | column | column-reverse;  */
     flex-direction: row;
+    /* służy wyrównaniu obiektów flex w pionie, flex-start dotyczy wyrownania wewnatrz kontenera, od jego poczatku */
     align-items: flex-start;
     justify-content: space-evenly;
     margin: 4rem 5rem 1rem;
@@ -324,7 +328,7 @@ body {
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
 #metric-select-title {
-    font-size: 2rem;
+    font-size: 4rem;
     color: #c8f10f;
 }
 
@@ -337,14 +341,15 @@ body {
 #value-setter-view-btn {
     margin-left: 20px;
 }
-  
+
+/* Ustawienia dla div zawierajacego elementy do ustawienia parametrow pomiarou */
 #value-setter-panel {
     line-height: 2;
 }
 
 #value-setter-panel-header {
     font-weight: bold;
-    color: darkgray;
+    color: #c8f10f;
     line-height: 1;
     padding: 2rem 0;
     border-bottom: 1px solid #4b5460;

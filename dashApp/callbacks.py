@@ -7,7 +7,6 @@ from dashApp.extensions import db
 from database import *
 import dash
 import datetime
-import json
 
 Global_DataBase = DataBase(db)
 
@@ -287,11 +286,11 @@ def register_callbacks(dashapp):
                 id="default_input_area",
                 children=None,
                 ) # by default
-        if dd_sel_mode is meas_modes["Fixed Frequency"]:
+        if dd_sel_mode is DROP_LIST_MEAS_MODE["Fixed Frequency"]:
             return  fix_meas_tab(state_value)
-        elif dd_sel_mode is meas_modes["Tracking"]:
+        elif dd_sel_mode is DROP_LIST_MEAS_MODE["Tracking"]:
             return track_meas_tab(state_value)
-        elif dd_sel_mode is meas_modes["Sweeping"]:
+        elif dd_sel_mode is DROP_LIST_MEAS_MODE["Sweeping"]:
             raise NameError('Do zaimplementowania')
             
         else: raise NameError('Ivalid Mode')

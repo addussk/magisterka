@@ -260,6 +260,19 @@ def generate_section_banner(title):
     return html.Div(className="section-banner", children=title)
 
 def build_value_setter_line(line_num, label, value, col3):
+    row_style = {}
+
+    if line_num[-6:] == "header":
+        row_style = {
+            'color':'#c8f10f',
+            'font-size': '4rem',
+        }
+    else:
+        row_style = {
+           'color': "#00000",
+           'font-size': '2rem',
+        }
+
     return html.Div(
         id=line_num,
         children=[
@@ -268,6 +281,7 @@ def build_value_setter_line(line_num, label, value, col3):
             html.Div(col3, className="four columns"),
         ],
         className="row",
+        style=row_style
     )
     
 def build_tab_1():
