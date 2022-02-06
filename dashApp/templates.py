@@ -272,10 +272,11 @@ def build_value_setter_line(line_num, label, value, col3):
     
 def build_tab_1():
     return [
-        #Manually select metrics
+        # Zawartosc tab 1
         html.Div(
             id="settings-menu",
             children=[
+                # Div zawierajacy drop down list do wyboru trybu pomiaru
                 html.Div(
                     id="metric-select-menu",
                     # className='five columns',
@@ -291,6 +292,7 @@ def build_tab_1():
                         ),
                     ],
                 ),
+                # Div zawierajacy elementy do ustawiania parametrow dla wybranego trybu, tworzone dynamicznie za pomoca callbackow
                 html.Div(
                     id="value-setter-menu",
                     # className='six columns',
@@ -314,10 +316,12 @@ def build_tab_1():
                 )
             ]
         ),
+        # Dla symulacji przebiegu tracking mode - tymczasowy
         html.Div(
             id="chart_scannig_container",
             className="twelve columns",
         ),
+        # Dla symulacji przebiegu tracking mode, ustawia minimum funkcji- tymczasowy
         html.Div(
             id="slider_min_pointer",
             className="eight columns",
