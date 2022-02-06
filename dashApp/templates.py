@@ -7,7 +7,8 @@ from dashApp.models import  MeasurementInfo
 
 Global_DataBase = DataBase(db)
 
-meas_modes = {
+# Dict dla drop list do wybierania trybow pomiaru(tab meas setts)
+DROP_LIST_MEAS_MODE = {
     "Fixed Frequency": 0,
     'Tracking': 1,
     'Sweeping': 2,
@@ -273,13 +274,6 @@ def build_tab_1():
     return [
         #Manually select metrics
         html.Div(
-            id="set-specs-intro-container",
-            # className="twelve columns",
-            children=html.P(
-                "Choose measurement mode and set parameters"
-            )
-        ),
-        html.Div(
             id="settings-menu",
             children=[
                 html.Div(
@@ -291,7 +285,7 @@ def build_tab_1():
                         dcc.Dropdown(
                             id="metric-select-dropdown",
                             options=list(
-                                {"label": mode, "value": meas_modes[mode]} for mode in meas_modes
+                                {"label": mode, "value": DROP_LIST_MEAS_MODE[mode]} for mode in DROP_LIST_MEAS_MODE
                             ),
                             value=0,
                         ),

@@ -322,11 +322,6 @@ body {
 
 /* Tab1 content
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-#set-specs-intro-container {
-    font-weight: bold;
-    margin: 8rem 5rem 1rem;
-    font-size: 3rem;
-}
 
 #metric-select-title {
     font-size: 2rem;
