@@ -282,10 +282,7 @@ def register_callbacks(dashapp):
     )
     def build_value_setter_panel(dd_sel_mode, state_value):
         if dd_sel_mode is None:
-            return  html.Div( 
-                id="default_input_area",
-                children=None,
-                ) # by default
+            return  [] ,style
         if dd_sel_mode is DROP_LIST_MEAS_MODE["Fixed Frequency"]:
             return  fix_meas_tab(state_value)
         elif dd_sel_mode is DROP_LIST_MEAS_MODE["Tracking"]:
