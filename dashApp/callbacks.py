@@ -12,15 +12,34 @@ import json
 Global_DataBase = DataBase(db)
 
 def generate_graph(axis_x, axis_y, name):
+    all_fig = list()
+
+    # tworzenie funkcji w zaleznosci od wielkosci listy axis_y
+    # case dla przypadku gdy axis_y jest pojedyncza lista
+    if type(axis_y[0]) == type([]):
+        for el in axis_y:
+            temp_dict = {
+                "x" : axis_x,
+                "y" : el,
+                "mode": "lines+markers",
+                'type': 'scatter',
+                'name': name,
+            }
+            all_fig.append(temp_dict)
+    # case dla listy list dla wartosci y, w przypadku gdy wiecej niz jeden checkbox zostanie zaklikany
+    else:
+        temp_dict = {
+            "x" : axis_x,
+            "y" : axis_y,
+            "mode": "lines+markers",
+            'type': 'scatter',
+            'name': name,
+        }
+        all_fig.append(temp_dict)
+    
+    # ustawienia graphu
     fig={
-                "data": [
-                    {
-                        "x" : axis_x,
-                        "y" : axis_y,
-                        "mode": "lines+markers",
-                        'type': 'scatter',
-                        'name': name,}
-                ],
+                "data": [ el for el in all_fig ],
                 "layout": {
                     "paper_bgcolor": "rgba(0,0,0,0)",
                     "plot_bgcolor": "rgba(0,0,0,0)",
@@ -33,7 +52,7 @@ def generate_graph(axis_x, axis_y, name):
                     "autosize": True,
                 },
             }
-    # fig = go.Figure(data=[go.Scatter(x=axis_x, y=axis_y)])
+
     return fig
 
 def register_callbacks(dashapp):
@@ -85,81 +104,69 @@ def register_callbacks(dashapp):
         inputs.append(Input('{}_buttonss'.format(el), "n_clicks"),)
     print(inputs)
     
-    # Multiple components can update everytime interval gets fired.
+    # Wiele komponentów może się aktualizować za każdym razem, gdy zostanie uruchomiony interwał.
     @dashapp.callback(
         Output('control-chart-live', 'figure'),
         inputs,
         )
     def update_graph_live(n, checkbox_list, *args):
-        
+        x_ax = list()
+        y_ax = list()
+
+        # sprawdzic czy jest aktualnie pomiar
         meas_state = Global_DataBase.read_table(MeasSettings).get_state()
 
-        ctx = dash.callback_context
-        if ctx.triggered:
-            # Get most recently triggered id and prop_type
-            splitted = ctx.triggered[0]["prop_id"].split(".")
-            prop_id = splitted[0]
-            prop_type = splitted[1]
+        if meas_state == MEASUREMENT_ONGOING:
+            # jesli jest pomiar, wyswietlac dane na biezaco.
+            for el in checkbox_list:
+                time_scope_last_meas = Global_DataBase.read_last_record(MeasurementInfo).get_time_scope()
+                frequency_measurement = Global_DataBase.read_filtered_table_live(time_scope_last_meas)
+                
+                x_ax = [ el.get_data_meas() for el in frequency_measurement]
 
-            if prop_type == "n_clicks":
-                meas_info = Global_DataBase.read_specific_row(MeasurementInfo, int(prop_id[0]))
-                results_table = Global_DataBase.read_filtered_table(meas_info.get_time_scope())
-   
-                transmitted_pwr = [ el.get_trans_pwr() for el in results_table]
-                data_meas = [ el.get_data_meas() for el in results_table]
-                return generate_graph( data_meas, transmitted_pwr, "stub")
+                if el == "transmit_pwr":
+                    y_ax.append([ el.get_trans_pwr() for el in frequency_measurement])
 
-        if meas_state != MEASUREMENT_ONGOING:
-            return dash.no_update
+                elif el == "received_pwr":
+                    y_ax.append([ el.get_meas_pwr() for el in frequency_measurement])
 
-        time_scope_last_meas = Global_DataBase.read_last_record(MeasurementInfo).get_time_scope()
-        frequency_measurement = Global_DataBase.read_filtered_table_live(time_scope_last_meas)
-        freq = [ el.get_meas_freq() for el in frequency_measurement]
-        transmitted_pwr = [ el.get_trans_pwr() for el in frequency_measurement]
-        received_pwr = [ el.get_meas_pwr() for el in frequency_measurement]
-        data_meas = [ el.get_data_meas() for el in frequency_measurement]
+                elif el == "sys_temp":
+                    # dodac odczyt temperatury i zapisanie do listy dict
+                    pass
+            return generate_graph( x_ax, y_ax, "stub")
+        # jesli nie ma :
+        else:
+            ctx = dash.callback_context
+            # jesli zostal wybrane pomiary z listy wyswietlic je
+            if ctx.triggered:
+                # Uzyskaj ostatnio wywołane id i prop_type
+                splitted = ctx.triggered[0]["prop_id"].split(".")
+                prop_type = splitted[1]
 
-        fig_dict = dict()
+                if prop_type == "n_clicks":
+                    prop_id = splitted[0]
+                    meas_info = Global_DataBase.read_specific_row(MeasurementInfo, int(prop_id[0]))
+                    results_table = Global_DataBase.read_filtered_table(meas_info.get_time_scope())
+                    x_ax = [ el.get_data_meas() for el in results_table]
 
-        for el in checkbox_list:
-            if el == "transmit_pwr":
-                fig_dict[el] = {
-                    "x" : data_meas,
-                    "y" : transmitted_pwr,
-                        "mode": "lines+markers",
-                        'type': 'scatter',
-                    'name': el,
-                }
-            elif el == "received_pwr":
-                fig_dict[el] = {
-                    "x" : data_meas,
-                    "y" : received_pwr,
-                    "mode": "lines+markers",
-                    'type': 'scatter',
-                    'name': el,
-                }
-            elif el == "sys_temp":
-                # dodac odczyt temperatury i zapisanie do listy dict
-                pass
+                    for check_box_el in checkbox_list:
+                        if check_box_el == "transmit_pwr":
+                            y_ax.append([ el.get_trans_pwr() for el in results_table])
 
+                        elif check_box_el == "received_pwr":
+                            y_ax.append([ el.get_meas_pwr() for el in results_table])
 
-        fig={
-                "data": [ fig_dict[el] for el in fig_dict ],
-                "layout": {
-                    "paper_bgcolor": "rgba(0,0,0,0)",
-                    "plot_bgcolor": "rgba(0,0,0,0)",
-                    "xaxis": dict(
-                        showline=False, showgrid=False, zeroline=False
-                    ),
-                    "yaxis": dict(
-                        showgrid=False, showline=False, zeroline=False
-                    ),
-                    "autosize": True,
-                },
-            }
+                        elif check_box_el == "sys_temp":
+                            # dodac odczyt temperatury i zapisanie do listy dict
+                            pass
 
+                    return generate_graph( x_ax, y_ax, "stub")
 
-        return fig
+                else: return dash.no_update
+
+            # TBD: wyswietlic ostatni pomiar z listy    
+            else: return dash.no_update
+
 
     @dashapp.callback(
         Output("chart_scannig_container", "children"),
@@ -351,29 +358,29 @@ def register_callbacks(dashapp):
     
     @dashapp.callback(
         Output('powerbutton', 'on'),
-        [
-            Input('powerbutton', 'on')
-        ],
+        Input('powerbutton', 'on')
     )
     def power_supply_btn(state):
         # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
         ctx = dash.callback_context
-        ctx.triggered[0]['value']
-        
-        if ctx.triggered[0]['value']:
-            if state == True:
-                # zasilacz wlaczony
-                Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, True)
-                return True
-            elif state == False:
-                # zasilacz wylaczony
-                Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, False)
-                return False
-            else: raise Exception("Error with power button")
-        else:
+
+        if ctx.triggered[0]['value'] == None:
             # Odczytanie stanu zasilacza z maszyny stanow i ustawienie odpowiedniego stanu.
             record = Global_DataBase.read_last_record(FrontEndInfo).get_tool_status()
             return record
+        else:
+            tool_status = Global_DataBase.read_table(FrontEndInfo).get_tool_status()
+            print("@@@@@@@@@@@@@@@")
+            print(tool_status)
+            if tool_status:
+                # zasilacz byl wlaczony
+                Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, False)
+                return False
+            elif tool_status == False:
+                # zasilacz byl wylaczony
+                Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, True)
+                return True
+            else: raise Exception("Error with power button")
 
     @dashapp.callback(
         Output("measure-triggered", 'color'),
@@ -390,6 +397,7 @@ def register_callbacks(dashapp):
 
         return retColor
 
+    # Live chart tab
     @dashapp.callback(
         Output('stopbutton-quick-stats', "disabled"),
         Input("stopbutton-quick-stats", 'n_clicks'),
@@ -400,14 +408,15 @@ def register_callbacks(dashapp):
         meas_state = Global_DataBase.read_table(MeasSettings).get_state()
         if meas_state == MEASUREMENT_ONGOING:
             if n_click:
-            Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
+                Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
                 return True
             # enable pressing button
             else:
-            return False
+                return False
         #  stop button cannot be pressed
         else: return True
 
+    # Measurements settings tab
     @dashapp.callback(
         Output( component_id="value-setter-view-btn", component_property="contextMenu"),
         Input("value-setter-view-btn", 'n_clicks'),
