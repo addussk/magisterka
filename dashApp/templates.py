@@ -9,9 +9,13 @@ Global_DataBase = DataBase(db)
 
 # Dict dla drop list do wybierania trybow pomiaru(tab meas setts)
 DROP_LIST_MEAS_MODE = {
-    "Fixed Frequency": 0,
+    'Fixed Frequency': 0,
     'Tracking': 1,
     'Sweeping': 2,
+}
+# Dict dla drop list do wybierania typow kalibracji(tab meas setts)
+DROP_LIST_CALIB = {
+    'Attenuator': 0,
 }
 
 suffix_row = "_row"
@@ -338,11 +342,31 @@ def build_tab_1():
                 ),
                 # Kolumna po prawej 5/12 szer, panel zawierajacy elementy z kalibracja urzadzen
                 html.Div(
-                    id="calib_panel",
+                    id="calib-panel",
                     className="five columns",
                     children=[
-                        html.P("TBD calibration panel"),
+                        html.Label(id="label-calib-panel", children="Calibration option:"),
+                        html.Br(),
+                        html.Div(
+                            children=[
+                                dcc.Dropdown(
+                                    className="six columns",
+                                    id="dropdownlist-calib-panel",
+                                    options=list( {"label": mode, "value": DROP_LIST_CALIB[mode]} for mode in DROP_LIST_CALIB ),
+                                    value=0,
+                                ),
+                            ],
+                            style={ 'margin-left':'30%'},
+                        ),
                         
+                        html.Div( id="option-calib-panel"),
+                        html.Div(
+                            id='calib-div-button',
+                            children=[
+                                html.Button("Calibrate!", id="calib-set-btn"),
+                            ]
+                        ),
+                       
                     ],
                 ),
             ],

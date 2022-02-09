@@ -10,6 +10,8 @@ import datetime
 
 Global_DataBase = DataBase(db)
 
+ATTENUATION_LIST = [0, 0.5, 1, 2, 4, 8, 16, 32] 
+
 def generate_graph(axis_x, axis_y, name):
     all_fig = list()
 
@@ -300,6 +302,34 @@ def register_callbacks(dashapp):
             raise NameError('Do zaimplementowania')
             
         else: raise NameError('Ivalid Mode')
+    
+    @dashapp.callback(
+        Output('option-calib-panel', 'children'),
+        Input('dropdownlist-calib-panel', 'value'),
+    )
+    def build_calibration_panel(choosen_elem_dropdownlist):
+        
+        if choosen_elem_dropdownlist == DROP_LIST_CALIB['Attenuator']:
+            return html.Div(
+                children=[
+                    html.Label("Choose Attenuation: ",className="four columns", style={ 'font-size': '1.8rem', 'margin-left':'5%'}),
+                    html.Div(
+                        className="three columns",
+                        children=[
+                            dcc.Dropdown(
+                                id="db-list-calib-panel",
+                                options=list( {"label": str(dB_value) + " dB", "value": idx } for dB_value, idx in zip(ATTENUATION_LIST, range(len(ATTENUATION_LIST))) ),
+                                value=0,
+                            ),
+                        ],
+                        style={ 'float':"right", 'margin-right':'15%' },
+                    )
+                ],
+                className='row',
+                style={
+                    'margin-top':'15%',
+                },
+            )
 
     # @@@ Callbacks to update stored data via click @@@
     @dashapp.callback(
