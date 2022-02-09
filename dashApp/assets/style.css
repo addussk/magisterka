@@ -262,8 +262,10 @@ body {
 
 /* Ustawienia dla calego panelu zawierajacego opcje kalibracji urzadzen, znajduje sie w settings-menu kontenerze */
 #calib-panel {
-    padding-right: 2%;
-    padding-left: 2%;
+    padding-right: 3%;
+    padding-left: 3%;
+    border : solid 1px #A2B1C6;
+    border-radius: 5px;
 }
 
 #metric-select-menu {
@@ -353,6 +355,16 @@ body {
     color: #c8f10f;
 }
 
+/* Dropdown list w panelu kalibracji */
+#label-calib-panel {
+    font-size: 4rem;
+    color: #c8f10f;
+}
+
+#dropdownlist-calib-panel {
+
+}
+
 #button-div {
     display: flex;
     flex-direction: row;
@@ -363,14 +375,21 @@ body {
     margin-left: 20px;
 }
 
-#value-setter-view-btn, #value-setter-set-btn {
+#value-setter-view-btn, #value-setter-set-btn, #calib-set-btn {
     border: 1px solid white;
     color: white;
     font-size: 1.8rem;
     font-weight: normal;
 }
-  
-#value-setter-set-btn:hover  {
+
+#calib-div-button {
+    margin-top: 15%;
+    margin-bottom: 5%;
+    display: flex;
+    flex-direction: row-reverse;
+}
+ 
+#value-setter-set-btn:hover, #calib-set-btn:hover  {
     color: #09d413;
     border-color: #09d413;
 }
