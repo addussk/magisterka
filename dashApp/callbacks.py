@@ -7,9 +7,10 @@ from dashApp.extensions import db
 from database import *
 import dash
 import datetime
-import json
 
 Global_DataBase = DataBase(db)
+
+ATTENUATION_LIST = [0, 0.5, 1, 2, 4, 8, 16, 32] 
 
 def generate_graph(axis_x, axis_y, name):
     all_fig = list()
@@ -277,25 +278,77 @@ def register_callbacks(dashapp):
         )
     
     @dashapp.callback(
-        Output("value-setter-panel", "children"),
+        [
+            Output("value-setter-panel", "children"),
+            Output("value-setter-panel", "style"),
+        ],
         Input("metric-select-dropdown", "value"),
         State("value-setter-store", "data"),
     )
     def build_value_setter_panel(dd_sel_mode, state_value):
+        style = {
+            'display': 'flex',
+            'flex-direction': 'column',
+            'margin-top':'5rem',
+        }
+
         if dd_sel_mode is None:
-            return  html.Div( 
-                id="default_input_area",
-                children=None,
-                ) # by default
-        if dd_sel_mode is meas_modes["Fixed Frequency"]:
-            return  fix_meas_tab(state_value)
-        elif dd_sel_mode is meas_modes["Tracking"]:
-            return track_meas_tab(state_value)
-        elif dd_sel_mode is meas_modes["Sweeping"]:
+            return  [] ,style
+        if dd_sel_mode is DROP_LIST_MEAS_MODE["Fixed Frequency"]:
+            return  fix_meas_tab(state_value), style
+        elif dd_sel_mode is DROP_LIST_MEAS_MODE["Tracking"]:
+            return track_meas_tab(state_value), style
+        elif dd_sel_mode is DROP_LIST_MEAS_MODE["Sweeping"]:
             raise NameError('Do zaimplementowania')
             
         else: raise NameError('Ivalid Mode')
+    
+    @dashapp.callback(
+        Output('option-calib-panel', 'children'),
+        Input('dropdownlist-calib-panel', 'value'),
+    )
+    def build_calibration_panel(choosen_elem_dropdownlist):
+        
+        if choosen_elem_dropdownlist == DROP_LIST_CALIB['Attenuator']:
+            return html.Div(
+                children=[
+                    html.Label("Choose Attenuation: ",className="four columns", style={ 'font-size': '1.8rem', 'margin-left':'5%'}),
+                    html.Div(
+                        className="three columns",
+                        children=[
+                            dcc.Dropdown(
+                                id="db-list-calib-panel",
+                                options=list( {"label": str(dB_value) + " dB", "value": idx } for dB_value, idx in zip(ATTENUATION_LIST, range(len(ATTENUATION_LIST))) ),
+                                value=0,
+                            ),
+                        ],
+                        style={ 'float':"right", 'margin-right':'15%' },
+                    )
+                ],
+                className='row',
+                style={
+                    'margin-top':'15%',
+                },
+            )
 
+    @dashapp.callback(
+        # tymczasowo tak zdefiniowany output
+        Output('calib-set-btn', 'value'),
+        Input('calib-set-btn', 'n_clicks'),
+    )
+    def set_calib_btn(n_clicks):
+        # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
+        ctx = dash.callback_context
+
+        if ctx.triggered[0]['value'] == None:
+            # case dla wywolania przy inicjalizacji-nie podejmuj akcji
+            return dash.no_update
+        else:
+            # wyslij informacje do serwera by przeprowadzic kalibracje urzadzenia
+            # wyswietl okienko z potwierdzeniem 
+            return dash.no_update
+
+            
     # @@@ Callbacks to update stored data via click @@@
     @dashapp.callback(
         Output("value-setter-store", "data"),
@@ -370,8 +423,7 @@ def register_callbacks(dashapp):
             return record
         else:
             tool_status = Global_DataBase.read_table(FrontEndInfo).get_tool_status()
-            print("@@@@@@@@@@@@@@@")
-            print(tool_status)
+
             if tool_status:
                 # zasilacz byl wlaczony
                 Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, False)
