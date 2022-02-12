@@ -331,6 +331,24 @@ def register_callbacks(dashapp):
                 },
             )
 
+    @dashapp.callback(
+        # tymczasowo tak zdefiniowany output
+        Output('calib-set-btn', 'value'),
+        Input('calib-set-btn', 'n_clicks'),
+    )
+    def set_calib_btn(n_clicks):
+        # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
+        ctx = dash.callback_context
+
+        if ctx.triggered[0]['value'] == None:
+            # case dla wywolania przy inicjalizacji-nie podejmuj akcji
+            return dash.no_update
+        else:
+            # wyslij informacje do serwera by przeprowadzic kalibracje urzadzenia
+            # wyswietl okienko z potwierdzeniem 
+            return dash.no_update
+
+            
     # @@@ Callbacks to update stored data via click @@@
     @dashapp.callback(
         Output("value-setter-store", "data"),
@@ -405,8 +423,7 @@ def register_callbacks(dashapp):
             return record
         else:
             tool_status = Global_DataBase.read_table(FrontEndInfo).get_tool_status()
-            print("@@@@@@@@@@@@@@@")
-            print(tool_status)
+
             if tool_status:
                 # zasilacz byl wlaczony
                 Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, False)
