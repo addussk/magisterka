@@ -36,8 +36,24 @@ layout_main = html.Div(
                 )
             ],
         ),
+        html.Div(
+            id="dialogBox_tab2",
+            className="modal",
+            children=[
+                html.Div(
+                    id="dialog_container_tab2",
+                    className="modal-content",
+                    children=[                        
+                        html.Button("X", id="exit_btn_tab2", className="close"),
+                        html.H1("Are you confirm?"),
+                        html.Button("Confirm", id="confirm_btn_tab2", className="confirm"),
+                    ],
+                )
+            ],
+        ),
         html.Div([Keyboard(id="keyboard"), html.Div(id="output")]),
         html.Div(id="hide_part", children=[daq.BooleanSwitch(id='isDiagWindShow', on=False)],  style={'display':'none'}),
+        html.Div(id="hide_part_tab2", children=[daq.BooleanSwitch(id='isDiagWindShow_tab2', on=False)],  style={'display':'none'}),
         dcc.Store(id="value-setter-store", data=init_value_setter_store()),
         dcc.Store(id="n-interval-stage", data=50),
     ], style={'text-align':'center'}

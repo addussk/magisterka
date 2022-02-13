@@ -64,37 +64,82 @@ def register_callbacks(dashapp):
             Input("keyboard", "keydown"),
             Input("exit_btn", "n_clicks"),
             Input("confirm_btn", "n_clicks"),
-            Input("dialog-btn", "n_clicks"),
+            Input('value-setter-view-btn', 'n_clicks'),
         ], prevent_initial_call=True
     )
-    def change_diagWind_state(keyb, ex_btn, conf_btn, dial_btn):
+    def change_diagWind_state(keyb, ex_btn, conf_btn, stop_btn_tab1):
         ctx = dash.callback_context
         trigger_by = ctx.triggered[0]['prop_id'].split('.')[0]
 
-        if trigger_by == "dialog-btn":
-            if dial_btn > 0:
+        if trigger_by in ["value-setter-view-btn"]:
+            if (Global_DataBase.read_last_record(MeasSettings).get_state() == MEASUREMENT_ONGOING) and stop_btn_tab1:
                 return True
             else: return False
 
         elif trigger_by == "keyboard":
             if keyb['key'].lower() == "enter":
+                Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
                 return False
-                return {"display": "none"}
             elif keyb['key'].lower() == "escape":
                 return False
-                return {"display": "none"}
 
-        elif trigger_by in ["exit_btn", "confirm_btn"]:
+        elif trigger_by == "confirm_btn":
+            Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
             return False
-            return {"display": "none"}
+
+        elif trigger_by in ["exit_btn"]:
+            return False
+
         else: return dash.no_update
-        
     
     @dashapp.callback(
-        Output("dialogBox", "style"), 
+        Output("isDiagWindShow_tab2", "on"),
+        [
+            Input("keyboard", "keydown"),
+            Input("exit_btn_tab2", "n_clicks"),
+            Input("confirm_btn_tab2", "n_clicks"),
+            Input('stopbutton-quick-stats', 'n_clicks'),
+        ], prevent_initial_call=True
+    )
+    def change_diagWind_state_tab2(keyb, ex_btn, conf_btn, stop_btn_tab2):
+        ctx = dash.callback_context
+        trigger_by = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if trigger_by in ["stopbutton-quick-stats"]:
+            if (Global_DataBase.read_last_record(MeasSettings).get_state() == MEASUREMENT_ONGOING) and stop_btn_tab2:
+                return True
+            else: return False
+
+        elif trigger_by == "keyboard":
+            if keyb['key'].lower() == "enter":
+                Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
+                return False
+            elif keyb['key'].lower() == "escape":
+                return False
+
+        elif trigger_by == "confirm_btn_tab2":
+            Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
+            return False
+
+        elif trigger_by in ["exit_btn_tab2"]:
+            return False
+
+        else: return dash.no_update
+    
+    # Funkcja wyswietlajaca okno warning dialog na oknie Meas settings
+    @dashapp.callback(
+        Output("dialogBox", "style"),
         Input("isDiagWindShow", "on"), prevent_initial_call=True
         )
-    def keydown(isOn):
+    def keydown_tab1(isOn):
+        return {"display": "block"} if isOn else {"display": "none"}
+
+    # Funkcja wyswietlajaca okno warning dialog na oknie Live chart meas
+    @dashapp.callback(
+        Output("dialogBox_tab2", "style"), 
+        Input("isDiagWindShow_tab2", "on"), prevent_initial_call=True
+        )
+    def keydown_tab2(isOn):
         return {"display": "block"} if isOn else {"display": "none"}
     
     inputs = [ Input('interval-component', 'n_intervals'),
@@ -449,36 +494,19 @@ def register_callbacks(dashapp):
 
         return retColor
 
-    # Live chart tab
+    # Funkcja wlaczajaca lub wylaczajaca mozliwosc klikniecia stop btn
     @dashapp.callback(
         Output('stopbutton-quick-stats', "disabled"),
         Input("stopbutton-quick-stats", 'n_clicks'),
     )
-    def stop_btn(n_click):
-
+    def stop_btn_diasbled_on_off(n_click):
         # read meas status from state machine
         meas_state = Global_DataBase.read_table(MeasSettings).get_state()
         if meas_state == MEASUREMENT_ONGOING:
             if n_click:
-                Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
                 return True
             # enable pressing button
             else:
                 return False
         #  stop button cannot be pressed
         else: return True
-
-    # Measurements settings tab
-    @dashapp.callback(
-        Output( component_id="value-setter-view-btn", component_property="contextMenu"),
-        Input("value-setter-view-btn", 'n_clicks'),
-    )
-    def stop_btn(n_click):
-        if n_click:
-            meas_state = Global_DataBase.read_table(MeasSettings).get_state()
-
-            if meas_state == MEASUREMENT_ONGOING:
-                Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
-                return "True"
-            else: "False"
-        else: return "else"

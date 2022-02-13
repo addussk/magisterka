@@ -419,13 +419,6 @@ def build_quick_stats_panel():
                 'width':'100%',
                 'height':'100%',
             }),
-
-            # html.Div(
-            #     id="utility-card",
-            #     children=[
-            #             daq.StopButton(id="dialog-btn",  buttonText='SHOW', size=160, n_clicks=0)
-            #         ],
-            # ),
         ],
     )
 
