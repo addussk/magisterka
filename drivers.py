@@ -4,6 +4,8 @@ import random
 #libs potrzebne dla LTDZ
 import serial.tools.list_ports as port_list
 import serial
+
+from defines import LOG_ON
 #adc
 try:
     import board
@@ -158,7 +160,6 @@ class ADC_driver():
 
     # funckja do odczytu napiecia z czujnika via I2C
     def read_voltage(self):
-        # def adc_measurement():
         i2c = busio.I2C(board.SCL, board.SDA)
         ads = ADS.ADS1115(i2c)
         #Single Ended Mode
@@ -262,3 +263,24 @@ class HMC624():
         if self.ATTENUATION[att] == retVal:
             print("Attenuation has been set succesfull")
         else: print("Warning: Attenuation've not set!") # further implementation needed
+
+
+class PowerSupply():
+    isPowerSupplyOn = None
+
+    def __init__(self):
+        self.isPowerSupplyOn = False
+        pass
+
+    def turn_on(self):
+        if LOG_ON:
+            print("Power Supply has been turned on")
+        self.isPowerSupplyOn = True
+    
+    def turn_off(self):
+        if LOG_ON:
+            print("Power Supply has been turned off")
+        self.isPowerSupplyOn = False
+    
+    def get_current_status(self):
+        return self.isPowerSupplyOn

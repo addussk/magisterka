@@ -3,7 +3,7 @@ from scripts import dummy_val_tracking, dummy_val_tracking_received_pwr
 from defines import *
 import threading
 from dashApp.models import Results, FrontEndInfo, MeasSettings, MeasurementInfo, Temperature
-from drivers import LTDZ, DS1820, ADC_driver
+from drivers import LTDZ, DS1820, ADC_driver, PowerSupply
 
 class DataBase(object):
    ptr_to_database = None
@@ -189,21 +189,6 @@ class Calibration(State):
       print("Calibration completed")
       self.status = COMPLETED
    
-class Off(State):
-   name = "off"
-   allowed = ['on', 'idle']
-
-   def turn_off(self):
-      print("Turn on process")
-
-class On(State):
-   """ State of being powered on and working """
-   name = "on"
-   allowed = ['off','idle']
-
-   def turn_on(self):
-      print("Turn on process")
-
 class Measurement(State):
    name = "measurement"
    allowed = ['idle']
@@ -390,6 +375,7 @@ class Guard(object):
    """ A class representing a guardian """
    status = None
    db = None
+   pwrSupplDriver = None
    scheduler = list()
    isInitStatus = False
    isCalibratedStatus = False
@@ -412,6 +398,7 @@ class Guard(object):
 
    def __init__(self, in_name='Main', database_ptr = None):
       self.name = in_name
+      self.pwrSupplDriver = PowerSupply()
       # State of the guard - default is init.
       self.state = Init(database_ptr)
       self.db = DataBase(database_ptr)
@@ -465,14 +452,16 @@ class Guard(object):
 
    # funkcja dokonuje pomiaru temperatury za pomoca classy DS1820
    def measure_temperature(self):
-      print("Measure temperature...")
+      if LOG_ON:
+         print("Measure temperature...")
+
       tmpSensor = DS1820()
       read_temp=tmpSensor.read_temp()
 
       self.db.ptr_to_database.session.add(Temperature(obj_temp=read_temp+5, sys_temp=read_temp, time_of_measurement=datetime.datetime.now()))
       self.db.ptr_to_database.session.commit()
 
-   def check(self):
+   def state_machine(self):
       read_mes_set = self.db.read_table(MeasSettings)
 
       if  not self.isChangeInSetting():
@@ -487,17 +476,13 @@ class Guard(object):
          db_tool_status = self.db.read_record(FrontEndInfo,"tool_status")
          if self.new_settings["tool_status"] != db_tool_status:
 
-            if db_tool_status == True:
-               print("ON MODE")
-               self.change_state(On)
-               self.state.turn_on()
-               self.new_settings["tool_status"] = True
+            if db_tool_status == TURN_ON_POWER_SUPPLY:
+               self.pwrSupplDriver.turn_on()
+               self.new_settings["tool_status"] = self.pwrSupplDriver.get_current_status()
 
-            elif db_tool_status == False:
-               print("OFF MODE")
-               self.change_state(Off)
-               self.state.turn_off()
-               self.new_settings["tool_status"] = False
+            elif db_tool_status == TURN_OFF_POWER_SUPPLY:
+               self.pwrSupplDriver.turn_off()
+               self.new_settings["tool_status"] = self.pwrSupplDriver.get_current_status()
 
             else: raise Exception("Wrong tool status")
 

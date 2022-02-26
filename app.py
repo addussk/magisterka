@@ -44,14 +44,13 @@ def make_measurement():
             print("Current Time is :", current_time)
         
         # comp.state.print_state()
-        comp.check()
+        comp.state_machine()
         time.sleep(5)
 
         comp.measure_temperature()
 
-        #adc_measurement()
-        
-        print("task completed")
+        if LOG_ON:
+            print("task completed")
 
 t2 = threading.Thread(target=make_measurement)
 t2.start()
