@@ -481,10 +481,10 @@ class Guard(object):
                retStep = STEP_TURN_POWER_ON
             else: retStep = STEP_TURN_POWER_OFF
 
-         
+         # Ustawienia pomiarow odczytane z front end'u
          read_mes_set = self.db.read_table(MeasSettings)
          if self.measurement_form["state"] != read_mes_set.get_state():
-            pass
+            retStep = STEP_MEASUREMENT
 
       return retStep
 
@@ -504,29 +504,32 @@ class Guard(object):
       elif current_step == STEP_TURN_POWER_OFF:
          self.pwrSupplDriver.turn_off()
          self.new_settings["tool_status"] = self.pwrSupplDriver.get_current_status()
-      else:
-         print("Take action")
-         if self.measurement_form["state"] != read_mes_set.get_state():
+      
+      elif current_step == STEP_MEASUREMENT:
+         if LOG_ON:
             print("MEASUREMENT MODE")
-            if read_mes_set.get_state() == MEASUREMENT_START:
-               self.change_state(Measurement)
-               self.state.managing_measurement(read_mes_set.get_state(), self.scheduler)
-               for task in self.scheduler:
-                  task.start()
+            
+         if read_mes_set.get_state() == MEASUREMENT_START:
+            self.change_state(Measurement)
+            self.state.managing_measurement(read_mes_set.get_state(), self.scheduler)
+            for task in self.scheduler:
+               task.start()
 
-               self.measurement_form["state"] = MEASUREMENT_ONGOING
-               self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_ONGOING)
+            self.measurement_form["state"] = MEASUREMENT_ONGOING
+            self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_ONGOING)
 
-            elif read_mes_set.get_state() == MEASUREMENT_STOP:
-               self.scheduler.pop()
-               self.db.update_last_record(MeasurementInfo, MeasurementInfo.finish, datetime.datetime.now())
-               self.state.managing_measurement(read_mes_set.get_state(), self.scheduler)
-               self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_FREE)
-               self.measurement_form["state"] = MEASUREMENT_FREE
-               self.db.update_setting(FrontEndInfo, FrontEndInfo.isScanAvalaible, False)
-               self.change_state(Idle)
-            # do testow
-            # elif read_mes_set.get_state() == MEASUREMENT_ONGOING:
-            #    self.measurement_form["state"] = MEASUREMENT_ONGOING
+         elif read_mes_set.get_state() == MEASUREMENT_STOP:
+            self.scheduler.pop()
+            self.db.update_last_record(MeasurementInfo, MeasurementInfo.finish, datetime.datetime.now())
+            self.state.managing_measurement(read_mes_set.get_state(), self.scheduler)
+            self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_FREE)
+            self.measurement_form["state"] = MEASUREMENT_FREE
+            self.db.update_setting(FrontEndInfo, FrontEndInfo.isScanAvalaible, False)
+            self.change_state(Idle)
+
+      else:
+         if LOG_ON:
+            print("UNKNOWN STATE")
+
 
 
