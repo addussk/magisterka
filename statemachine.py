@@ -1,6 +1,6 @@
 import time, datetime, random
 from scripts import dummy_val_tracking, dummy_val_tracking_received_pwr
-from database import *
+from defines import *
 import threading
 from dashApp.models import Results, FrontEndInfo, MeasSettings, MeasurementInfo, Temperature
 from drivers import LTDZ, DS1820, ADC_driver

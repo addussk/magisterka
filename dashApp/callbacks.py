@@ -4,7 +4,7 @@ from dash.dependencies import Input, Output, State
 from dash import html
 from dashApp.templates import *
 from dashApp.extensions import db
-from database import *
+from defines import *
 import dash
 import datetime
 

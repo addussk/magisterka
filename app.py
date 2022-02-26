@@ -1,6 +1,6 @@
 from dashApp.webapp import create_app
 from statemachine import Guard, Idle, Calibration, State
-from database import *
+from defines import *
 import datetime, time, threading
 from flask import Flask
 
@@ -35,12 +35,13 @@ def make_measurement():
     comp.state.print_state()
 
     while(True):
-        print("task started")
-        print("the number of Thread objects currently alive: ", threading.active_count())
-        print("current thread: ", threading.current_thread())
-        now = datetime.datetime.now()
-        current_time = now.strftime("%H:%M:%S")
-        print("Current Time is :", current_time)
+        if LOG_ON:
+            print("task started")
+            print("the number of Thread objects currently alive: ", threading.active_count())
+            print("current thread: ", threading.current_thread())
+            now = datetime.datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+            print("Current Time is :", current_time)
         
         # comp.state.print_state()
         comp.check()

@@ -1,3 +1,4 @@
+LOG_ON = True
 
 TURN_OFF = 0
 TURN_ON = 1
