@@ -460,7 +460,33 @@ class Guard(object):
 
       self.db.ptr_to_database.session.add(Temperature(obj_temp=read_temp+5, sys_temp=read_temp, time_of_measurement=datetime.datetime.now()))
       self.db.ptr_to_database.session.commit()
+   
+   # funkcja sprawdzajaca czy uzytkownik wybral jakas akcje, wybiera krok w state machine
+   def choose_step(self):
+      if LOG_ON:
+         print("choose step function")
+         print(self.isChangeInSetting())
 
+      # Jesli nie ma zmiany -> STEP_IDLE
+      if (not self.isChangeInSetting()):
+         retStep = STEP_IDLE
+      # Obsluga zadania 
+      else:
+         # Odczyt informacji dotyczacych zasilacza ustawionych przez uzytkownika.
+         db_pwr_suppl_status = self.db.read_record(FrontEndInfo,"tool_status")
+
+         # Sprawdzenie czy ustawienia ulegly zmianie
+         if self.new_settings["tool_status"] != db_pwr_suppl_status:
+            if db_pwr_suppl_status:
+               retStep = STEP_TURN_POWER_ON
+            else: retStep = STEP_TURN_POWER_OFF
+
+         
+         read_mes_set = self.db.read_table(MeasSettings)
+         if self.measurement_form["state"] != read_mes_set.get_state():
+            pass
+
+      return retStep
    def state_machine(self):
       read_mes_set = self.db.read_table(MeasSettings)
 
