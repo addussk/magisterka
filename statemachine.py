@@ -487,31 +487,25 @@ class Guard(object):
             pass
 
       return retStep
+
    def state_machine(self):
       read_mes_set = self.db.read_table(MeasSettings)
+      current_step = self.choose_step()
 
-      if  not self.isChangeInSetting():
+      if  current_step == STEP_IDLE:
          print("Nothing change, stay in ", self.state.__class__)
          if self.state.__class__ != Idle and self.state.__class__ != Measurement:
             self.change_state(Idle)
 
+      elif current_step == STEP_TURN_POWER_ON:
+         self.pwrSupplDriver.turn_on()
+         self.new_settings["tool_status"] = self.pwrSupplDriver.get_current_status()
+      
+      elif current_step == STEP_TURN_POWER_OFF:
+         self.pwrSupplDriver.turn_off()
+         self.new_settings["tool_status"] = self.pwrSupplDriver.get_current_status()
       else:
          print("Take action")
-
-         # If settings has been changed, choose requested action
-         db_tool_status = self.db.read_record(FrontEndInfo,"tool_status")
-         if self.new_settings["tool_status"] != db_tool_status:
-
-            if db_tool_status == TURN_ON_POWER_SUPPLY:
-               self.pwrSupplDriver.turn_on()
-               self.new_settings["tool_status"] = self.pwrSupplDriver.get_current_status()
-
-            elif db_tool_status == TURN_OFF_POWER_SUPPLY:
-               self.pwrSupplDriver.turn_off()
-               self.new_settings["tool_status"] = self.pwrSupplDriver.get_current_status()
-
-            else: raise Exception("Wrong tool status")
-
          if self.measurement_form["state"] != read_mes_set.get_state():
             print("MEASUREMENT MODE")
             if read_mes_set.get_state() == MEASUREMENT_START:
