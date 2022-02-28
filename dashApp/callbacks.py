@@ -379,21 +379,27 @@ def register_callbacks(dashapp):
     @dashapp.callback(
         # tymczasowo tak zdefiniowany output
         Output('calib-set-btn', 'value'),
-        Input('calib-set-btn', 'n_clicks'),
+        [
+            Input('calib-set-btn', 'n_clicks'),
+            Input('db-list-calib-panel', 'value'),
+        ],
     )
-    def set_calib_btn(n_clicks):
+    def set_calib_btn(n_clicks, attVal):
         # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
         ctx = dash.callback_context
-
-        if ctx.triggered[0]['value'] == None:
-            # case dla wywolania przy inicjalizacji-nie podejmuj akcji
-            return dash.no_update
-        else:
-            # wyslij informacje do serwera by przeprowadzic kalibracje urzadzenia
-            Global_DataBase.update_calib_info(START_CALIBRATE)
-
-            # TODO: wyswietl okienko z potwierdzeniem 
-            return dash.no_update
+        
+        # Akcja podejmowana tylko po wywolaniu przez klikniecie calibrate button
+        if ctx.triggered[0]['prop_id'] == "calib-set-btn.n_clicks":
+            # Zabezpieczenie by nie wykonac akcji podczas inicjalizacji strony
+            if ctx.triggered[0]['value'] == None:
+                return dash.no_update
+            else:
+                # wyslij informacje do serwera by przeprowadzic kalibracje urzadzenia
+                Global_DataBase.update_calib_info(START_CALIBRATE, ATTENUATION_LIST[attVal])
+                
+                # TODO: wyswietl okienko z potwierdzeniem 
+                return dash.no_update
+        else: return dash.no_update
 
             
     # @@@ Callbacks to update stored data via click @@@
