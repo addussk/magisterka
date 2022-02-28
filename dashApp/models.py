@@ -143,6 +143,8 @@ class FrontEndInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     slider_val = db.Column(db.Integer, nullable=False)
     tool_status = db.Column(db.Boolean)
+    calib_status = db.Column(db.Boolean)
+    attenuation = db.Column(db.Integer)
     isScanAvalaible = db.Column(db.Boolean)
     
     def __repr__(self):
@@ -150,8 +152,19 @@ class FrontEndInfo(db.Model):
 
     def set_default(self):
         self.slider_val = 2500
+        self.attenuation = 0
         self.tool_status = False
         self.isScanAvalaible = False
+        self.calib_status = False
+    
+    def set_attenuation(self, value):
+        self.attenuation = value
+
+    def change_tool_status(self, value):
+        self.tool_status = value
+    
+    def change_calib_status(self, value):
+        self.calib_status = value
 
     def get(self, member):
         if member == "slider_val":
@@ -163,6 +176,11 @@ class FrontEndInfo(db.Model):
         elif member == "isScanAvalaible":
             return self.isScanAvalaible
 
+        elif member == "calib_status":
+            return self.calib_status
+
+        elif member == "attenuation":
+            return self.attenuation
 
         else: return "invalid name"
 
@@ -172,5 +190,9 @@ class FrontEndInfo(db.Model):
     def get_slider(self):
         return self.slider_val
 
-    def change_tool_status(self, value):
-        self.tool_status = value
+    def get_calib_status(self):
+        return self.calib_status
+    
+    def get_attenuation(self):
+        return self.attenuation
+    
