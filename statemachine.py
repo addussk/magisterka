@@ -106,6 +106,13 @@ class DataBase(object):
       self.ptr_to_database.session.query(typeTable).order_by(typeTable.id.desc()).first().update(typeKey, val)
       self.ptr_to_database.session.commit()
 
+   # Funkcja sluzaca do aktualizacji informacji dotyczacych calibracji
+   def update_calib_info(self, calibState, attVal):
+      table = self.read_table(FrontEndInfo)
+      table.change_calib_status(calibState)
+      table.set_attenuation(attVal)
+      self.ptr_to_database.session.commit()
+
 class State(DataBase):
 
    name = "state"
@@ -384,6 +391,7 @@ class Guard(object):
       "slider_val":2500,
       "tool_status" : False,
       "isScanAvalaible": False,
+      "calibration_status":False,
    }
 
    measurement_form = {
@@ -428,7 +436,7 @@ class Guard(object):
    # funkcja sprawdza czy ustawienia ulegly zmianie - do refactoringu, ulepszyc dodawanie kolejnych ustawien
    def isChangeInSetting(self):
       # rzeczy ktore zawiera baza danych w alchemy
-      for key in ["tool_status"]:
+      for key in ["tool_status", "calib_status"]:
 
          read_record = self.db.read_record(FrontEndInfo, key)
          if read_record == "invalid name":
@@ -466,6 +474,8 @@ class Guard(object):
       if LOG_ON:
          print("choose step function")
          print(self.isChangeInSetting())
+         print("CALIB STATUS:")
+         print(self.db.read_record(FrontEndInfo,"calib_status"))
 
       # Jesli nie ma zmiany -> STEP_IDLE
       if (not self.isChangeInSetting()):
@@ -473,13 +483,19 @@ class Guard(object):
       # Obsluga zadania 
       else:
          # Odczyt informacji dotyczacych zasilacza ustawionych przez uzytkownika.
-         db_pwr_suppl_status = self.db.read_record(FrontEndInfo,"tool_status")
+         front_info_table = self.db.read_table(FrontEndInfo)
 
          # Sprawdzenie czy ustawienia ulegly zmianie
-         if self.new_settings["tool_status"] != db_pwr_suppl_status:
-            if db_pwr_suppl_status:
+         if self.new_settings["tool_status"] != front_info_table.get_tool_status():
+            if front_info_table.get_tool_status():
                retStep = STEP_TURN_POWER_ON
             else: retStep = STEP_TURN_POWER_OFF
+
+         # Po wyslaniu zapytania o calibracje, ustaw odpowiedni krok.
+         if self.new_settings["calib_status"] != front_info_table.get_calib_status():
+            if front_info_table.get_calib_status():
+               retStep = STEP_CALIBRATION
+            else: retStep = STEP_IDLE
 
          # Ustawienia pomiarow odczytane z front end'u
          read_mes_set = self.db.read_table(MeasSettings)
@@ -504,6 +520,11 @@ class Guard(object):
       elif current_step == STEP_TURN_POWER_OFF:
          self.pwrSupplDriver.turn_off()
          self.new_settings["tool_status"] = self.pwrSupplDriver.get_current_status()
+
+      elif current_step == STEP_CALIBRATION:
+         # TODO: Dopisac inicjalizacje dla HMC, i ustawianie poprawnej wartosci tlumienia.
+         self.db.read_table(FrontEndInfo).change_calib_status(STOP_CALIBRATE)
+         self.new_settings["calib_status"] = STOP_CALIBRATE
       
       elif current_step == STEP_MEASUREMENT:
          if LOG_ON:

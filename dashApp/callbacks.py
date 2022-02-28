@@ -390,7 +390,9 @@ def register_callbacks(dashapp):
             return dash.no_update
         else:
             # wyslij informacje do serwera by przeprowadzic kalibracje urzadzenia
-            # wyswietl okienko z potwierdzeniem 
+            Global_DataBase.update_calib_info(START_CALIBRATE)
+
+            # TODO: wyswietl okienko z potwierdzeniem 
             return dash.no_update
 
             
