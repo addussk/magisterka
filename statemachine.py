@@ -391,7 +391,7 @@ class Guard(object):
       "slider_val":2500,
       "tool_status" : False,
       "isScanAvalaible": False,
-      "calibration_status":False,
+      "calib_status":False,
    }
 
    measurement_form = {
@@ -476,6 +476,7 @@ class Guard(object):
          print(self.isChangeInSetting())
          print("CALIB STATUS:")
          print(self.db.read_record(FrontEndInfo,"calib_status"))
+         print(self.new_settings["calib_status"])
 
       # Jesli nie ma zmiany -> STEP_IDLE
       if (not self.isChangeInSetting()):
