@@ -146,6 +146,9 @@ def build_banner():
         ],
     )
 
+def build_mode_btns():
+    return 0
+
 # Build header
 def generate_metric_row(id, style, col1, col2, col3):
     if style is None:

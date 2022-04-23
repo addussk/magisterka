@@ -7,6 +7,7 @@ layout_main = html.Div(
     id="big-app-conteiner",
     children=[
         build_banner(),
+        build_mode_btns(),
         dcc.Interval(
             id='interval-component',
             interval=1*1000, # in milliseconds
