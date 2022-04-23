@@ -20,7 +20,7 @@
     }
 
     #header {
-        width: 100%;
+        width: 75%;
         height: 10%;
         border-bottom: 2px solid #f2f6f3;
     }
@@ -44,6 +44,7 @@
 
 
     #baner-logo, #baner-btn {
+        
     }
 
     #logo {
@@ -69,11 +70,14 @@
     }
 
     #start-btn {
-
+        color: rgb(17, 17, 17);
+        font-size: 1.8rem;
+        font-weight: normal;
+        background-color: #08f614;
     }
 
+    #start-btn:hover {
+        color: #111010;
+        background-color: #065b0a9d;
+    }
     
-
-}
-
-
