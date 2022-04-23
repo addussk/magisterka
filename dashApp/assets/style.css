@@ -1,551 +1,12 @@
-#app-container * {
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-}
-  
-body {
-    background-color: #1e2130;
-    color: #f3f5f4;
-    font-family: "Open Sans", sans-serif;
-    width: 100%;
-    height: 100vh;
-    max-width: 100% !important;
-    overflow-x: hidden;
-    margin: 0;
-}
-
-#big-app-conteiner {
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 6rem;
-}
-
-.banner {
-    height: fit-content;
-    background-color: #1e2130;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #4B5460;
-    padding: 1rem 10rem;
-    width: 100%;
-}
-
-.banner h5 {
-    font-family: 'Open Sans Semi Bold', sans-serif;
-    color: #c8f10f;
-    font-weight: 500;
-    line-height: 1.2;
-    font-size: 2rem;
-    letter-spacing: 0.1rem;
-    text-transform: uppercase;
-}
-
-.banner h6 {
-    color: #c8f10f;
-    font-size: 1.6rem;
-    line-height: 1;
-}
-
-
-.banner button {
-    color: #c8f10f;
-    margin-right: 10px;
-    height: 5rem;
-    line-height: 3rem;
-}
-
-#banner-logo {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.banner button:hover {
-    color: #c8f10f;
-    border-color: whitesmoke;
-}
-
-.banner Img {
-    height: 5rem;
-    margin-top: 0px;
-    margin-right: 150px;
-}
-  
-/* Dialog banner */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 2; /* Sit on top */
-    color: #f8f8f0;
-    left: 0;
-    top: 0;
-    width: 100%; 
-    height: 100%;
-    overflow: auto; /* Enable scroll if needed */
-    background-color: #474e5d;
-    padding-top: 50px;
-    background: rgba(0, 0, 0, .4)
-}
-
-/* Modal Content/Box */
-.modal-content {
-    position:relative;
-    background-color: #1e2130;
-    margin: 5% auto 15% auto; 
-    border: 1px solid darkgray;
-    width: 30%;
-    opacity: 1; 
-}
-
-/* The Modal Confirm Button (enter) */
-.modal .confirm{
-    background-color: #0a0b11;
-    color: #f8f8f0;
-    margin-bottom: 10px;
-    border: 1px solid darkgray;
-}
-
-.confirm:hover {
-    color: #c8f10f;
-    border: 1px solid #c8f10f;
-}
-
-/* The Modal Close Button (x) */
-.close {
-    position: absolute;
-    left: 90%;
-    align-items: right;
-    font-size: 20px;
-    font-weight: bold;
-    border: rgb(10, 10, 10);
-  }
-
-  .close:hover,
-  .close:focus {
-    color: #f44336;
-    cursor: pointer;
-  }
-
-/* Tabs
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-
-#tabs {
-    width: 100%;
-}
-
-.custom-tabs {
-    background-color: #1E2130;
-    text-transform: uppercase;
-    font-weight: 600;
-    font-size: 14px;
-    height: fit-content;
-    cursor: pointer;
-}
-
-#Specs-tab.custom-tab, #Control-chart-tab.custom-tab {
-    background-color: #161a28;
-    letter-spacing: 1px;
-    color: inherit;
-    border: 0;
-    border-bottom: #1E2130 solid 4px !important;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    height: 18px;
-}
-
-#Specs-tab.custom-tab--selected, #Control-chart-tab.custom-tab--selected {
-    border-bottom: #91dfd2 solid 4px !important;
-}
-
-#Specs-tab.custom-tab {
-    margin-right: 3px;
-}
-
-#Control-chart-tab.custom-tab {
-    margin-left: 3px;
-}
-
-.section-banner {
-    color: darkgray;
-    font-size: 2rem;
-    text-align: center;
-    padding: 1rem 2rem;
-    border-bottom: 1px solid #4b5460;
-}
-
-.section-checklist {
-    color: darkgray;
-    font-size: 1.5rem;
-    text-align: left;
-    padding: 1rem 2rem;
-    border-bottom: 1px solid #4b5460;
-}
-
-/* Main Dashboard Tab
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-
-#top-section-container {
-    height: 40rem;
-    flex-direction: row;
-    display: flex;
-    max-width: 100%;
-    border-top: #1e2130 solid 0.8rem;
-    /*width: 100%;*/
-  }
-
-#metric_header > div {
-    font-weight: bold;
-    font-size: 1.35rem;
-    line-height: 3rem;
-}
-
-#m_header_5 {
-    margin-top: 0rem !important;
-}
-
-.metric-row {
-    font-size: 1.3rem;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center; /* vertical center row items*/
-  }
-  
-.metric-row:hover {
-    background-color: #0F1328;
-  }
-/* Container
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-
-#app-container {
-    background: #161a28;
-    margin: 1rem 2rem;
-    max-width: 100%;
-    width: 100%;
-    height: calc(100vh - 10rem - 1px);
-}
-
-#app-content {
-    background: inherit;
-    padding: 0;
-    width: 100%;
-    max-width: 100%;
-}
-
-#settings-menu {
-    /*To definiuje kontener flex; inline lub block w zależności od podanej wartości. 
-    !! Włącza kontekst flex dla wszystkich jego bezpośrednich dzieci.*/
-    display: flex;
-    /* W ten sposób ustala się oś główną. Mozliwosci row | row-reverse | column | column-reverse;  */
-    flex-direction: row;
-    /* służy wyrównaniu obiektów flex w pionie, flex-start dotyczy wyrownania wewnatrz kontenera, od jego poczatku */
-    align-items: flex-start;
-    justify-content: space-evenly;
-    margin: 4rem 5rem 1rem;
-}
-
-/* Ustawienia dla calego panelu zawierajacego opcje nastawy pomiarow, znajduje sie w settings-menu kontenerze */
-#meas-sett-panel {
-    padding-right: 5%;
-    padding-left: 5%;
-    border : solid 1px #A2B1C6;
-    border-radius: 5px;
-}
-
-/* Ustawienia dla calego panelu zawierajacego opcje kalibracji urzadzen, znajduje sie w settings-menu kontenerze */
-#calib-panel {
-    padding-right: 3%;
-    padding-left: 3%;
-    border : solid 1px #A2B1C6;
-    border-radius: 5px;
-}
-
-#metric-select-menu {
-    margin-bottom: 5rem;
-}
-
-#metric-select-dropdown {
-    font-size: 2rem;
-    font-weight: normal;
-    width: 50%;
-    margin: auto
-}
-
-/* edytuja container przeznaczona dla buttonow */
-#value-setter-menu {
-    flex: 1 1 30%;
-    display: flex;
-    flex-direction: column;
-}
-
-#status-container {
-    width: 100%;
-    max-width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-}
-
-/*Dash Daq Graduatebar */
-
-#quick-stats.row {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-#control-chart-container {
-    flex-direction: row;
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    border-top: #1E2130 solid 0.8rem;
-}
-
-#metric-summary-session {
-    height: 100%;
-    flex: 1 1 auto;
-}
-
-#temp-indicator{
-    height: 100%;
-    margin: 0;
-    border-left: #1E2130 solid 0.8rem;
-    flex: 1 1 auto;
-}
-
-#thermometer-card {
-    color: #c8f10f;
-    font-size: 10rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-    margin: 5rem;
-    margin-right: 10rem;
-    padding: 0;
-    width: 100%;
-}
-
-#graphs-container {
-    display: flex;
-    flex-direction: column;
-    flex: 3 1;
-    max-width: calc(75%);
-    width: 70%;
-}
-
-/* Tab1 content
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-
-#metric-select-title {
-    font-size: 4rem;
-    color: #c8f10f;
-}
-
-/* Dropdown list w panelu kalibracji */
-#label-calib-panel {
-    font-size: 4rem;
-    color: #c8f10f;
-}
-
-#dropdownlist-calib-panel {
-
-}
-
-#button-div {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-}
-  
-#value-setter-view-btn {
-    margin-left: 20px;
-}
-
-#value-setter-view-btn, #value-setter-set-btn, #calib-set-btn {
-    border: 1px solid white;
-    color: white;
-    font-size: 1.8rem;
-    font-weight: normal;
-}
-
-#calib-div-button {
-    margin-top: 15%;
-    margin-bottom: 5%;
-    display: flex;
-    flex-direction: row-reverse;
-}
- 
-#value-setter-set-btn:hover, #calib-set-btn:hover  {
-    color: #09d413;
-    border-color: #09d413;
-}
-
-#value-setter-view-btn:hover {
-    color: #f44336;
-    border-color: #f44336;
-}
-
-#value-setter-panel .row {
-    padding: 1rem 0;
-}
-
-.output-datatable {
-    margin: 2rem 0rem 2rem 2rem;
-    line-height: 3;
-    align-self: flex-end;
-    width: 80%;
-}
-
-/*Dropdown*/
-.setting-input {
-    width: 100% !important;
-    height: 100%;
-  }
-  
-  .react-numeric-input, .react-numeric-input input {
-    width: 100% !important;
-  }
-  
-  .react-numeric-input input {
-    background-color: #242633 !important;
-    border-color: darkgray !important;
-    color: white !important;
-  }
-  
-  .react-numeric-input b:nth-child(2) i {
-    border-color: transparent transparent white !important;
-  }
-  
-  .react-numeric-input b:nth-child(3) i {
-    border-color: white transparent transparent !important;
-  }
-  
-  
-  /* Dropdown
-  ----------------------------------------------*/
-  
-  /*Dropdown items*/
-  .Select-control, .Select-multi-value-wrapper, .Select-menu-outer div {
-    background-color: #242633;
-  }
-  
-  /*Dropdown items*/
-  .Select-control, .Select, .Select-value-label, .Select-clear-zone {
-    color: white;
-  }
-  
-  
-  /*Dropdown items*/
-  .Select-menu-outer {
-    background-color: #242633;
-    border: 1px solid darkgray !important;
-  }
-  
-  /*Dropdown items*/
-  .Select-menu-outer div:hover {
-    background-color: rgba(36, 38, 51, 0.5) !important;
-    cursor: pointer;
-  }
-  
-  /*Dropdown arrow + delete button*/
-  .Select-control, .Select-control > span {
-    color: white;
-    background: #242633 !important;
-  }
-  
-  /*Placeholder*/
-  .Select.has-value.Select--single > .Select-control .Select-value .Select-value-label, .Select.has-value.is-pseudo-focused.Select--single > .Select-control .Select-value .Select-value-label {
-    color: white !important;
-  }
-  
-  /*Placeholder*/
-  .Select--single > .Select-control .Select-value, .Select-placeholder {
-    /*border: 1px solid darkgray;*/
-    border-radius: 4px;
-    background-color: #242633;
-    cursor: pointer;
-  }
-  
-  
-  .Select.is-focused:not(.is-open) > .Select-control {
-    border-color: #91dfd2 !important;
-  }
-  /* Tab 2 Quick stats
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-#quick-stats {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    border-right: #1e2130 solid 0.8rem;
-    border-top: #1e2130 solid 0.8rem;
-    flex: 1 1;
-    max-width: 25%;
-}
-
-#operator-led {
-    width: 200px;
-}
-  
-#operator-led > div {
-    width: 80%;
-    margin: auto;
-}
-
-#operator-led > div > div {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
-
-/* Tab 2 metric row
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-#all-charts-div {
-    padding: 1rem 2rem 1rem 1rem;
-  }
-
-  .metric-row-button {
-    border: none;
-    padding: 0px 0px;
-    color: #95969A;
-    font-size: 1rem;
-    letter-spacing: 0.02rem;
-  }
-  
-  .metric-row-button:hover {
-    border: none;
-    color: white !important;
-  }
-  
-  #metric-div {
-    padding: 1rem 2rem 1rem 1rem;
-  }
-  
-  #metric-rows {
-    overflow-y: scroll;
-    width: 100%;
-    height: 28rem;
-  }
-
 /*
   # Device with different resolution
 */
 @media only screen and (max-width: 1100px) {
+    
+    * {
+        box-sizing: border-box;
+    }
+
     body {
         background-color: #1e2130;
         color: #f3f5f4;
@@ -553,6 +14,66 @@ body {
     }
 
     #big-app-conteiner {
-        display: none; /* Hidden by default */
+        width: 1024px;
+        height: 600px;
+        text-align : center;
     }
+
+    #header {
+        width: 100%;
+        height: 10%;
+        border-bottom: 2px solid #f2f6f3;
+    }
+
+    .row {  
+
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .column {
+        float: left;
+        width: 25%;
+        height: 100%;
+    }
+
+
+    #baner-logo, #baner-btn {
+    }
+
+    #logo {
+        width: 100%;
+        height: 100%;
+    }
+
+    #baner-text{
+        width: 50%;
+        height: 100%;
+        padding: auto;
+        color: #f22d06;
+    }
+
+    #baner-text h2 {
+        margin: auto;
+        padding: 2%;
+    }
+
+    .button {
+        width: 100%;
+        height: 100%;
+    }
+
+    #start-btn {
+
+    }
+
+    
+
 }
+
+

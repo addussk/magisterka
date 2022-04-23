@@ -92,6 +92,33 @@ def init_value_setter_store():
 
 def build_banner():
     return html.Div(
+        id="header",
+        className="row",
+        children=[
+            html.Div(
+                id="baner-logo",
+                className="column",
+                children=[
+                    html.Img(id="logo", src='/dashboard/assets/logoPW.png' ),
+                ]
+            ),
+            html.Div(
+                id="baner-text",
+                className="column",
+                children=[
+                    html.H2("REAKTOR CHEMICZNY"),
+                ]
+            ),
+            html.Div(
+                id="baner-btn",
+                className="column",
+                children=[
+                    html.Button("Start!", id="start-btn", className="button"),
+                ]
+            )
+        ],
+    )
+    return html.Div(
         id="banner",
         className="banner",
         children=[
