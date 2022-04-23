@@ -14,7 +14,7 @@ body {
     margin: 0;
 }
 
-#big-app-container {
+#big-app-conteiner {
     max-width: 100%;
     display: flex;
     flex-direction: column;
