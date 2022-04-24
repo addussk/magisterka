@@ -199,11 +199,32 @@ def build_set_panel():
             ),
 
             html.Div(
-                className="column",
+                className="column input_div",
                 children=[
                     dcc.Input(id="freq_input", className="numeric_input", type="number", placeholder="Freq....", debounce=True, min=0, size=5)
                 ],
-                style={'width':'10%', 'float':'left', 'margin-left': '2%'},
+            ),
+
+            html.Div(
+                children=[
+                    html.P("Power Level: "),
+                ],
+                style={'width':'15%', 'height':'100%', 'float':'left'},
+            ),
+
+            html.Div(
+                children=[
+                    html.Button("+", className="button padding-zero half-space", style={'margin-bottom':'2%'}),
+                    html.Button("-", className="button padding-zero half-space", style={'margin-top':'2%'}),
+                ],
+                style={'height':'95%', 'width':'10%','float':'left', 'margin-left': '2%'}
+            ),
+
+            html.Div(
+                className="input_div column",
+                children=[
+                    dcc.Input(id="power_input", className="numeric_input", type="number", placeholder="Power", debounce=True, min=0, max=15 ,size=5)
+                ],
             ),
         ]
     )
