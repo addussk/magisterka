@@ -34,14 +34,23 @@
         text-align : center;
     }
 
-    #header {
-        width: 75%;
-        height: 10%;
-        border-bottom: 2px solid darkgray;
+    #setting-panel {
+        width: 70%;
+        height: 100%;
+        display: inline-block;
     }
 
-    .row {  
-        width: 75%;
+    #output-panel {
+        width: 30%;
+        height: 100%;
+        border: 2px solid darkred;
+        display: inline-block;
+    }
+
+    #header {
+    }
+
+    .row {
         height: 10%;
     }
 
@@ -97,17 +106,25 @@
         background-color: #065b0a9d;
     }
 
-    #header_modes {
-        width: 75%;
-        height: 10%;
+    #header-modes {
         margin-top: 1%;
+        font-weight: bold;
+        font-size: 1.5rem;
     }
 
-    #header_modes h2 {
+    #header-modes h2 {
         height: 100%;
         margin: auto;
         color: #f22d06;
         padding: 2%;
+    }
+
+    .mode-btn > button {
+        padding: 0%;
+        max-width: 90%;
+        max-height: 90%;
+        font-weight: bold;
+        font-size: 1.5rem;
     }
 
     #setting_panel {
