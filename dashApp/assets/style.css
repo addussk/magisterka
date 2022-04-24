@@ -22,6 +22,11 @@
         height: 50% !important;
     }
 
+    .input_div{
+        width :15% !important; 
+        float :left; 
+        margin-left: 2%;
+    }
 
     #big-app-conteiner {
         width: 1024px;
