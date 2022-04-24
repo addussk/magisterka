@@ -180,22 +180,37 @@ def build_mode_btns():
 
 def build_set_panel():
     return html.Div(
-        id="setting_panel",
+        id="setting-panel",
         className="row",
         children=[
             html.Div(
+                className='left column-set lab_btns',
                 children=[
-                    html.P("Frequency: "),
-                ],
-                style={'width':'15%', 'height':'100%', 'float':'left'},
-            ),
+                    html.Div(
+                        children=[
+                            html.P("Frequency: "),
+                        ],
+                        style={'height':'50%'},
+                    ),
 
-            html.Div(
-                children=[
-                    html.Button("+", className="button padding-zero half-space", style={'margin-bottom':'2%'}),
-                    html.Button("-", className="button padding-zero half-space", style={'margin-top':'2%'}),
+                    html.Div(
+                        children=[
+                            html.Div(
+                                className='column',
+                                children=[
+                                    html.Button("+", className="button padding-zero"),
+                                ], style={'width':'50%'}
+                            ),
+                            html.Div(
+                                className='column',
+                                children=[
+                                    html.Button("-", className="button padding-zero"),
+                                ], style={'width':'50%'}
+                            ),
+                        ],
+                        style={'height':'50%', 'margin-left': '2%'}
+                    ),
                 ],
-                style={'height':'95%', 'width':'10%','float':'left', 'margin-left': '2%'}
             ),
 
             html.Div(
@@ -206,18 +221,33 @@ def build_set_panel():
             ),
 
             html.Div(
-                children=[
-                    html.P("Power Level: "),
-                ],
-                style={'width':'15%', 'height':'100%', 'float':'left'},
-            ),
+                className='left column-set lab_btns',
+                children=[ 
+                    html.Div(
+                        children=[
+                            html.P("Power Level: "),
+                        ],
+                        style={'height':'50%'},
+                    ),
 
-            html.Div(
-                children=[
-                    html.Button("+", className="button padding-zero half-space", style={'margin-bottom':'2%'}),
-                    html.Button("-", className="button padding-zero half-space", style={'margin-top':'2%'}),
-                ],
-                style={'height':'95%', 'width':'10%','float':'left', 'margin-left': '2%'}
+                    html.Div(
+                        children=[
+                            html.Div(
+                                className='column',
+                                children=[
+                                    html.Button("+", className="button padding-zero"),
+                                ], style={'width':'50%'}
+                            ),
+                            html.Div(
+                                className='column',
+                                children=[
+                                    html.Button("-", className="button padding-zero"),
+                                ], style={'width':'50%'}
+                            ),
+                        ],
+                        style={'height':'50%', 'margin-left': '2%'}
+                    ),
+                ], 
             ),
 
             html.Div(
