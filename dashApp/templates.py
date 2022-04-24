@@ -568,18 +568,6 @@ def build_chart_panel():
         className="twelve columns",
         children=[
             generate_section_banner("Live Measurement Chart"),
-            html.Div(className="section-checklist", children=[
-                dcc.Checklist(
-                    id="trace_checklist",
-                    options=[
-                        {'label': 'Transmit Power', 'value': 'transmit_pwr'},
-                        {'label': 'Received Power', 'value': 'received_pwr'},
-                        {'label': 'System Temperature', 'value': 'sys_temp'},
-                    ],
-                    value=["transmit_pwr"],
-                    labelStyle={'display': 'inline'}
-                ),]
-            ),
             dcc.Graph(
                 id="control-chart-live",
                 figure=go.Figure(
