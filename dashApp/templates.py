@@ -148,7 +148,7 @@ def build_banner():
 
 def build_mode_btns():
     return html.Div(
-        id="header_modes",
+        id="header-modes",
         className="row",
         children=[
             html.Div(
@@ -158,19 +158,19 @@ def build_mode_btns():
                 ],
             ),
             html.Div(
-                className="column",
+                className="column mode-btn",
                 children=[
                     html.Button("Manual", id="manual-mode-btn", className="button"),
                 ],
             ),
             html.Div(
-                className="column",
+                className="column mode-btn",
                 children=[
                     html.Button("P-Tracking", id="p-track-mode-btn", className="button"),
                 ],
             ),
             html.Div(
-                className="column",
+                className="column mode-btn",
                 children=[
                     html.Button("PF-Tracking", id="pf-track-mode-btn", className="button"),
                 ],
@@ -228,6 +228,7 @@ def build_set_panel():
             ),
         ]
     )
+
 # Build header
 def generate_metric_row(id, style, col1, col2, col3):
     if style is None:
