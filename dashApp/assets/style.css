@@ -105,8 +105,8 @@
     }
 
     .button {
-        width: 95%;
-        height: 95%;
+        width: 85%;
+        height: 85%;
     }
 
     #start-btn {
@@ -136,8 +136,8 @@
 
     .mode-btn > button {
         padding: 0%;
-        max-width: 90%;
-        max-height: 90%;
+        width: 90%;
+        height: 90%;
         font-weight: bold;
         font-size: 1.5rem;
     }
