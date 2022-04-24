@@ -178,6 +178,35 @@ def build_mode_btns():
         ]
     )
 
+def build_set_panel():
+    return html.Div(
+        id="setting_panel",
+        className="row",
+        children=[
+            html.Div(
+                children=[
+                    html.P("Frequency: "),
+                ],
+                style={'width':'15%', 'height':'100%', 'float':'left'},
+            ),
+
+            html.Div(
+                children=[
+                    html.Button("+", className="button padding-zero half-space", style={'margin-bottom':'2%'}),
+                    html.Button("-", className="button padding-zero half-space", style={'margin-top':'2%'}),
+                ],
+                style={'height':'95%', 'width':'10%','float':'left', 'margin-left': '2%'}
+            ),
+
+            html.Div(
+                className="column",
+                children=[
+                    dcc.Input(id="freq_input", className="numeric_input", type="number", placeholder="Freq....", debounce=True, min=0, size=5)
+                ],
+                style={'width':'10%', 'float':'left', 'margin-left': '2%'},
+            ),
+        ]
+    )
 # Build header
 def generate_metric_row(id, style, col1, col2, col3):
     if style is None:

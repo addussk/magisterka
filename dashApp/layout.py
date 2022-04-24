@@ -8,6 +8,7 @@ layout_main = html.Div(
     children=[
         build_banner(),
         build_mode_btns(),
+        build_set_panel(),
         dcc.Interval(
             id='interval-component',
             interval=1*1000, # in milliseconds
