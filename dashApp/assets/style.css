@@ -27,9 +27,10 @@
     }
 
     .input_div{
-        width :15% !important; 
+        width :20% !important;
+        height: 80% !important;
         float :left; 
-        margin-left: 2%;
+        margin: 1%;
     }
 
     #big-app-conteiner {
@@ -47,6 +48,7 @@
     .column-set {
         width: 25%;
         height: 100%;
+        margin-left: 2%;
     }
 
     .lab_btns *{

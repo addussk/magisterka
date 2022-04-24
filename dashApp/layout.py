@@ -7,7 +7,7 @@ layout_main = html.Div(
     id="big-app-conteiner",
     children=[
         html.Div(
-            id='setting-panel',
+            id='input-panel',
             children=[
                 build_banner(),
                 build_mode_btns(),
