@@ -18,7 +18,9 @@ layout_main = html.Div(
 
         html.Div(
             id='output-panel',
+            className="row",
             children=[
+                html.H1("Status: OFF", ),
 
             ],
         ),

@@ -39,10 +39,16 @@
         text-align : center;
     }
 
+    #big-app-conteiner ::after{
+        content: '';
+        display: block;
+        clear: both;
+    }
+
     #input-panel {
         width: 70%;
         height: 100%;
-        display: inline-block;
+        float:left;
     }
 
     .column-set {
@@ -59,7 +65,7 @@
         width: 30%;
         height: 100%;
         border: 2px solid darkred;
-        display: inline-block;
+        float:left;
     }
 
     #header {
