@@ -4,7 +4,7 @@ from dash_extensions import Keyboard
 import dash_daq as daq
 
 layout_main = html.Div(
-    id="big-app-conteiner",
+    id="big-app-container",
     children=[
         html.Div(
             id='input-panel',
@@ -21,9 +21,19 @@ layout_main = html.Div(
             className="row",
             children=[
                 html.H1("Status: OFF", ),
-
+                html.Div(
+                    id="indicators_container",
+                    children=[
+                        html.Div(
+                            className="row",
+                            children=generate_output_indicators(),
+                        )
+                        
+                    ],
+                ),
             ],
         ),
+
         
         dcc.Interval(
             id='interval-component',

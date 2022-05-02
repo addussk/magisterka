@@ -61,6 +61,32 @@ rootLayout = html.Div([
     ), html.Br(),
 ])
 
+
+# id : label content
+OUTPUT_INDICATORS = {
+    'O_PWR':"Output PWR:,[W]",
+    'Refl_PWR': "Reflected PWR:,[W]",
+    'SWR': "SWR:,[W]",
+    'Freq': "Frequency:,[GHz]",
+    'PA_V': "PA Voltage:,[V]",
+    'PA_C': "PA Current:,[A]",
+    'PA_T': "PA Temperature:,[C]",
+}
+
+def generate_output_indicators():
+    retArr = []
+    for el_id, el_cont in OUTPUT_INDICATORS.items():
+        string_val, unit= el_cont.split(',')
+        one_row = html.Div(
+            id=el_id,
+            children=[
+                html.Label(string_val, className="left"),
+                html.Label(unit, className="right"),
+                html.Label("0", id=el_id+"value", className="right"),
+            ])
+        retArr.append(one_row)
+    return retArr
+    
 def init_value_setter_store():
     # Initialize store data - will be implemented
     ret = {
@@ -567,7 +593,7 @@ def build_chart_panel():
         id="chart-panel",
         children=[
             html.Div(
-                id='chart-conteiner',
+                id='chart-container',
                 children=[
                     dcc.Graph(
                         id="control-chart-live",
@@ -597,7 +623,7 @@ def build_chart_panel():
                 ],
             ),
             html.Div(
-                id="stop-btn-conteiner",
+                id="stop-btn-container",
                 className="column",
                 children=[
                     html.Button("Stop!", id="stop-btn", className="button",),

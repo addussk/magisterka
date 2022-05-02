@@ -26,6 +26,10 @@
         float: left;
     }
 
+    .right {
+        float: right;
+    }
+
     .input_div{
         width :20% !important;
         height: 80% !important;
@@ -33,13 +37,13 @@
         margin: 1%;
     }
 
-    #big-app-conteiner {
+    #big-app-container {
         width: 1024px;
         height: 600px;
         text-align : center;
     }
 
-    #big-app-conteiner ::after{
+    #big-app-container ::after{
         content: '';
         display: block;
         clear: both;
@@ -176,7 +180,7 @@
         margin: 0%;
     }
 
-    #chart-conteiner {
+    #chart-container {
         width: 79%;
         height: 100%;
         float: left;
@@ -186,7 +190,7 @@
         height: 65vh;
     }
 
-    #stop-btn-conteiner {
+    #stop-btn-container {
         width: 21%;
         display: flex;
     }
@@ -203,5 +207,14 @@
     #stop-btn:hover {
         color: #111010;
         background-color: #f10202;
+    }
+
+    #indicators_container{
+        width: 100%;
+        padding: 5%;
+    }
+
+    .output_indicator {
+        width: 100%;
     }
     
