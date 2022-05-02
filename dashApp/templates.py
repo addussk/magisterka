@@ -564,34 +564,44 @@ def build_quick_stats_panel():
 
 def build_chart_panel():
     return html.Div(
-        id="control-chart-container",
-        className="twelve columns",
+        id="chart-panel",
         children=[
-            generate_section_banner("Live Measurement Chart"),
-            dcc.Graph(
-                id="control-chart-live",
-                figure=go.Figure(
-                    {
-                        "data": [
+            html.Div(
+                id='chart-conteiner',
+                children=[
+                    dcc.Graph(
+                        id="control-chart-live",
+                        figure=go.Figure(
                             {
-                                "x": [],
-                                "y": [],
-                                "mode": "lines+markers",
+                                "data": [
+                                    {
+                                        "x": [1,2,3,4,5],
+                                        "y": [1,2,3,4,5],
+                                        "mode": "lines+markers",
+                                    }
+                                ],
+                                "layout": {
+                                    "paper_bgcolor": "rgba(0,0,0,0)",
+                                    "plot_bgcolor": "rgba(0,0,0,0)",
+                                    "xaxis": dict(
+                                        showline=False, showgrid=False, zeroline=False
+                                    ),
+                                    "yaxis": dict(
+                                        showgrid=False, showline=False, zeroline=False
+                                    ),
+                                    "autosize": True,
+                                },
                             }
-                        ],
-                        "layout": {
-                            "paper_bgcolor": "rgba(0,0,0,0)",
-                            "plot_bgcolor": "rgba(0,0,0,0)",
-                            "xaxis": dict(
-                                showline=False, showgrid=False, zeroline=False
-                            ),
-                            "yaxis": dict(
-                                showgrid=False, showline=False, zeroline=False
-                            ),
-                            "autosize": True,
-                        },
-                    }
-                ),
+                        ),
+                    ),
+                ],
+            ),
+            html.Div(
+                id="stop-btn-conteiner",
+                className="column",
+                children=[
+                    html.Button("Stop!", id="stop-btn", className="button",),
+                ]
             ),
         ],
     )

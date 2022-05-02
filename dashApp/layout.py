@@ -12,6 +12,7 @@ layout_main = html.Div(
                 build_banner(),
                 build_mode_btns(),
                 build_set_panel(),
+                build_chart_panel(),
             ]
         ),
 

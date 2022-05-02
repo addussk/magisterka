@@ -163,5 +163,39 @@
         font-size: 2rem;
         border: solid 2px darkgrey;
     }
+
+    #chart-panel{
+        height: 60%;
+        padding: 0%;
+        margin: 0%;
+    }
+
+    #chart-conteiner {
+        width: 79%;
+        height: 100%;
+        float: left;
+    }
+
+    #control-chart-live{
+        height: 65vh;
+    }
+
+    #stop-btn-conteiner {
+        width: 21%;
+        display: flex;
+    }
     
+    #stop-btn {
+        height: 20%;
+        color: rgb(17, 17, 17);
+        font-size: 1.8rem;
+        font-weight: normal;
+        background-color: #de2e0bd3;
+        align-self: flex-end;
+    }
+
+    #stop-btn:hover {
+        color: #111010;
+        background-color: #f10202;
+    }
     
