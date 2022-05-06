@@ -86,7 +86,25 @@ def generate_output_indicators():
             ])
         retArr.append(one_row)
     return retArr
+
+def generate_temp_indicator():
+    return  html.Div(
+                id="thermometer-card",
+                children=[
+                    daq.Thermometer(
+                        id="thermometer-indicator",
+                        min=0,
+                        max=105,
+                        value=50, # should be update in runtime
+                        showCurrentValue=True,
+                        units="C",
+                        color="#f71606",
+                        style={ }
+                    )
+                ]
+            )  
     
+
 def init_value_setter_store():
     # Initialize store data - will be implemented
     ret = {

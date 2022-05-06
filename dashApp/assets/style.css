@@ -210,8 +210,26 @@
     }
 
     #indicators_container{
+        height: 30%;
         width: 100%;
         padding: 5%;
+    }
+
+    #temperature_panel {
+        height: 51%;
+    }
+
+    #thermometer-card {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    #thermometer-indicator {
+        position: absolute;
+        margin: auto;
+        width: 100%;
+        height: 100%;
     }
 
     .output_indicator {
