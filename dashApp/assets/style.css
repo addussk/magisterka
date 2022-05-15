@@ -123,12 +123,11 @@
         color: rgb(17, 17, 17);
         font-size: 1.8rem;
         font-weight: normal;
-        background-color: #08f614;
+        background-color: #065b0a9d;
     }
 
     #start-btn:hover {
-        color: #111010;
-        background-color: #065b0a9d;
+        background-color: #08f614;
     }
 
     #header-modes {
