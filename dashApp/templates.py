@@ -42,23 +42,6 @@ rootLayout = html.Div([
         label= {'label':"Measurement status", 'style':{'font-size': '3rem'}},
     ), html.Br(),
 
-    daq.StopButton(
-        id='stopbutton-quick-stats',
-        disabled=True,
-        size=180,
-        style={'marginLeft':'90px', 'margin-top': '80px'},
-        className='dark-theme-control',
-    ), html.Br(),
-
-    daq.PowerButton(
-        id='powerbutton',
-        on=False,
-        style={ 'margin-top': '80px'},
-        size=140,
-        label={'label':"Power Supply", 'style':{'font-size': '3rem'}},
-        color=theme['primary'],
-        className='dark-theme-control'
-    ), html.Br(),
 ])
 
 

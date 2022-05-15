@@ -159,19 +159,13 @@ def register_callbacks(dashapp):
             Input("keyboard", "keydown"),
             Input("exit_btn_tab2", "n_clicks"),
             Input("confirm_btn_tab2", "n_clicks"),
-            Input('stopbutton-quick-stats', 'n_clicks'),
         ], prevent_initial_call=True
     )
-    def change_diagWind_state_tab2(keyb, ex_btn, conf_btn, stop_btn_tab2):
+    def change_diagWind_state_tab2(keyb, ex_btn, conf_btn):
         ctx = dash.callback_context
         trigger_by = ctx.triggered[0]['prop_id'].split('.')[0]
 
-        if trigger_by in ["stopbutton-quick-stats"]:
-            if (Global_DataBase.read_last_record(MeasSettings).get_state() == MEASUREMENT_ONGOING) and stop_btn_tab2:
-                return True
-            else: return False
-
-        elif trigger_by == "keyboard":
+        if trigger_by == "keyboard":
             if keyb['key'].lower() == "enter":
                 Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
                 return False
@@ -524,31 +518,6 @@ def register_callbacks(dashapp):
                 raise NameError("Updating store error")
     
     @dashapp.callback(
-        Output('powerbutton', 'on'),
-        Input('powerbutton', 'on')
-    )
-    def power_supply_btn(state):
-        # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
-        ctx = dash.callback_context
-
-        if ctx.triggered[0]['value'] == None:
-            # Odczytanie stanu zasilacza z maszyny stanow i ustawienie odpowiedniego stanu.
-            record = Global_DataBase.read_last_record(FrontEndInfo).get_tool_status()
-            return record
-        else:
-            tool_status = Global_DataBase.read_table(FrontEndInfo).get_tool_status()
-
-            if tool_status:
-                # zasilacz byl wlaczony
-                Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, False)
-                return False
-            elif tool_status == False:
-                # zasilacz byl wylaczony
-                Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.tool_status, True)
-                return True
-            else: raise Exception("Error with power button")
-
-    @dashapp.callback(
         Output("measure-triggered", 'color'),
         Input("measure-triggered", 'color')
     )
@@ -562,20 +531,3 @@ def register_callbacks(dashapp):
             retColor="#fa2c089d"
 
         return retColor
-
-    # Funkcja wlaczajaca lub wylaczajaca mozliwosc klikniecia stop btn
-    @dashapp.callback(
-        Output('stopbutton-quick-stats', "disabled"),
-        Input("stopbutton-quick-stats", 'n_clicks'),
-    )
-    def stop_btn_diasbled_on_off(n_click):
-        # read meas status from state machine
-        meas_state = Global_DataBase.read_table(MeasSettings).get_state()
-        if meas_state == MEASUREMENT_ONGOING:
-            if n_click:
-                return True
-            # enable pressing button
-            else:
-                return False
-        #  stop button cannot be pressed
-        else: return True
