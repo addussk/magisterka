@@ -6,6 +6,9 @@ import dash_daq as daq
 layout_main = html.Div(
     id="big-app-container",
     children=[
+        # Po refactoringu:
+        # Przetrzymuje dane od pierwszego zaladowania strony do czasu wyczysczenia
+        dcc.Store(id='start-btn-color', storage_type='local', data=fill_style()),
         html.Div(
             id='input-panel',
             children=[

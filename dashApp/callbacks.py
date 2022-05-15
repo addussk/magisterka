@@ -10,7 +10,15 @@ import datetime
 
 Global_DataBase = DataBase(db)
 
-ATTENUATION_LIST = [0, 0.5, 1, 2, 4, 8, 16, 32] 
+ATTENUATION_LIST = [0, 0.5, 1, 2, 4, 8, 16, 32]
+
+start_btn_off_style = {
+    'backgroundColor': '#065b0a9d',
+}
+
+start_btn_on_style = {
+    'backgroundColor': '#08f614',
+}
 
 def generate_graph(axis_x, axis_y, name):
     all_fig = list()
@@ -58,6 +66,59 @@ def generate_graph(axis_x, axis_y, name):
 
 def register_callbacks(dashapp):
 
+    @dashapp.callback(
+        Output('start-btn','style'),
+        Input('start-btn-color', 'data'),
+    )
+    def update_color(data):
+        return data['start-btn-style']
+
+    @dashapp.callback(
+        Output('start-btn-color', 'data'),
+        [
+            Input('stop-btn', 'n_clicks'),
+            Input('start-btn', 'n_clicks'),
+        ],
+        [State('start-btn-color', 'data'),],
+    )
+    def start_stop_btn(n_clicks_stp, n_clicks_str, data):
+        # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
+        ctx = dash.callback_context
+        # Odczytanie stanu czy pomiar jest dokonywany
+        measurement_status = Global_DataBase.read_last_record(MeasSettings).get_state()
+
+        # If obslugujacy callback przy zaladowaniu strony
+        if ctx.triggered[0]['value'] == None:
+            # jesli pomiar nie jest wystartowany, ustaw odpowiedni kolor
+            if MEASUREMENT_FREE == measurement_status:
+                data['start-btn-style'] = start_btn_off_style
+
+            # case dla pomiaru ktory jest dokonywany, kolor ma wskazywac ze pomiar jest pobierany
+            else:
+                data['start-btn-style']=start_btn_on_style
+
+        elif ctx.triggered[0]['prop_id'] == 'stop-btn.n_clicks':
+            # Btn zostal wcisniety przez uzytkownika
+            if MEASUREMENT_FREE == measurement_status:
+                dash.no_update
+
+            elif MEASUREMENT_ONGOING == measurement_status:
+                # Zapis  do bazy danych zaczecie pomiaru
+                Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
+                data['start-btn-style'] = start_btn_off_style
+                
+        elif ctx.triggered[0]['prop_id'] == 'start-btn.n_clicks':
+            # Btn zostal wcisniety przez uzytkownika
+            if MEASUREMENT_FREE == measurement_status:
+                # Zapis  do bazy danych zaczecie pomiaru
+                Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_START)
+                data['start-btn-style'] = start_btn_on_style
+            else:
+                #TODO: rozwazyc opcje dla manualu, nadpisanie parametru
+                dash.no_update
+
+        return data
+    
     @dashapp.callback(
         Output("isDiagWindShow", "on"),
         [
