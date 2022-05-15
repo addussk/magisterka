@@ -46,7 +46,7 @@ rootLayout = html.Div([
         id='stopbutton-quick-stats',
         disabled=True,
         size=180,
-        style={'margin-left':'90px', 'margin-top': '80px'},
+        style={'marginLeft':'90px', 'margin-top': '80px'},
         className='dark-theme-control',
     ), html.Br(),
 
@@ -133,6 +133,14 @@ def init_value_setter_store():
     }
     
     return ret
+
+def fill_style():
+    retDic = {
+        'start-btn-style': {
+            'backgroundColor':'#065b0a9d',
+        }
+    }
+    return retDic
 
 def build_banner():
     return html.Div(
@@ -252,7 +260,7 @@ def build_set_panel():
                                 ], style={'width':'50%'}
                             ),
                         ],
-                        style={'height':'50%', 'margin-left': '2%'}
+                        style={'height':'50%', 'marginLeft': '2%'}
                     ),
                 ],
             ),
@@ -260,7 +268,7 @@ def build_set_panel():
             html.Div(
                 className="column input_div",
                 children=[
-                    dcc.Input(id="freq_input", className="numeric_input", type="number", placeholder="Freq....", debounce=True, min=0, size=5)
+                    dcc.Input(id="freq_input", className="numeric_input", type="number", placeholder="Freq....", debounce=True, min=0)
                 ],
             ),
 
@@ -289,7 +297,7 @@ def build_set_panel():
                                 ], style={'width':'50%'}
                             ),
                         ],
-                        style={'height':'50%', 'margin-left': '2%'}
+                        style={'height':'50%', 'marginLeft': '2%'}
                     ),
                 ], 
             ),
@@ -297,7 +305,7 @@ def build_set_panel():
             html.Div(
                 className="input_div column",
                 children=[
-                    dcc.Input(id="power_input", className="numeric_input", type="number", placeholder="Power", debounce=True, min=0, max=15 ,size=5)
+                    dcc.Input(id="power_input", className="numeric_input", type="number", placeholder="Power", debounce=True, min=0, max=15)
                 ],
             ),
         ]
@@ -540,7 +548,7 @@ def build_tab_1():
                                     value=0,
                                 ),
                             ],
-                            style={ 'margin-left':'30%'},
+                            style={ 'marginLeft':'30%'},
                         ),
                         
                         html.Div( id="option-calib-panel"),
@@ -566,7 +574,7 @@ def build_tab_1():
             className="eight columns",
             style={
                 "margin-top":100,
-                "margin-left":300,
+                "marginLeft":300,
                 'align-items': 'center',
             }
         ),
