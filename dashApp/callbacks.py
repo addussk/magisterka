@@ -7,6 +7,7 @@ from dashApp.extensions import db
 from defines import *
 import dash
 import datetime
+from drivers import OUTPUT_INDICATORS_FNC
 
 Global_DataBase = DataBase(db)
 
@@ -270,6 +271,21 @@ def register_callbacks(dashapp):
         else:
             return int(last_measurement.get_sys_temperature())
 
+    # Callback obslugujacy odczyt kazdego z sensorow za pomoca tablicy zawierajacej wskaznik na funkcje do ich odczytu
+    @dashapp.callback(
+        [Output((label_indicator_id+"value"), 'children') for label_indicator_id in OUTPUT_INDICATORS.keys()],
+        [Input('interval-component', 'n_intervals'),]
+    )
+    def update_sensors_output(refresh):
+        retArr = []
+
+        for indicator in OUTPUT_INDICATORS.keys():
+            retArr.append(OUTPUT_INDICATORS_FNC[indicator]())
+
+        if len(retArr) == len(OUTPUT_INDICATORS.keys()):
+            return retArr
+        else: raise Exception("Wrong length of array in update_sensors_output cb")
+
     # Przed refactoringiem
     @dashapp.callback(
         Output("isDiagWindShow", "on"),
@@ -352,11 +368,9 @@ def register_callbacks(dashapp):
     inputs = [ Input('interval-component', 'n_intervals'),
             Input('trace_checklist', 'value'),]
     el_counter = 0
-    print(len(Global_DataBase.read_record_all(MeasurementInfo)))
     for el in range(1,len(Global_DataBase.read_record_all(MeasurementInfo))+1):
         inputs.append(Input('{}_buttonss'.format(el), "n_clicks"),)
-    print(inputs)
-    
+
     # Wiele komponentów może się aktualizować za każdym razem, gdy zostanie uruchomiony interwał.
     @dashapp.callback(
         Output('control-chart-live', 'figure'),

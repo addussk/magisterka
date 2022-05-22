@@ -63,8 +63,11 @@ def generate_output_indicators():
         one_row = html.Div(
             id=el_id,
             children=[
+                # Napis reprezentujacy nazwe dla kazdego wskaznika
                 html.Label(string_val, className="left"),
+                # Napis reprezentujacy jednostke dla kazdego wskaznika
                 html.Label(unit, className="right"),
+                # Napis reprezentujacy wartosc odczytana przez sensor
                 html.Label("0", id=el_id+"value", className="right"),
             ])
         retArr.append(one_row)
