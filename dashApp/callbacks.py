@@ -483,61 +483,7 @@ def register_callbacks(dashapp):
             raise NameError('Do zaimplementowania')
             
         else: raise NameError('Ivalid Mode')
-    
-    @dashapp.callback(
-        Output('option-calib-panel', 'children'),
-        Input('dropdownlist-calib-panel', 'value'),
-    )
-    def build_calibration_panel(choosen_elem_dropdownlist):
-        
-        if choosen_elem_dropdownlist == DROP_LIST_CALIB['Attenuator']:
-            return html.Div(
-                children=[
-                    html.Label("Choose Attenuation: ",className="four columns", style={ 'font-size': '1.8rem', 'margin-left':'5%'}),
-                    html.Div(
-                        className="three columns",
-                        children=[
-                            dcc.Dropdown(
-                                id="db-list-calib-panel",
-                                options=list( {"label": str(dB_value) + " dB", "value": idx } for dB_value, idx in zip(ATTENUATION_LIST, range(len(ATTENUATION_LIST))) ),
-                                value=0,
-                            ),
-                        ],
-                        style={ 'float':"right", 'margin-right':'15%' },
-                    )
-                ],
-                className='row',
-                style={
-                    'margin-top':'15%',
-                },
-            )
 
-    @dashapp.callback(
-        # tymczasowo tak zdefiniowany output
-        Output('calib-set-btn', 'value'),
-        [
-            Input('calib-set-btn', 'n_clicks'),
-            Input('db-list-calib-panel', 'value'),
-        ],
-    )
-    def set_calib_btn(n_clicks, attVal):
-        # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
-        ctx = dash.callback_context
-        
-        # Akcja podejmowana tylko po wywolaniu przez klikniecie calibrate button
-        if ctx.triggered[0]['prop_id'] == "calib-set-btn.n_clicks":
-            # Zabezpieczenie by nie wykonac akcji podczas inicjalizacji strony
-            if ctx.triggered[0]['value'] == None:
-                return dash.no_update
-            else:
-                # wyslij informacje do serwera by przeprowadzic kalibracje urzadzenia
-                Global_DataBase.update_calib_info(START_CALIBRATE, ATTENUATION_LIST[attVal])
-                
-                # TODO: wyswietl okienko z potwierdzeniem 
-                return dash.no_update
-        else: return dash.no_update
-
-            
     # @@@ Callbacks to update stored data via click @@@
     @dashapp.callback(
         Output("value-setter-store", "data"),

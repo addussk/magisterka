@@ -518,51 +518,7 @@ def build_tab_1():
                     
                     ]
                 ),
-                # Kolumna po prawej 5/12 szer, panel zawierajacy elementy z kalibracja urzadzen
-                html.Div(
-                    id="calib-panel",
-                    className="five columns",
-                    children=[
-                        html.Label(id="label-calib-panel", children="Calibration option:"),
-                        html.Br(),
-                        html.Div(
-                            children=[
-                                dcc.Dropdown(
-                                    className="six columns",
-                                    id="dropdownlist-calib-panel",
-                                    options=list( {"label": mode, "value": DROP_LIST_CALIB[mode]} for mode in DROP_LIST_CALIB ),
-                                    value=0,
-                                ),
-                            ],
-                            style={ 'marginLeft':'30%'},
-                        ),
-                        
-                        html.Div( id="option-calib-panel"),
-                        html.Div(
-                            id='calib-div-button',
-                            children=[
-                                html.Button("Calibrate!", id="calib-set-btn"),
-                            ]
-                        ),
-                       
-                    ],
-                ),
             ],
-        ),
-        # Dla symulacji przebiegu tracking mode - tymczasowy
-        html.Div(
-            id="chart_scannig_container",
-            className="twelve columns",
-        ),
-        # Dla symulacji przebiegu tracking mode, ustawia minimum funkcji- tymczasowy
-        html.Div(
-            id="slider_min_pointer",
-            className="eight columns",
-            style={
-                "margin-top":100,
-                "marginLeft":300,
-                'align-items': 'center',
-            }
         ),
     ]
 
