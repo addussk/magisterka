@@ -78,6 +78,7 @@ def generate_graph(axis_x, axis_y, name):
 
 def register_callbacks(dashapp):
 
+    # Funkcja ustawiajaca kolor start btn oraz status headera
     @dashapp.callback(
         [
             Output('start-btn','style'),
