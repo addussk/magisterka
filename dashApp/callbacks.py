@@ -365,21 +365,23 @@ def register_callbacks(dashapp):
     def keydown_tab2(isOn):
         return {"display": "block"} if isOn else {"display": "none"}
     
-    inputs = [ Input('interval-component', 'n_intervals'),
-            Input('trace_checklist', 'value'),]
-    el_counter = 0
-    for el in range(1,len(Global_DataBase.read_record_all(MeasurementInfo))+1):
-        inputs.append(Input('{}_buttonss'.format(el), "n_clicks"),)
+    inputs = [ Input('interval-component', 'n_intervals'),]
+    # Input('trace_checklist', 'value'),]
+    # el_counter = 0
+    # for el in range(1,len(Global_DataBase.read_record_all(MeasurementInfo))+1):
+    #     inputs.append(Input('{}_buttonss'.format(el), "n_clicks"),)
 
     # Wiele komponentów może się aktualizować za każdym razem, gdy zostanie uruchomiony interwał.
     @dashapp.callback(
         Output('control-chart-live', 'figure'),
         inputs,
         )
-    def update_graph_live(n, checkbox_list, *args):
+    def update_graph_live(n):
         x_ax = list()
         y_ax = list()
 
+        # tymczasowa deaktywacja callbacka
+        return dash.no_update
         # sprawdzic czy jest aktualnie pomiar
         meas_state = Global_DataBase.read_table(MeasSettings).get_state()
 
