@@ -232,7 +232,7 @@ def register_callbacks(dashapp):
         ],
         [State('power-input-val', 'data'),],
     )
-    def inc_dec_freq(inc_pwr_clicked, dec_pwr_clicked, current_pwr):
+    def inc_dec_power(inc_pwr_clicked, dec_pwr_clicked, current_pwr):
         triggered_by = dash.callback_context.triggered[0]['prop_id']
         retValue = current_pwr
 
@@ -241,12 +241,12 @@ def register_callbacks(dashapp):
             pass
         # Service seq
         else:
-            if triggered_by == 'freq-inc-btn.n_clicks':
+            if triggered_by == 'power-inc-btn.n_clicks':
                 retValue = current_pwr + UNIT_TO_INC_DEC
-            elif triggered_by == 'freq-dec-btn.n_clicks':
+            elif triggered_by == 'power-dec-btn.n_clicks':
                 retValue = current_pwr - UNIT_TO_INC_DEC
             else:
-                raise Exception("Error in inc_dec_freq fnc")
+                raise Exception("Error in inc_dec_pwr fnc")
         return int(retValue)
 
     # Przed refactoringiem
