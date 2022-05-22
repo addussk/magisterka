@@ -31,20 +31,6 @@ theme = {
     'secondary': '#fa0606',
 }
 
-# layout dla quick panelu 
-rootLayout = html.Div([
-
-    daq.Indicator(
-        id="measure-triggered", 
-        value=True,
-        color="#0000",
-        size=80,
-        label= {'label':"Measurement status", 'style':{'font-size': '3rem'}},
-    ), html.Br(),
-
-])
-
-
 # id : label content
 OUTPUT_INDICATORS = {
     'O_PWR':"Output PWR:,[W]",
@@ -521,23 +507,6 @@ def build_tab_1():
             ],
         ),
     ]
-
-
-def build_quick_stats_panel():
-    return html.Div(
-        id="quick-stats",
-        children=[
-            html.Div(id='dark-theme-components-1', children=[
-                daq.DarkThemeProvider(theme=theme, children=rootLayout)
-            ], style={
-                'border': 'solid 1px #A2B1C6',
-                'border-radius': '5px',
-                'padding': '50px',
-                'width':'100%',
-                'height':'100%',
-            }),
-        ],
-    )
 
 def build_chart_panel():
     return html.Div(

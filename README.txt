@@ -23,3 +23,4 @@ Bug list(TODO):
 - Poprawic init funkcje dla uzupelnienia dcc.Input elementow, zeby czytaly z gen wartosc ustawiona.
 - Dla headera repr status pomiaru dodac funkcje init, ktora bedzie sprawdzac jak ustawic wartosc na starcie
 - Dodanie ograniczenia przy ustawianiu mocy i czestotliwosci
+- Dodanie koloru zielonego dla status headera gdy odbywa sie pomiar

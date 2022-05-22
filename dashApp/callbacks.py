@@ -448,7 +448,6 @@ def register_callbacks(dashapp):
             html.Div(
                 id="status-container",
                 children=[
-                    build_quick_stats_panel(),
                     html.Div(
                         id="graphs-container",
                         children=[build_chart_panel(), build_bottom_panel() ],
@@ -543,18 +542,3 @@ def register_callbacks(dashapp):
                 store["cur_sweep_meas_setting"] = 1919
             else:
                 raise NameError("Updating store error")
-    
-    @dashapp.callback(
-        Output("measure-triggered", 'color'),
-        Input("measure-triggered", 'color')
-    )
-    def update_meas_indic(input):
-        retColor = None
-        meas_state = Global_DataBase.read_table(MeasSettings).get_state()
-
-        if meas_state == MEASUREMENT_ONGOING:
-            retColor = "#1cfa089d"
-        else:
-            retColor="#fa2c089d"
-
-        return retColor
