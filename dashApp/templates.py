@@ -251,7 +251,7 @@ def build_set_panel():
             html.Div(
                 className="column input_div",
                 children=[
-                    dcc.Input(id="freq_input", className="numeric_input", type="number", placeholder="Freq....", debounce=True, min=0)
+                    dcc.Input(id="freq_input", className="numeric_input", type="number", placeholder="MHz", debounce=True, min=0)
                 ],
             ),
 
@@ -270,13 +270,13 @@ def build_set_panel():
                             html.Div(
                                 className='column',
                                 children=[
-                                    html.Button("+", className="button padding-zero"),
+                                    html.Button("+", id="power-inc-btn", className="button padding-zero"),
                                 ], style={'width':'50%'}
                             ),
                             html.Div(
                                 className='column',
                                 children=[
-                                    html.Button("-", className="button padding-zero"),
+                                    html.Button("-", id="power-dec-btn", className="button padding-zero"),
                                 ], style={'width':'50%'}
                             ),
                         ],

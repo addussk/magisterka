@@ -10,6 +10,7 @@ layout_main = html.Div(
         # Przetrzymuje dane od pierwszego zaladowania strony do czasu wyczysczenia
         dcc.Store(id='start-btn-color', storage_type='local', data=fill_style()),
         dcc.Store(id='mode-btn-hg', storage_type='local', data=""),
+        dcc.Store(id='freq-input-val', storage_type='local', data=0),
         html.Div(
             id='input-panel',
             children=[

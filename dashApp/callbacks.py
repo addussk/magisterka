@@ -30,6 +30,8 @@ MANUAL_MODE = 0
 P_TRACKING_MODE = 1
 PF_TRACKING_MODE = 2
 
+UNIT_TO_INC_DEC = 1 # MHz
+
 def generate_graph(axis_x, axis_y, name):
     all_fig = list()
 
@@ -150,7 +152,6 @@ def register_callbacks(dashapp):
         [State('mode-btn-hg', 'data')],
     )
     def mode_btn(manual, p_track, pf_track, data):
-        print("@@@ mode_btn")
         ctx = dash.callback_context
         # Odczytanie stanu czy pomiar jest dokonywany
         measurement_status = Global_DataBase.read_last_record(MeasSettings).get_state()
@@ -181,7 +182,40 @@ def register_callbacks(dashapp):
                 raise Exception("Fail in mode_btn fnc")
 
         return data
-        
+    
+    # Funkcja wykorzystujaca storage, kazda zmiana tej wartosci powoduje aktualizacje elementu input dla czestotliwosci
+    @dashapp.callback(
+        Output('freq_input', 'value'),
+        Input('freq-input-val', 'data'),
+    )
+    def update_freq_input(data):
+        return int(data)
+
+    @dashapp.callback(
+        Output('freq-input-val', 'data'),
+        [
+            Input('freq-inc-btn', 'n_clicks'),
+            Input('freq-dec-btn', 'n_clicks'),
+        ],
+        [State('freq-input-val', 'data'),],
+    )
+    def inc_dec_freq(inc_freq_clicked, dec_freq_clicked, current_freq):
+        triggered_by = dash.callback_context.triggered[0]['prop_id']
+        retValue = current_freq
+
+        # Init seq
+        if (None == inc_freq_clicked) and (None == dec_freq_clicked):
+            pass
+        # Service seq
+        else:
+            if triggered_by == 'freq-inc-btn.n_clicks':
+                retValue = current_freq + UNIT_TO_INC_DEC
+            elif triggered_by == 'freq-dec-btn.n_clicks':
+                retValue = current_freq - UNIT_TO_INC_DEC
+            else:
+                raise Exception("Error in inc_dec_freq fnc")
+        return int(retValue)
+
     # Przed refactoringiem
     @dashapp.callback(
         Output("isDiagWindShow", "on"),
