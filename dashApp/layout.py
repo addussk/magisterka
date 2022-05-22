@@ -12,6 +12,7 @@ layout_main = html.Div(
         dcc.Store(id='mode-btn-hg', storage_type='local', data=""),
         dcc.Store(id='freq-input-val', storage_type='local', data=0),
         dcc.Store(id='power-input-val', storage_type='local', data=0),
+        dcc.Store(id="n-interval-stage", data=50),
         html.Div(
             id='input-panel',
             children=[
