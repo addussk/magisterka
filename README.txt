@@ -22,3 +22,4 @@ Bug list(TODO):
 - Poprawic uklad dla grafu, uzyc vp by miescil sie w swoim divie dla kazdej rozdzielczosci,
 - Poprawic init funkcje dla uzupelnienia dcc.Input elementow, zeby czytaly z gen wartosc ustawiona.
 - Dla headera repr status pomiaru dodac funkcje init, ktora bedzie sprawdzac jak ustawic wartosc na starcie
+- Dodanie ograniczenia przy ustawianiu mocy i czestotliwosci
