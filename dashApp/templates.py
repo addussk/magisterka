@@ -563,23 +563,6 @@ def build_tab_1():
         ),
     ]
 
-def generate_indicator():
-    return html.Div(
-        id="thermometer-card",
-        children=[
-            daq.Thermometer(
-                id="thermometer-indicator",
-                min=0,
-                max=105,
-                value=50, # should be update in runtime
-                showCurrentValue=True,
-                units="C",
-                color="#f71606",
-                style={
-                }
-            )
-        ]
-    )
 
 def build_quick_stats_panel():
     return html.Div(
