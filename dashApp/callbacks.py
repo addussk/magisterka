@@ -216,6 +216,39 @@ def register_callbacks(dashapp):
                 raise Exception("Error in inc_dec_freq fnc")
         return int(retValue)
 
+    # Funkcja wykorzystujaca storage, kazda zmiana tej wartosci powoduje aktualizacje elementu input dla mocy
+    @dashapp.callback(
+        Output('power_input', 'value'),
+        Input('power-input-val', 'data'),
+    )
+    def update_freq_input(data):
+        return int(data)
+
+    @dashapp.callback(
+        Output('power-input-val', 'data'),
+        [
+            Input('power-inc-btn', 'n_clicks'),
+            Input('power-dec-btn', 'n_clicks'),
+        ],
+        [State('power-input-val', 'data'),],
+    )
+    def inc_dec_freq(inc_pwr_clicked, dec_pwr_clicked, current_pwr):
+        triggered_by = dash.callback_context.triggered[0]['prop_id']
+        retValue = current_pwr
+
+        # Init seq
+        if (None == inc_pwr_clicked) and (None == dec_pwr_clicked):
+            pass
+        # Service seq
+        else:
+            if triggered_by == 'freq-inc-btn.n_clicks':
+                retValue = current_pwr + UNIT_TO_INC_DEC
+            elif triggered_by == 'freq-dec-btn.n_clicks':
+                retValue = current_pwr - UNIT_TO_INC_DEC
+            else:
+                raise Exception("Error in inc_dec_freq fnc")
+        return int(retValue)
+
     # Przed refactoringiem
     @dashapp.callback(
         Output("isDiagWindShow", "on"),
