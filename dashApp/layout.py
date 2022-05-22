@@ -49,7 +49,6 @@ layout_main = html.Div(
             ],
         ),
 
-        
         dcc.Interval(
             id='interval-component',
             interval=1*1000, # in milliseconds
@@ -98,7 +97,6 @@ layout_main = html.Div(
         html.Div(id="hide_part", children=[daq.BooleanSwitch(id='isDiagWindShow', on=False)],  style={'display':'none'}),
         html.Div(id="hide_part_tab2", children=[daq.BooleanSwitch(id='isDiagWindShow_tab2', on=False)],  style={'display':'none'}),
         dcc.Store(id="value-setter-store", data=init_value_setter_store()),
-        dcc.Store(id="n-interval-stage", data=50),
     ],
 )
 
