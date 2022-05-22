@@ -20,6 +20,16 @@ start_btn_on_style = {
     'backgroundColor': '#08f614',
 }
 
+mode_btns_on_style = {
+    'border': 'solid 4px rgb(40, 243, 4)',
+}
+
+mode_btns_id = ['manual-mode-btn', 'p-track-mode-btn', 'pf-track-mode-btn']
+
+MANUAL_MODE = 0
+P_TRACKING_MODE = 1
+PF_TRACKING_MODE = 2
+
 def generate_graph(axis_x, axis_y, name):
     all_fig = list()
 
@@ -79,9 +89,12 @@ def register_callbacks(dashapp):
             Input('stop-btn', 'n_clicks'),
             Input('start-btn', 'n_clicks'),
         ],
-        [State('start-btn-color', 'data'),],
+        [
+            State('start-btn-color', 'data'),
+            State('mode-btn-hg', 'data')
+        ],
     )
-    def start_stop_btn(n_clicks_stp, n_clicks_str, data):
+    def start_stop_btn(n_clicks_stp, n_clicks_str, data, data_mode):
         # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
         ctx = dash.callback_context
         # Odczytanie stanu czy pomiar jest dokonywany
@@ -119,6 +132,57 @@ def register_callbacks(dashapp):
 
         return data
     
+    @dashapp.callback(
+        [Output(mode_id, 'style' ) for mode_id in mode_btns_id],
+        [Input('mode-btn-hg', 'data')],
+    )
+    def highlight_mode_btn(data):
+        # default value dla: tryb bez zaznaczonego moda
+        retArr = [{'border':'none'}, {'border':'none'}, {'border':'none'}]
+
+        # W store przechowywana dana z nazwa btn ktory ma zostac podswietlony, sprawdzamy w tablicy pozycje i edytujemy dla niego styl w zwracanej wartosci
+        retArr[mode_btns_id.index(data)] = mode_btns_on_style
+        return retArr
+
+    @dashapp.callback(
+        Output('mode-btn-hg', 'data'),
+        [Input(mode_id, 'n_clicks' ) for mode_id in mode_btns_id],
+        [State('mode-btn-hg', 'data')],
+    )
+    def mode_btn(manual, p_track, pf_track, data):
+        print("@@@ mode_btn")
+        ctx = dash.callback_context
+        # Odczytanie stanu czy pomiar jest dokonywany
+        measurement_status = Global_DataBase.read_last_record(MeasSettings).get_state()
+        
+        # Init seq
+        if ctx.triggered[0]['value'] == None:
+            if MEASUREMENT_FREE == measurement_status:
+                data = mode_btns_id[MANUAL_MODE]
+            else:
+                meas_mode = Global_DataBase.read_last_record(MeasSettings).get_mode()
+                if MANUAL_MODE == meas_mode:
+                    data = mode_btns_id[MANUAL_MODE]
+                elif P_TRACKING_MODE == meas_mode:
+                   data = mode_btns_id[P_TRACKING_MODE]
+                elif PF_TRACKING_MODE == meas_mode:
+                    data = mode_btns_id[PF_TRACKING_MODE]
+                else:
+                    raise Exception("Wrong measurement mode")
+        # Seq po wcisnieciu przycisku mode
+        else:
+            if ctx.triggered[0]['prop_id'] == 'manual-mode-btn.n_clicks':
+                data = mode_btns_id[MANUAL_MODE]
+            elif ctx.triggered[0]['prop_id'] == 'p-track-mode-btn.n_clicks':
+                data = mode_btns_id[P_TRACKING_MODE]
+            elif ctx.triggered[0]['prop_id'] == 'pf-track-mode-btn.n_clicks':
+                data = mode_btns_id[PF_TRACKING_MODE]
+            else:
+                raise Exception("Fail in mode_btn fnc")
+
+        return data
+        
+    # Przed refactoringiem
     @dashapp.callback(
         Output("isDiagWindShow", "on"),
         [
