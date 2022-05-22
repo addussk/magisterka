@@ -79,11 +79,17 @@ def generate_graph(axis_x, axis_y, name):
 def register_callbacks(dashapp):
 
     @dashapp.callback(
-        Output('start-btn','style'),
-        Input('start-btn-color', 'data'),
+        [
+            Output('start-btn','style'),
+            Output('status-header', 'children')
+        ],
+        [Input('start-btn-color', 'data'),],
     )
     def update_color(data):
-        return data['start-btn-style']
+        # W zaleznosci od koloru start btn zaktualizuj wartosc headera
+        retHeader = "Status: OFF" if '#065b0a9d' == data['start-btn-style']['backgroundColor'] else "Status: ON"
+        
+        return [data['start-btn-style'], retHeader]
 
     @dashapp.callback(
         Output('start-btn-color', 'data'),
@@ -487,18 +493,6 @@ def register_callbacks(dashapp):
             Global_DataBase.update_setting(FrontEndInfo, FrontEndInfo.slider_val, value)
 
         return 'drag_value: {} | value: {}'.format(drag_value, value)
-
-    @dashapp.callback(
-        Output('thermometer-indicator', 'value'),
-        [Input('interval-component', 'n_intervals')]
-    )
-    def update_therm_col(val):
-        last_measurement = db.session.query(Temperature).order_by(Temperature.id.desc()).first()
-
-        if last_measurement == None:
-            pass
-        else:
-            return int(last_measurement.get_sys_temperature())
 
     @dashapp.callback(
         [Output("app-content", "children"), Output("interval-component", "n_intervals")],
