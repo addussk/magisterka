@@ -251,6 +251,18 @@ def register_callbacks(dashapp):
                 raise Exception("Error in inc_dec_pwr fnc")
         return int(retValue)
 
+    @dashapp.callback(
+        Output('thermometer-indicator', 'value'),
+        [Input('interval-component', 'n_intervals')],
+    )
+    def update_therm_col(val):
+        last_measurement = db.session.query(Temperature).order_by(Temperature.id.desc()).first()
+
+        if last_measurement == None:
+            pass
+        else:
+            return int(last_measurement.get_sys_temperature())
+
     # Przed refactoringiem
     @dashapp.callback(
         Output("isDiagWindShow", "on"),
