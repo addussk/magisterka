@@ -190,7 +190,8 @@ def register_callbacks(dashapp):
     )
     def update_freq_input(data):
         return int(data)
-
+    
+    # Funkcja obslugujace przyciski do ustawiania czestotliwosci
     @dashapp.callback(
         Output('freq-input-val', 'data'),
         [
@@ -224,6 +225,7 @@ def register_callbacks(dashapp):
     def update_freq_input(data):
         return int(data)
 
+    # Funkcja obslugujace przyciski do ustawiania mocy
     @dashapp.callback(
         Output('power-input-val', 'data'),
         [
