@@ -3,6 +3,17 @@ from dashApp.templates import *
 from dash_extensions import Keyboard
 import dash_daq as daq
 
+DICT_DEFAULT_CFG = {
+    "cur_track_meas_setting": {
+            "turn_on": False,
+            "start_freq":90,
+            "stop_freq":110,
+            "power":36,
+            "freq_step":1,
+            "time_step":10,
+        }
+    }
+
 layout_main = html.Div(
     id="big-app-container",
     children=[
@@ -47,6 +58,15 @@ layout_main = html.Div(
                     ],
                 ),
             ],
+        ),
+
+        html.Div(
+            id="dialog-form-p-tracking",
+            className="dialog_container",
+            children=track_meas_tab(DICT_DEFAULT_CFG),
+            style={
+                'display':'none',
+            }
         ),
 
         dcc.Interval(
