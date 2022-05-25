@@ -76,7 +76,6 @@ def generate_temp_indicator():
                 ]
             )  
     
-
 def init_value_setter_store():
     # Initialize store data - will be implemented
     ret = {
@@ -427,28 +426,19 @@ def build_tabs():
 def generate_section_banner(title):
     return html.Div(className="section-banner", children=title)
 
-def build_value_setter_line(line_num, label, value, col3):
-    row_style = {}
-
-    if line_num[-6:] == "header":
-        row_style = {
-            'color':'#c8f10f',
-            'font-size': '3rem',
-        }
-    else:
-        row_style = {
-           'color': "#00000",
-           'font-size': '2rem',
-        }
+def build_value_setter_line(line_num, label, col3):
+    row_style = {
+        'color':'#c8f10f',
+        'font-size': '1.5rem',
+    }
 
     return html.Div(
         id=line_num,
         children=[
-            html.Label(label, className="four columns"),
-            html.Label(value, className="four columns"),
-            html.Div(col3, className="four columns"),
+            html.Label(label, className='first_diag_col left'),
+            html.Div(col3, className='sec_diag_col left'),
         ],
-        className="row",
+        className="row-diag-window",
         style=row_style
     )
     
