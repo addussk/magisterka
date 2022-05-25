@@ -235,3 +235,23 @@
         width: 100%;
     }
     
+    .dialog_container {
+        background-color:rgba(26, 27, 54, 0.95);
+        color: #f10202;
+        position: fixed;
+        z-index: 2;
+        height: 60vh;
+        width: 70vh;
+        margin-left: 30%;
+        margin-top: 5%;
+        border: solid 2px #f3f5f4;
+        font-size: medium;
+    }
+
+    .first_diag_col{
+        width: 45%;
+    }
+
+    .sec_diag_col{
+        width: 30%;
+    }
