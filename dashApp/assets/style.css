@@ -119,6 +119,14 @@
         height: 85%;
     }
 
+    .button-container{
+        width: 50vh;
+        height: 15vh;
+        padding: 5%;
+        margin-top: 5%;
+        margin-left: 15%;
+    }
+
     #start-btn {
         color: rgb(17, 17, 17);
         font-size: 1.8rem;
@@ -254,4 +262,8 @@
 
     .sec_diag_col{
         width: 30%;
+    }
+
+    #accept-btn {
+
     }
