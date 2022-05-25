@@ -155,12 +155,17 @@ def register_callbacks(dashapp):
         return retArr
 
     @dashapp.callback(
-        Output('mode-btn-hg', 'data'),
+        [
+            Output('mode-btn-hg', 'data'),
+            Output('dialog-form-p-tracking', 'style'),
+        ],
         [Input(mode_id, 'n_clicks' ) for mode_id in mode_btns_id],
         [State('mode-btn-hg', 'data')],
     )
     def mode_btn(manual, p_track, pf_track, data):
+        unhide_diag_box, style = False, dash.no_update
         ctx = dash.callback_context
+
         # Odczytanie stanu czy pomiar jest dokonywany
         measurement_status = Global_DataBase.read_last_record(MeasSettings).get_state()
         
@@ -184,12 +189,17 @@ def register_callbacks(dashapp):
                 data = mode_btns_id[MANUAL_MODE]
             elif ctx.triggered[0]['prop_id'] == 'p-track-mode-btn.n_clicks':
                 data = mode_btns_id[P_TRACKING_MODE]
+                unhide_diag_box = True
             elif ctx.triggered[0]['prop_id'] == 'pf-track-mode-btn.n_clicks':
                 data = mode_btns_id[PF_TRACKING_MODE]
             else:
                 raise Exception("Fail in mode_btn fnc")
 
-        return data
+        if unhide_diag_box:
+            style = {
+                'display':'block',
+            }
+        return data, style
     
     # Funkcja wykorzystujaca storage, kazda zmiana tej wartosci powoduje aktualizacje elementu input dla czestotliwosci
     @dashapp.callback(
