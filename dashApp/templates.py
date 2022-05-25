@@ -619,50 +619,44 @@ def track_meas_tab(state_value):
         build_value_setter_line(
             "value-setter-panel-track-header",
             "Parameter",
-            "Last Value",
-            "Set new value",
+            "Value",
         ), 
         
         build_value_setter_line(
             "value-setter-panel-track-start-freq",
-            "Start Frequency [MHz]:",
-            state_value["cur_track_meas_setting"]["start_freq"],
+            "Start Freq:",
             daq.NumericInput(
-                id="start_freq_input", value=100, className="setting-input", size=200, max=9999999
+                id="start_freq_input", value=100,  className="setting-input", size=200, max=9999999
             ),
         ),
 
         build_value_setter_line(
             "value-setter-panel-track-stop-freq",
-            "Stop Frequency [MHz]:",
-            state_value["cur_track_meas_setting"]["stop_freq"],
+            "Stop Freq:",
             daq.NumericInput(
-                id="stop_freq_input", value=100, className="setting-input", size=200, max=9999999
+                id="stop_freq_input", value=state_value["cur_track_meas_setting"]["stop_freq"], className="setting-input", size=200, max=9999999
             ),
         ),
 
         build_value_setter_line(
             "value-setter-panel-track-power",
-            "Power [dBm]:",
-            state_value["cur_track_meas_setting"]["power"],
+            "Power:",
             daq.NumericInput(
-                id="power_track_input", value=10, className="setting-input", size=200, max=9999999
+                id="power_track_input", value=state_value["cur_track_meas_setting"]["power"], className="setting-input", size=200, max=9999999
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-freq-step",
-            "Frequency Step[MHz]:",
-            state_value["cur_track_meas_setting"]["freq_step"],
+            "Freq Step:",
             daq.NumericInput(
-                id="freq_step_input", value=5, className="setting-input", size=200, max=9999999
+                id="freq_step_input", value=state_value["cur_track_meas_setting"]["freq_step"], className="setting-input", size=200, max=9999999
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-track-time-step",
-            "Time for one step [s]:",
-            state_value["cur_track_meas_setting"]["time_step"],
+            "Time step:",
             daq.NumericInput(
-                id="time_step_track_input", value=5, className="setting-input", size=200, max=9999999
+                id="time_step_track_input", value=state_value["cur_track_meas_setting"]["time_step"], className="setting-input", size=200, max=9999999
             ),
         )
     ]
