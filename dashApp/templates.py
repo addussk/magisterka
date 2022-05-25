@@ -282,6 +282,76 @@ def build_set_panel():
         ]
     )
 
+def build_value_setter_line(line_num, label, col3):
+    row_style = {
+        'color':'#c8f10f',
+        'fontSize': '1.5rem',
+    }
+
+    return html.Div(
+        id=line_num,
+        children=[
+            html.Label(label, className='first_diag_col left'),
+            html.Div(col3, className='sec_diag_col left'),
+        ],
+        className="row-diag-window",
+        style=row_style
+    )
+ 
+def track_meas_tab(state_value):
+    return [
+        build_value_setter_line(
+            "value-setter-panel-track-header",
+            "Parameter",
+            "Value",
+        ), 
+        
+        build_value_setter_line(
+            "value-setter-panel-track-start-freq",
+            "Start Freq:",
+            daq.NumericInput(
+                id="start_freq_input", value=100,  className="setting-input", size=200, max=9999999
+            ),
+        ),
+
+        build_value_setter_line(
+            "value-setter-panel-track-stop-freq",
+            "Stop Freq:",
+            daq.NumericInput(
+                id="stop_freq_input", value=state_value["cur_track_meas_setting"]["stop_freq"], className="setting-input", size=200, max=9999999
+            ),
+        ),
+
+        build_value_setter_line(
+            "value-setter-panel-track-power",
+            "Power:",
+            daq.NumericInput(
+                id="power_track_input", value=state_value["cur_track_meas_setting"]["power"], className="setting-input", size=200, max=9999999
+            ),
+        ), 
+        build_value_setter_line(
+            "value-setter-panel-freq-step",
+            "Freq Step:",
+            daq.NumericInput(
+                id="freq_step_input", value=state_value["cur_track_meas_setting"]["freq_step"], className="setting-input", size=200, max=9999999
+            ),
+        ), 
+        build_value_setter_line(
+            "value-setter-panel-track-time-step",
+            "Time step:",
+            daq.NumericInput(
+                id="time_step_track_input", value=state_value["cur_track_meas_setting"]["time_step"], className="setting-input", size=200, max=9999999
+            ),
+        ),
+
+        html.Div(
+            className="button-container",
+            children=[
+                html.Button("Accept", id="accept-btn", className="button"),
+            ],
+        )
+    ]
+
 # Build header
 def generate_metric_row(id, style, col1, col2, col3):
     if style is None:
@@ -429,7 +499,7 @@ def generate_section_banner(title):
 def build_value_setter_line(line_num, label, col3):
     row_style = {
         'color':'#c8f10f',
-        'font-size': '1.5rem',
+        'fontSize': '1.5rem',
     }
 
     return html.Div(
@@ -614,49 +684,4 @@ def fix_meas_tab(state_value):
         )
     ]
 
-def track_meas_tab(state_value):
-    return [
-        build_value_setter_line(
-            "value-setter-panel-track-header",
-            "Parameter",
-            "Value",
-        ), 
-        
-        build_value_setter_line(
-            "value-setter-panel-track-start-freq",
-            "Start Freq:",
-            daq.NumericInput(
-                id="start_freq_input", value=100,  className="setting-input", size=200, max=9999999
-            ),
-        ),
 
-        build_value_setter_line(
-            "value-setter-panel-track-stop-freq",
-            "Stop Freq:",
-            daq.NumericInput(
-                id="stop_freq_input", value=state_value["cur_track_meas_setting"]["stop_freq"], className="setting-input", size=200, max=9999999
-            ),
-        ),
-
-        build_value_setter_line(
-            "value-setter-panel-track-power",
-            "Power:",
-            daq.NumericInput(
-                id="power_track_input", value=state_value["cur_track_meas_setting"]["power"], className="setting-input", size=200, max=9999999
-            ),
-        ), 
-        build_value_setter_line(
-            "value-setter-panel-freq-step",
-            "Freq Step:",
-            daq.NumericInput(
-                id="freq_step_input", value=state_value["cur_track_meas_setting"]["freq_step"], className="setting-input", size=200, max=9999999
-            ),
-        ), 
-        build_value_setter_line(
-            "value-setter-panel-track-time-step",
-            "Time step:",
-            daq.NumericInput(
-                id="time_step_track_input", value=state_value["cur_track_meas_setting"]["time_step"], className="setting-input", size=200, max=9999999
-            ),
-        )
-    ]
