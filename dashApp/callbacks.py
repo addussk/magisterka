@@ -287,84 +287,37 @@ def register_callbacks(dashapp):
             return retArr
         else: raise Exception("Wrong length of array in update_sensors_output cb")
 
+    # Callback wyswietlajacy formularz dla danego typu
+    @dashapp.callback(
+        [
+            Output('dialog-form-fix', 'style'),
+            Output('dialog-form-p-tracking', 'style'),
+            Output('dialog-form-pf-tracking', 'style'),
+        ],
+        [
+            Input('manual-mode-btn', 'n_clicks' ),
+            Input('p-track-mode-btn', 'n_clicks' ),
+            Input('pf-track-mode-btn', 'n_clicks' ),
+            Input('accept-btn-fix', 'n_clicks'),
+            Input('accept-btn-p-track', 'n_clicks'),
+        ],
+    )
+    def diag_box_on_off(fix_btn, p_btn, pf_btn, accept_btn_f, accept_btn_p_tr):
+        style = [ dash.no_update, dash.no_update, dash.no_update ]
+
+        triggered_by = dash.callback_context.triggered[0]['prop_id']
+
+        if triggered_by == 'manual-mode-btn.n_clicks':
+            style = [ {'display':'block'}, dash.no_update, dash.no_update ]
+        elif triggered_by == 'p-track-mode-btn.n_clicks':
+            style = [ dash.no_update, {'display':'block'}, dash.no_update ]
+        elif triggered_by == 'pf-track-mode-btn.n_clicks':
+            style = [ dash.no_update, dash.no_update, {'display':'block'} ]
+        else:
+            style = [ {'display':'none'}, {'display':'none'}, {'display':'none'} ]
+
+        return style
     # Przed refactoringiem
-    @dashapp.callback(
-        Output("isDiagWindShow", "on"),
-        [
-            Input("keyboard", "keydown"),
-            Input("exit_btn", "n_clicks"),
-            Input("confirm_btn", "n_clicks"),
-            Input('value-setter-view-btn', 'n_clicks'),
-        ], prevent_initial_call=True
-    )
-    def change_diagWind_state(keyb, ex_btn, conf_btn, stop_btn_tab1):
-        ctx = dash.callback_context
-        trigger_by = ctx.triggered[0]['prop_id'].split('.')[0]
-
-        if trigger_by in ["value-setter-view-btn"]:
-            if (Global_DataBase.read_last_record(MeasSettings).get_state() == MEASUREMENT_ONGOING) and stop_btn_tab1:
-                return True
-            else: return False
-
-        elif trigger_by == "keyboard":
-            if keyb['key'].lower() == "enter":
-                Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
-                return False
-            elif keyb['key'].lower() == "escape":
-                return False
-
-        elif trigger_by == "confirm_btn":
-            Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
-            return False
-
-        elif trigger_by in ["exit_btn"]:
-            return False
-
-        else: return dash.no_update
-    
-    @dashapp.callback(
-        Output("isDiagWindShow_tab2", "on"),
-        [
-            Input("keyboard", "keydown"),
-            Input("exit_btn_tab2", "n_clicks"),
-            Input("confirm_btn_tab2", "n_clicks"),
-        ], prevent_initial_call=True
-    )
-    def change_diagWind_state_tab2(keyb, ex_btn, conf_btn):
-        ctx = dash.callback_context
-        trigger_by = ctx.triggered[0]['prop_id'].split('.')[0]
-
-        if trigger_by == "keyboard":
-            if keyb['key'].lower() == "enter":
-                Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
-                return False
-            elif keyb['key'].lower() == "escape":
-                return False
-
-        elif trigger_by == "confirm_btn_tab2":
-            Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
-            return False
-
-        elif trigger_by in ["exit_btn_tab2"]:
-            return False
-
-        else: return dash.no_update
-    
-    # Funkcja wyswietlajaca okno warning dialog na oknie Meas settings
-    @dashapp.callback(
-        Output("dialogBox", "style"),
-        Input("isDiagWindShow", "on"), prevent_initial_call=True
-        )
-    def keydown_tab1(isOn):
-        return {"display": "block"} if isOn else {"display": "none"}
-
-    # Funkcja wyswietlajaca okno warning dialog na oknie Live chart meas
-    @dashapp.callback(
-        Output("dialogBox_tab2", "style"), 
-        Input("isDiagWindShow_tab2", "on"), prevent_initial_call=True
-        )
-    def keydown_tab2(isOn):
-        return {"display": "block"} if isOn else {"display": "none"}
     
     inputs = [ Input('interval-component', 'n_intervals'),]
     # Input('trace_checklist', 'value'),]
