@@ -4,6 +4,12 @@ from dash_extensions import Keyboard
 import dash_daq as daq
 
 DICT_DEFAULT_CFG = {
+    "cur_fix_meas_setting": {
+            "turn_on": False,
+            "frequency": 1,
+            "power":36,
+            "time_step":10,
+    },
     "cur_track_meas_setting": {
             "turn_on": False,
             "start_freq":90,
@@ -61,9 +67,27 @@ layout_main = html.Div(
         ),
 
         html.Div(
+            id="dialog-form-fix",
+            className="dialog_container",
+            children=fix_meas_tab(DICT_DEFAULT_CFG),
+            style={
+                'display':'none',
+            }
+        ),
+
+        html.Div(
             id="dialog-form-p-tracking",
             className="dialog_container",
             children=track_meas_tab(DICT_DEFAULT_CFG),
+            style={
+                'display':'none',
+            }
+        ),
+
+        html.Div(
+            id="dialog-form-pf-tracking",
+            className="dialog_container",
+            # children=track_meas_tab(DICT_DEFAULT_CFG),
             style={
                 'display':'none',
             }

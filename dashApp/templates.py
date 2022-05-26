@@ -347,11 +347,48 @@ def track_meas_tab(state_value):
         html.Div(
             className="button-container",
             children=[
-                html.Button("Accept", id="accept-btn", className="button"),
+                html.Button("Accept", id="accept-btn-p-track", className="button"),
             ],
         )
     ]
 
+def fix_meas_tab(state_value):
+    return [
+        build_value_setter_line(
+            "value-setter-panel-fix-header",
+            "Parameter",
+            "Set new value",
+        ), 
+        
+        build_value_setter_line(
+            "value-setter-panel-fix-freq",
+            "Frequency:",
+            daq.NumericInput(
+                id="fixed_freq_input", value=state_value["cur_fix_meas_setting"]["frequency"], className="setting-input", size=200, max=9999999
+            ),
+        ), 
+        build_value_setter_line(
+            "value-setter-panel-fix-power",
+            "Power:",
+            daq.NumericInput(
+                id="power_fix_input", value=state_value["cur_fix_meas_setting"]["power"], className="setting-input", size=200, max=9999999
+            ),
+        ), 
+        build_value_setter_line(
+            "value-setter-panel-fix-time-step",
+            "Time step:",
+            daq.NumericInput(
+                id="time_step_fix_input", value=state_value["cur_fix_meas_setting"]["time_step"], className="setting-input", size=200, max=9999999
+            ),
+        ),
+        html.Div(
+            className="button-container",
+            children=[
+                html.Button("Accept", id="accept-btn-fix", className="button"),
+            ],
+        )
+    ]
+    
 # Build header
 def generate_metric_row(id, style, col1, col2, col3):
     if style is None:
@@ -649,39 +686,5 @@ def build_bottom_panel():
         ],
     )
 
-def fix_meas_tab(state_value):
-    return [
-        build_value_setter_line(
-            "value-setter-panel-fm-header",
-            "Parameter",
-            "Last Value",
-            "Set new value",
-        ), 
-        
-        build_value_setter_line(
-            "value-setter-panel-fm-freq",
-            "Frequency [MHz]:",
-            state_value["cur_fix_meas_setting"]["frequency"],
-            daq.NumericInput(
-                id="fixed_freq_input", value=100, className="setting-input", size=200, max=9999999
-            ),
-        ), 
-        build_value_setter_line(
-            "value-setter-panel-fm-power",
-            "Power [dBm]:",
-            state_value["cur_fix_meas_setting"]["power"],
-            daq.NumericInput(
-                id="power_fm_input", value=10, className="setting-input", size=200, max=9999999
-            ),
-        ), 
-        build_value_setter_line(
-            "value-setter-panel-fm-time-step",
-            "Time for one step [s]:",
-            state_value["cur_fix_meas_setting"]["time_step"],
-            daq.NumericInput(
-                id="time_step_fm_input", value=5, className="setting-input", size=200, max=9999999
-            ),
-        )
-    ]
 
 
