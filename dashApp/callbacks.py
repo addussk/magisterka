@@ -77,6 +77,26 @@ def generate_graph(axis_x, axis_y, name):
 
     return fig
 
+# Funkcja do rozpakowania div w ktorym jest umieszczony formularz
+def unpack_html_element(form_to_unzip):
+    retArr = []
+    for x in form_to_unzip:
+        x = x["props"]
+        while type(x) == type([]) or type(x) == type({}):
+            if type(x) == type([]):
+                for list_dict in x:
+                    x = list_dict["props"]
+
+            if "children" in x:
+                x = x["children"]
+            if "props" in x:
+                x = x["props"]
+
+            if type(x) is type({}) and ("value" in x) :
+                retArr.append((x['id'], x['value']))
+                break
+    return retArr
+
 def register_callbacks(dashapp):
 
     # Funkcja ustawiajaca kolor start btn oraz status headera
