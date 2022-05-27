@@ -317,8 +317,66 @@ def register_callbacks(dashapp):
             style = [ {'display':'none'}, {'display':'none'}, {'display':'none'} ]
 
         return style
-    # Przed refactoringiem
     
+    @dashapp.callback(
+        Output("cfg-mode-store", "data"),
+        [
+            Input('dialog-form-fix', 'children'),
+            Input('dialog-form-p-tracking', 'children'),
+            Input('dialog-form-pf-tracking', 'children'),
+            Input('accept-btn-fix', 'n_clicks'),
+            Input('accept-btn-p-track', 'n_clicks'),
+        ],
+        State("cfg-mode-store", "data"),
+    )
+    def store_measurment_settings(form_fix, form_p_track, form_pf_track, acc_btn_fix, acc_btn_p , cfg_mode):
+        retVal, config_from_form = cfg_mode, []
+        state_measurement = Global_DataBase.read_table(MeasSettings)
+        triggered_by = dash.callback_context.triggered[0]
+
+        if None == triggered_by['value']:
+            retVal = dash.no_update
+        else:
+            # sprawdz czy mozna zaczac nowy pomiar
+            if state_measurement.get_state() in [None, MEASUREMENT_FREE]:
+                config_from_form = unpack_html_element(form_fix)
+                if 'accept-btn-fix.n_clicks' == triggered_by['prop_id']:
+                    temp_dict = {}
+
+                    if triggered_by['prop_id'] == 'accept-btn-fix.n_clicks':
+                        temp_dict.update({
+                            "turn_on": True,
+                            "frequency": config_from_form[0][1],
+                            "power":config_from_form[1][1],
+                            "time_step":config_from_form[2][1],})
+
+                        cfg_mode['cur_fix_meas_setting'] = temp_dict
+
+                    elif triggered_by['prop_id'] == 'accept-btn-p-track.n_clicks':
+                        temp_dict.update({
+                            "turn_on": True,
+                            "start_freq": config_from_form[0][1],
+                            "stop_freq":config_from_form[1][1],
+                            "power":config_from_form[2][1],
+                            "freq_step":config_from_form[3][1],
+                            "time_step":config_from_form[4][1],
+                            })
+
+                        cfg_mode['cur_track_meas_setting'] = temp_dict
+
+                    # TODO: opcja dla sweeping mode
+                    # elif triggered_by['prop_id'] == 'accept-btn-pf-track.n_clicks':
+                        # cfg_mode['']
+                    else:
+                        raise Exception("Fail in store_measurment_settings fnc")
+
+            else:
+                # TODO : komunikat ze trwa aktualnie pomiar
+                pass
+
+        return retVal
+
+    # Przed refactoringiem
     inputs = [ Input('interval-component', 'n_intervals'),]
     # Input('trace_checklist', 'value'),]
     # el_counter = 0
