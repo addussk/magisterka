@@ -99,9 +99,7 @@ layout_main = html.Div(
             #n_intervals=50, # start at batch 50
             #disabled = True,
         ),
-        html.Div(id="hide_part", children=[daq.BooleanSwitch(id='isDiagWindShow', on=False)],  style={'display':'none'}),
-        dcc.Store(id="value-setter-store", data=init_value_setter_store()),
-    ],
+    ],       
 )
 
 
