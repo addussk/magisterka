@@ -30,6 +30,8 @@ layout_main = html.Div(
         dcc.Store(id='freq-input-val', storage_type='local', data=0),
         dcc.Store(id='power-input-val', storage_type='local', data=0),
         dcc.Store(id="n-interval-stage", data=50),
+        dcc.Store(id="cfg-mode-store", data=init_config_storage()),
+
         html.Div(
             id='input-panel',
             children=[

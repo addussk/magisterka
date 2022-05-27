@@ -76,7 +76,7 @@ def generate_temp_indicator():
                 ]
             )  
     
-def init_value_setter_store():
+def init_config_storage():
     # Initialize store data - will be implemented
     ret = {
         "cur_fix_meas_setting": {
