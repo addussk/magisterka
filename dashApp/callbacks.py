@@ -101,10 +101,11 @@ def register_callbacks(dashapp):
         ],
         [
             State('start-btn-color', 'data'),
-            State('mode-btn-hg', 'data')
+            State('mode-btn-hg', 'data'),
+            State("cfg-mode-store", "data"),
         ],
     )
-    def start_stop_btn(n_clicks_stp, n_clicks_str, data, data_mode):
+    def start_stop_btn(n_clicks_stp, n_clicks_str, data, data_mode, cfg_mode):
         # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
         ctx = dash.callback_context
         # Odczytanie stanu czy pomiar jest dokonywany
@@ -131,11 +132,37 @@ def register_callbacks(dashapp):
                 data['start-btn-style'] = start_btn_off_style
                 
         elif ctx.triggered[0]['prop_id'] == 'start-btn.n_clicks':
+            cfg_to_store = []
             # Btn zostal wcisniety przez uzytkownika
             if MEASUREMENT_FREE == measurement_status:
                 # Zapis  do bazy danych zaczecie pomiaru
                 Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_START)
                 data['start-btn-style'] = start_btn_on_style
+
+                if mode_btns_id[MANUAL_MODE] == data_mode:
+                    # dodanie mode 0 reprezentujacego tracking mode
+                    cfg_to_store.append(0)
+                    
+                    for key, value in cfg_mode['cur_fix_meas_setting'].items():
+                        if key != "turn_on":
+                            cfg_to_store.append((key,value))
+                    
+                elif mode_btns_id[P_TRACKING_MODE] == data_mode:
+                    # dodanie mode 1 reprezentujacego tracking mode
+                    cfg_to_store.append(1)
+
+                    for key, value in cfg_mode['cur_track_meas_setting'].items():
+                        if key != "turn_on":
+                            cfg_to_store.append((key,value))
+                else:
+                    raise Exception("Error in start_stop_btn fnc")
+
+                cfg_to_store.append(MEASUREMENT_START)
+
+                # zapisujemy do bazy danych configuracje dla wybranego trybu
+                Global_DataBase.configure_measurement(cfg_to_store)
+                # Global_DataBase.create_MeasurementInfo("badanie {}".format(set_btn), datetime.datetime.now())
+
             else:
                 #TODO: rozwazyc opcje dla manualu, nadpisanie parametru
                 dash.no_update
