@@ -181,7 +181,7 @@ def register_callbacks(dashapp):
 
                 # zapisujemy do bazy danych configuracje dla wybranego trybu
                 Global_DataBase.configure_measurement(cfg_to_store)
-                # Global_DataBase.create_MeasurementInfo("badanie {}".format(set_btn), datetime.datetime.now())
+                Global_DataBase.create_MeasurementInfo("badanie {}".format(datetime.datetime.now()), datetime.datetime.now())
 
             else:
                 #TODO: rozwazyc opcje dla manualu, nadpisanie parametru
@@ -423,74 +423,34 @@ def register_callbacks(dashapp):
 
         return retVal
 
-    # Przed refactoringiem
-    inputs = [ Input('interval-component', 'n_intervals'),]
-    # Input('trace_checklist', 'value'),]
-    # el_counter = 0
-    # for el in range(1,len(Global_DataBase.read_record_all(MeasurementInfo))+1):
-    #     inputs.append(Input('{}_buttonss'.format(el), "n_clicks"),)
-
     # Wiele komponentów może się aktualizować za każdym razem, gdy zostanie uruchomiony interwał.
     @dashapp.callback(
         Output('control-chart-live', 'figure'),
-        inputs,
+        Input('interval-component', 'n_intervals'),
         )
     def update_graph_live(n):
-        x_ax = list()
-        y_ax = list()
-
-        # tymczasowa deaktywacja callbacka
-        return dash.no_update
+        x_ax, y_ax = list(), list()
+        retFig = dash.no_update
         # sprawdzic czy jest aktualnie pomiar
         meas_state = Global_DataBase.read_table(MeasSettings).get_state()
 
         if meas_state == MEASUREMENT_ONGOING:
-            # jesli jest pomiar, wyswietlac dane na biezaco.
-            for el in checkbox_list:
-                time_scope_last_meas = Global_DataBase.read_last_record(MeasurementInfo).get_time_scope()
-                frequency_measurement = Global_DataBase.read_filtered_table_live(time_scope_last_meas)
-                
-                x_ax = [ el.get_data_meas() for el in frequency_measurement]
+            # Odczyt pomiarow z bazy danych
+            time_scope_last_meas = Global_DataBase.read_last_record(MeasurementInfo).get_time_scope()
+            frequency_measurement = Global_DataBase.read_filtered_table_live(time_scope_last_meas)
+            x_ax = [ el.get_data_meas() for el in frequency_measurement]
+            
+            # transmit pwr
+            y_ax.append([ el.get_trans_pwr() for el in frequency_measurement])
+            # received pwr
+            y_ax.append([ el.get_meas_pwr() for el in frequency_measurement])
 
-                if el == "transmit_pwr":
-                    y_ax.append([ el.get_trans_pwr() for el in frequency_measurement])
-
-                elif el == "received_pwr":
-                    y_ax.append([ el.get_meas_pwr() for el in frequency_measurement])
-
-                elif el == "sys_temp":
-                    # dodac odczyt temperatury i zapisanie do listy dict
-                    pass
             return generate_graph( x_ax, y_ax, "stub")
-        # jesli nie ma :
         else:
-            ctx = dash.callback_context
-            # jesli zostal wybrane pomiary z listy wyswietlic je
-            if ctx.triggered:
-                # Uzyskaj ostatnio wywołane id i prop_type
-                splitted = ctx.triggered[0]["prop_id"].split(".")
-                prop_type = splitted[1]
+            all_records = Global_DataBase.read_record_all(MeasurementInfo)
+            for one_el in all_records:
+                
 
-                if prop_type == "n_clicks":
-                    prop_id = splitted[0]
-                    meas_info = Global_DataBase.read_specific_row(MeasurementInfo, int(prop_id[0]))
-                    results_table = Global_DataBase.read_filtered_table(meas_info.get_time_scope())
-                    x_ax = [ el.get_data_meas() for el in results_table]
+            retFig =  dash.no_update
 
-                    for check_box_el in checkbox_list:
-                        if check_box_el == "transmit_pwr":
-                            y_ax.append([ el.get_trans_pwr() for el in results_table])
-
-                        elif check_box_el == "received_pwr":
-                            y_ax.append([ el.get_meas_pwr() for el in results_table])
-
-                        elif check_box_el == "sys_temp":
-                            # dodac odczyt temperatury i zapisanie do listy dict
-                            pass
-
-                    return generate_graph( x_ax, y_ax, "stub")
-
-                else: return dash.no_update
-
-            # TBD: wyswietlic ostatni pomiar z listy    
-            else: return dash.no_update
+        return retFig
