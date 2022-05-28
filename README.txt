@@ -24,3 +24,7 @@ Bug list(TODO):
 - Dla headera repr status pomiaru dodac funkcje init, ktora bedzie sprawdzac jak ustawic wartosc na starcie
 - Dodanie ograniczenia przy ustawianiu mocy i czestotliwosci
 - Dodanie koloru zielonego dla status headera gdy odbywa sie pomiar
+- refactoring callbacka aktualizujacego graf
+- wystylizowanie diag boxow
+- dodanie warning boxow
+- rozwiazanie problemu z handlowaniem freq i pwr dla fix moda. Czy w formularzu powinna byc opcja ustawienia?
