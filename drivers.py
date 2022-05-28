@@ -17,6 +17,37 @@ except:
 #hmc
 import digitalio
 
+def read_output_pwr():
+    return random.randint(10,20)
+
+def read_reflected_pwr():
+    return random.randint(10,20)
+
+def read_swr():
+    return random.randint(10,20)
+
+def read_freq():
+    return random.randint(10,20)
+
+def read_pa_voltage():
+    return random.randint(10,20)
+
+def read_pa_current():
+    return random.randint(10,20)
+
+def read_pa_temp():
+    return random.randint(10,20)
+
+OUTPUT_INDICATORS_FNC = {
+    'O_PWR': read_output_pwr,
+    'Refl_PWR': read_reflected_pwr,
+    'SWR': read_swr,
+    'Freq': read_freq,
+    'PA_V': read_pa_voltage,
+    'PA_C': read_pa_current,
+    'PA_T': read_pa_temp,
+}
+
 #Syntezator czestotliwosci
 class LTDZ():
     

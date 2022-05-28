@@ -31,37 +31,52 @@ theme = {
     'secondary': '#fa0606',
 }
 
-# layout dla quick panelu 
-rootLayout = html.Div([
+# id : label content
+OUTPUT_INDICATORS = {
+    'O_PWR':"Output PWR:,[W]",
+    'Refl_PWR': "Reflected PWR:,[W]",
+    'SWR': "SWR:,[W]",
+    'Freq': "Frequency:,[GHz]",
+    'PA_V': "PA Voltage:,[V]",
+    'PA_C': "PA Current:,[A]",
+    'PA_T': "PA Temperature:,[C]",
+}
 
-    daq.Indicator(
-        id="measure-triggered", 
-        value=True,
-        color="#0000",
-        size=80,
-        label= {'label':"Measurement status", 'style':{'font-size': '3rem'}},
-    ), html.Br(),
+def generate_output_indicators():
+    retArr = []
+    for el_id, el_cont in OUTPUT_INDICATORS.items():
+        string_val, unit= el_cont.split(',')
+        one_row = html.Div(
+            id=el_id,
+            children=[
+                # Napis reprezentujacy nazwe dla kazdego wskaznika
+                html.Label(string_val, className="left"),
+                # Napis reprezentujacy jednostke dla kazdego wskaznika
+                html.Label(unit, className="right"),
+                # Napis reprezentujacy wartosc odczytana przez sensor
+                html.Label("0", id=el_id+"value", className="right"),
+            ])
+        retArr.append(one_row)
+    return retArr
 
-    daq.StopButton(
-        id='stopbutton-quick-stats',
-        disabled=True,
-        size=180,
-        style={'margin-left':'90px', 'margin-top': '80px'},
-        className='dark-theme-control',
-    ), html.Br(),
-
-    daq.PowerButton(
-        id='powerbutton',
-        on=False,
-        style={ 'margin-top': '80px'},
-        size=140,
-        label={'label':"Power Supply", 'style':{'font-size': '3rem'}},
-        color=theme['primary'],
-        className='dark-theme-control'
-    ), html.Br(),
-])
-
-def init_value_setter_store():
+def generate_temp_indicator():
+    return  html.Div(
+                id="thermometer-card",
+                children=[
+                    daq.Thermometer(
+                        id="thermometer-indicator",
+                        min=0,
+                        max=105,
+                        value=50, # should be update in runtime
+                        showCurrentValue=True,
+                        units="C",
+                        color="#f71606",
+                        style={ }
+                    )
+                ]
+            )  
+    
+def init_config_storage():
     # Initialize store data - will be implemented
     ret = {
         "cur_fix_meas_setting": {
@@ -90,7 +105,42 @@ def init_value_setter_store():
     
     return ret
 
+def fill_style():
+    retDic = {
+        'start-btn-style': {
+            'backgroundColor':'#065b0a9d',
+        }
+    }
+    return retDic
+
 def build_banner():
+    return html.Div(
+        id="header",
+        className="row",
+        children=[
+            html.Div(
+                id="baner-logo",
+                className="column",
+                children=[
+                    html.Img(id="logo", src='/dashboard/assets/logoPW.png' ),
+                ]
+            ),
+            html.Div(
+                id="baner-text",
+                className="column",
+                children=[
+                    html.H2("REAKTOR CHEMICZNY"),
+                ]
+            ),
+            html.Div(
+                id="baner-btn",
+                className="column",
+                children=[
+                    html.Button("Start!", id="start-btn", className="button"),
+                ]
+            )
+        ],
+    )
     return html.Div(
         id="banner",
         className="banner",
@@ -119,6 +169,226 @@ def build_banner():
         ],
     )
 
+def build_mode_btns():
+    return html.Div(
+        id="header-modes",
+        className="row",
+        children=[
+            html.Div(
+                className="column",
+                children=[
+                    html.H2("Mode:")
+                ],
+            ),
+            html.Div(
+                className="column mode-btn",
+                children=[
+                    html.Button("Manual", id="manual-mode-btn", className="button"),
+                ],
+            ),
+            html.Div(
+                className="column mode-btn",
+                children=[
+                    html.Button("P-Tracking", id="p-track-mode-btn", className="button"),
+                ],
+            ),
+            html.Div(
+                className="column mode-btn",
+                children=[
+                    html.Button("PF-Tracking", id="pf-track-mode-btn", className="button"),
+                ],
+            ),
+        ]
+    )
+
+def build_set_panel():
+    return html.Div(
+        id="setting-panel",
+        className="row",
+        children=[
+            html.Div(
+                className='left column-set lab_btns',
+                children=[
+                    html.Div(
+                        children=[
+                            html.P("Frequency: "),
+                        ],
+                        style={'height':'50%'},
+                    ),
+
+                    html.Div(
+                        children=[
+                            html.Div(
+                                className='column',
+                                children=[
+                                    html.Button("+", id="freq-inc-btn", className="button padding-zero"),
+                                ], style={'width':'50%'}
+                            ),
+                            html.Div(
+                                className='column',
+                                children=[
+                                    html.Button("-", id="freq-dec-btn", className="button padding-zero"),
+                                ], style={'width':'50%'}
+                            ),
+                        ],
+                        style={'height':'50%', 'marginLeft': '2%'}
+                    ),
+                ],
+            ),
+
+            html.Div(
+                className="column input_div",
+                children=[
+                    dcc.Input(id="freq_input", className="numeric_input", type="number", placeholder="MHz", debounce=True, min=0)
+                ],
+            ),
+
+            html.Div(
+                className='left column-set lab_btns',
+                children=[ 
+                    html.Div(
+                        children=[
+                            html.P("Power Level: "),
+                        ],
+                        style={'height':'50%'},
+                    ),
+
+                    html.Div(
+                        children=[
+                            html.Div(
+                                className='column',
+                                children=[
+                                    html.Button("+", id="power-inc-btn", className="button padding-zero"),
+                                ], style={'width':'50%'}
+                            ),
+                            html.Div(
+                                className='column',
+                                children=[
+                                    html.Button("-", id="power-dec-btn", className="button padding-zero"),
+                                ], style={'width':'50%'}
+                            ),
+                        ],
+                        style={'height':'50%', 'marginLeft': '2%'}
+                    ),
+                ], 
+            ),
+
+            html.Div(
+                className="input_div column",
+                children=[
+                    dcc.Input(id="power_input", className="numeric_input", type="number", placeholder="dBm", debounce=True, min=0, max=15)
+                ],
+            ),
+        ]
+    )
+
+def build_value_setter_line(line_num, label, col3):
+    row_style = {
+        'color':'#c8f10f',
+        'fontSize': '1.5rem',
+    }
+
+    return html.Div(
+        id=line_num,
+        children=[
+            html.Label(label, className='first_diag_col left'),
+            html.Div(col3, className='sec_diag_col left'),
+        ],
+        className="row-diag-window",
+        style=row_style
+    )
+ 
+def track_meas_tab(state_value):
+    return [
+        build_value_setter_line(
+            "value-setter-panel-track-header",
+            "Parameter",
+            "Value",
+        ), 
+        
+        build_value_setter_line(
+            "value-setter-panel-track-start-freq",
+            "Start Freq:",
+            daq.NumericInput(
+                id="start_freq_input", value=100,  className="setting-input", size=200, max=9999999
+            ),
+        ),
+
+        build_value_setter_line(
+            "value-setter-panel-track-stop-freq",
+            "Stop Freq:",
+            daq.NumericInput(
+                id="stop_freq_input", value=state_value["cur_track_meas_setting"]["stop_freq"], className="setting-input", size=200, max=9999999
+            ),
+        ),
+
+        build_value_setter_line(
+            "value-setter-panel-track-power",
+            "Power:",
+            daq.NumericInput(
+                id="power_track_input", value=state_value["cur_track_meas_setting"]["power"], className="setting-input", size=200, max=9999999
+            ),
+        ), 
+        build_value_setter_line(
+            "value-setter-panel-freq-step",
+            "Freq Step:",
+            daq.NumericInput(
+                id="freq_step_input", value=state_value["cur_track_meas_setting"]["freq_step"], className="setting-input", size=200, max=9999999
+            ),
+        ), 
+        build_value_setter_line(
+            "value-setter-panel-track-time-step",
+            "Time step:",
+            daq.NumericInput(
+                id="time_step_track_input", value=state_value["cur_track_meas_setting"]["time_step"], className="setting-input", size=200, max=9999999
+            ),
+        ),
+
+        html.Div(
+            className="button-container",
+            children=[
+                html.Button("Accept", id="accept-btn-p-track", className="button"),
+            ],
+        )
+    ]
+
+def fix_meas_tab(state_value):
+    return [
+        build_value_setter_line(
+            "value-setter-panel-fix-header",
+            "Parameter",
+            "Set new value",
+        ), 
+        
+        build_value_setter_line(
+            "value-setter-panel-fix-freq",
+            "Frequency:",
+            daq.NumericInput(
+                id="fixed_freq_input", value=state_value["cur_fix_meas_setting"]["frequency"], className="setting-input", size=200, max=9999999
+            ),
+        ), 
+        build_value_setter_line(
+            "value-setter-panel-fix-power",
+            "Power:",
+            daq.NumericInput(
+                id="power_fix_input", value=state_value["cur_fix_meas_setting"]["power"], className="setting-input", size=200, max=9999999
+            ),
+        ), 
+        build_value_setter_line(
+            "value-setter-panel-fix-time-step",
+            "Time step:",
+            daq.NumericInput(
+                id="time_step_fix_input", value=state_value["cur_fix_meas_setting"]["time_step"], className="setting-input", size=200, max=9999999
+            ),
+        ),
+        html.Div(
+            className="button-container",
+            children=[
+                html.Button("Accept", id="accept-btn-fix", className="button"),
+            ],
+        )
+    ]
+    
 # Build header
 def generate_metric_row(id, style, col1, col2, col3):
     if style is None:
@@ -263,28 +533,19 @@ def build_tabs():
 def generate_section_banner(title):
     return html.Div(className="section-banner", children=title)
 
-def build_value_setter_line(line_num, label, value, col3):
-    row_style = {}
-
-    if line_num[-6:] == "header":
-        row_style = {
-            'color':'#c8f10f',
-            'font-size': '3rem',
-        }
-    else:
-        row_style = {
-           'color': "#00000",
-           'font-size': '2rem',
-        }
+def build_value_setter_line(line_num, label, col3):
+    row_style = {
+        'color':'#c8f10f',
+        'fontSize': '1.5rem',
+    }
 
     return html.Div(
         id=line_num,
         children=[
-            html.Label(label, className="four columns"),
-            html.Label(value, className="four columns"),
-            html.Div(col3, className="four columns"),
+            html.Label(label, className='first_diag_col left'),
+            html.Div(col3, className='sec_diag_col left'),
         ],
-        className="row",
+        className="row-diag-window",
         style=row_style
     )
     
@@ -340,130 +601,50 @@ def build_tab_1():
                     
                     ]
                 ),
-                # Kolumna po prawej 5/12 szer, panel zawierajacy elementy z kalibracja urzadzen
-                html.Div(
-                    id="calib-panel",
-                    className="five columns",
-                    children=[
-                        html.Label(id="label-calib-panel", children="Calibration option:"),
-                        html.Br(),
-                        html.Div(
-                            children=[
-                                dcc.Dropdown(
-                                    className="six columns",
-                                    id="dropdownlist-calib-panel",
-                                    options=list( {"label": mode, "value": DROP_LIST_CALIB[mode]} for mode in DROP_LIST_CALIB ),
-                                    value=0,
-                                ),
-                            ],
-                            style={ 'margin-left':'30%'},
-                        ),
-                        
-                        html.Div( id="option-calib-panel"),
-                        html.Div(
-                            id='calib-div-button',
-                            children=[
-                                html.Button("Calibrate!", id="calib-set-btn"),
-                            ]
-                        ),
-                       
-                    ],
-                ),
             ],
-        ),
-        # Dla symulacji przebiegu tracking mode - tymczasowy
-        html.Div(
-            id="chart_scannig_container",
-            className="twelve columns",
-        ),
-        # Dla symulacji przebiegu tracking mode, ustawia minimum funkcji- tymczasowy
-        html.Div(
-            id="slider_min_pointer",
-            className="eight columns",
-            style={
-                "margin-top":100,
-                "margin-left":300,
-                'align-items': 'center',
-            }
         ),
     ]
 
-def generate_indicator():
-    return html.Div(
-        id="thermometer-card",
-        children=[
-            daq.Thermometer(
-                id="thermometer-indicator",
-                min=0,
-                max=105,
-                value=50, # should be update in runtime
-                showCurrentValue=True,
-                units="C",
-                color="#f71606",
-                style={
-                }
-            )
-        ]
-    )
-
-def build_quick_stats_panel():
-    return html.Div(
-        id="quick-stats",
-        children=[
-            html.Div(id='dark-theme-components-1', children=[
-                daq.DarkThemeProvider(theme=theme, children=rootLayout)
-            ], style={
-                'border': 'solid 1px #A2B1C6',
-                'border-radius': '5px',
-                'padding': '50px',
-                'width':'100%',
-                'height':'100%',
-            }),
-        ],
-    )
-
 def build_chart_panel():
     return html.Div(
-        id="control-chart-container",
-        className="twelve columns",
+        id="chart-panel",
         children=[
-            generate_section_banner("Live Measurement Chart"),
-            html.Div(className="section-checklist", children=[
-                dcc.Checklist(
-                    id="trace_checklist",
-                    options=[
-                        {'label': 'Transmit Power', 'value': 'transmit_pwr'},
-                        {'label': 'Received Power', 'value': 'received_pwr'},
-                        {'label': 'System Temperature', 'value': 'sys_temp'},
-                    ],
-                    value=["transmit_pwr"],
-                    labelStyle={'display': 'inline'}
-                ),]
-            ),
-            dcc.Graph(
-                id="control-chart-live",
-                figure=go.Figure(
-                    {
-                        "data": [
+            html.Div(
+                id='chart-container',
+                children=[
+                    dcc.Graph(
+                        id="control-chart-live",
+                        figure=go.Figure(
                             {
-                                "x": [],
-                                "y": [],
-                                "mode": "lines+markers",
+                                "data": [
+                                    {
+                                        "x": [1,2,3,4,5],
+                                        "y": [1,2,3,4,5],
+                                        "mode": "lines+markers",
+                                    }
+                                ],
+                                "layout": {
+                                    "paper_bgcolor": "rgba(0,0,0,0)",
+                                    "plot_bgcolor": "rgba(0,0,0,0)",
+                                    "xaxis": dict(
+                                        showline=False, showgrid=False, zeroline=False
+                                    ),
+                                    "yaxis": dict(
+                                        showgrid=False, showline=False, zeroline=False
+                                    ),
+                                    "autosize": True,
+                                },
                             }
-                        ],
-                        "layout": {
-                            "paper_bgcolor": "rgba(0,0,0,0)",
-                            "plot_bgcolor": "rgba(0,0,0,0)",
-                            "xaxis": dict(
-                                showline=False, showgrid=False, zeroline=False
-                            ),
-                            "yaxis": dict(
-                                showgrid=False, showline=False, zeroline=False
-                            ),
-                            "autosize": True,
-                        },
-                    }
-                ),
+                        ),
+                    ),
+                ],
+            ),
+            html.Div(
+                id="stop-btn-container",
+                className="column",
+                children=[
+                    html.Button("Stop!", id="stop-btn", className="button",),
+                ]
             ),
         ],
     )
@@ -505,90 +686,5 @@ def build_bottom_panel():
         ],
     )
 
-def fix_meas_tab(state_value):
-    return [
-        build_value_setter_line(
-            "value-setter-panel-fm-header",
-            "Parameter",
-            "Last Value",
-            "Set new value",
-        ), 
-        
-        build_value_setter_line(
-            "value-setter-panel-fm-freq",
-            "Frequency [MHz]:",
-            state_value["cur_fix_meas_setting"]["frequency"],
-            daq.NumericInput(
-                id="fixed_freq_input", value=100, className="setting-input", size=200, max=9999999
-            ),
-        ), 
-        build_value_setter_line(
-            "value-setter-panel-fm-power",
-            "Power [dBm]:",
-            state_value["cur_fix_meas_setting"]["power"],
-            daq.NumericInput(
-                id="power_fm_input", value=10, className="setting-input", size=200, max=9999999
-            ),
-        ), 
-        build_value_setter_line(
-            "value-setter-panel-fm-time-step",
-            "Time for one step [s]:",
-            state_value["cur_fix_meas_setting"]["time_step"],
-            daq.NumericInput(
-                id="time_step_fm_input", value=5, className="setting-input", size=200, max=9999999
-            ),
-        )
-    ]
 
-def track_meas_tab(state_value):
-    return [
-        build_value_setter_line(
-            "value-setter-panel-track-header",
-            "Parameter",
-            "Last Value",
-            "Set new value",
-        ), 
-        
-        build_value_setter_line(
-            "value-setter-panel-track-start-freq",
-            "Start Frequency [MHz]:",
-            state_value["cur_track_meas_setting"]["start_freq"],
-            daq.NumericInput(
-                id="start_freq_input", value=100, className="setting-input", size=200, max=9999999
-            ),
-        ),
 
-        build_value_setter_line(
-            "value-setter-panel-track-stop-freq",
-            "Stop Frequency [MHz]:",
-            state_value["cur_track_meas_setting"]["stop_freq"],
-            daq.NumericInput(
-                id="stop_freq_input", value=100, className="setting-input", size=200, max=9999999
-            ),
-        ),
-
-        build_value_setter_line(
-            "value-setter-panel-track-power",
-            "Power [dBm]:",
-            state_value["cur_track_meas_setting"]["power"],
-            daq.NumericInput(
-                id="power_track_input", value=10, className="setting-input", size=200, max=9999999
-            ),
-        ), 
-        build_value_setter_line(
-            "value-setter-panel-freq-step",
-            "Frequency Step[MHz]:",
-            state_value["cur_track_meas_setting"]["freq_step"],
-            daq.NumericInput(
-                id="freq_step_input", value=5, className="setting-input", size=200, max=9999999
-            ),
-        ), 
-        build_value_setter_line(
-            "value-setter-panel-track-time-step",
-            "Time for one step [s]:",
-            state_value["cur_track_meas_setting"]["time_step"],
-            daq.NumericInput(
-                id="time_step_track_input", value=5, className="setting-input", size=200, max=9999999
-            ),
-        )
-    ]
