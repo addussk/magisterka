@@ -33,6 +33,7 @@ PF_TRACKING_MODE = 2
 
 UNIT_TO_INC_DEC = 1 # MHz
 
+# Funkcja do wygenerowania elementu dcc.Graph
 def generate_graph(axis_x, axis_y, name):
     all_fig = list()
 
@@ -253,15 +254,16 @@ def register_callbacks(dashapp):
         [
             Input('freq-inc-btn', 'n_clicks'),
             Input('freq-dec-btn', 'n_clicks'),
+            Input('freq_input', 'value'),
         ],
         [State('freq-input-val', 'data'),],
     )
-    def inc_dec_freq(inc_freq_clicked, dec_freq_clicked, current_freq):
+    def inc_dec_freq(inc_freq_clicked, dec_freq_clicked, input_value, current_freq):
         triggered_by = dash.callback_context.triggered[0]['prop_id']
         retValue = current_freq
 
         # Init seq
-        if (None == inc_freq_clicked) and (None == dec_freq_clicked):
+        if dash.callback_context.triggered[0]['value'] == None:
             pass
         # Service seq
         else:
@@ -269,6 +271,8 @@ def register_callbacks(dashapp):
                 retValue = current_freq + UNIT_TO_INC_DEC
             elif triggered_by == 'freq-dec-btn.n_clicks':
                 retValue = current_freq - UNIT_TO_INC_DEC
+            elif triggered_by == 'freq_input.value':
+                retValue = input_value
             else:
                 raise Exception("Error in inc_dec_freq fnc")
         return int(retValue)
@@ -287,15 +291,16 @@ def register_callbacks(dashapp):
         [
             Input('power-inc-btn', 'n_clicks'),
             Input('power-dec-btn', 'n_clicks'),
+            Input('power_input', 'value'),
         ],
         [State('power-input-val', 'data'),],
     )
-    def inc_dec_power(inc_pwr_clicked, dec_pwr_clicked, current_pwr):
+    def inc_dec_power(inc_pwr_clicked, dec_pwr_clicked, input_value, current_pwr):
         triggered_by = dash.callback_context.triggered[0]['prop_id']
         retValue = current_pwr
 
         # Init seq
-        if (None == inc_pwr_clicked) and (None == dec_pwr_clicked):
+        if dash.callback_context.triggered[0]['value'] == None:
             pass
         # Service seq
         else:
@@ -303,10 +308,13 @@ def register_callbacks(dashapp):
                 retValue = current_pwr + UNIT_TO_INC_DEC
             elif triggered_by == 'power-dec-btn.n_clicks':
                 retValue = current_pwr - UNIT_TO_INC_DEC
+            elif triggered_by == 'power_input.value':
+                retValue = input_value
             else:
                 raise Exception("Error in inc_dec_pwr fnc")
         return int(retValue)
 
+    # Funkcja odpowiedzialna za odczyt pomiaru temperatury z BD i wyswietleniu na kontrolce
     @dashapp.callback(
         Output('thermometer-indicator', 'value'),
         [Input('interval-component', 'n_intervals')],
@@ -454,7 +462,7 @@ def register_callbacks(dashapp):
                 results_table = Global_DataBase.read_filtered_table(last_measurement.get_time_scope())
                
                 x_ax = [ el.get_data_meas() for el in results_table]
-                
+
                 y_ax.append([ el.get_meas_pwr() for el in results_table])
                 y_ax.append([ el.get_trans_pwr() for el in results_table])
 
