@@ -326,34 +326,33 @@ def build_chart_panel():
         ],
     )
 
-def build_value_setter_line(line_num, label, col3):
-    row_style = {
-        'color':'#c8f10f',
-        'fontSize': '1.5rem',
-    }
-
+def build_value_setter_line(line_num, label, col3, class_name=""):
     return html.Div(
         id=line_num,
         children=[
             html.Label(label, className='first_diag_col left'),
             html.Div(col3, className='sec_diag_col left'),
         ],
-        className="row-diag-window",
-        style=row_style
+        className="row-diag-window {}".format(class_name),
+        style={'color':'#c8f10f'}
     )
  
 def track_meas_tab(state_value):
     return [
-        build_value_setter_line(
-            "value-setter-panel-track-header",
-            "Parameter",
-            "Value",
-        ), 
+        html.Div(
+            id='value-setter-panel-track-header',
+            children=[
+                html.Label('Parameter', className='left header-first-col'),
+                html.Label('Value', className='left header-sec-col'),
+            ],
+            className="header-form",
+            style={'color':'#c8f10f'}
+        ),
         
         build_value_setter_line(
             "value-setter-panel-track-start-freq",
             "Start Freq:",
-            daq.NumericInput(
+            dcc.Input(
                 id="start_freq_input", value=state_value["cur_track_meas_setting"]["start_freq"],  className="setting-input", size=200, max=9999999
             ),
         ),
@@ -361,7 +360,7 @@ def track_meas_tab(state_value):
         build_value_setter_line(
             "value-setter-panel-track-stop-freq",
             "Stop Freq:",
-            daq.NumericInput(
+            dcc.Input(
                 id="stop_freq_input", value=state_value["cur_track_meas_setting"]["stop_freq"], className="setting-input", size=200, max=9999999
             ),
         ),
@@ -369,21 +368,21 @@ def track_meas_tab(state_value):
         build_value_setter_line(
             "value-setter-panel-track-power",
             "Power:",
-            daq.NumericInput(
+            dcc.Input(
                 id="power_track_input", value=state_value["cur_track_meas_setting"]["power"], className="setting-input", size=200, max=9999999
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-freq-step",
             "Freq Step:",
-            daq.NumericInput(
+            dcc.Input(
                 id="freq_step_input", value=state_value["cur_track_meas_setting"]["freq_step"], className="setting-input", size=200, max=9999999
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-track-time-step",
             "Time step:",
-            daq.NumericInput(
+            dcc.Input(
                 id="time_step_track_input", value=state_value["cur_track_meas_setting"]["time_step"], className="setting-input", size=200, max=9999999
             ),
         ),
@@ -391,44 +390,48 @@ def track_meas_tab(state_value):
         html.Div(
             className="button-container",
             children=[
-                html.Button("Accept", id="accept-btn-p-track", className="button"),
+                html.Button("Accept", id="accept-btn-p-track", className="button form-button"),
             ],
         )
     ]
 
 def fix_meas_tab(state_value):
     return [
-        build_value_setter_line(
-            "value-setter-panel-fix-header",
-            "Parameter",
-            "Set new value",
-        ), 
+        html.Div(
+            id='value-setter-panel-fix-header',
+            children=[
+                html.Label('Parameter', className='left header-first-col'),
+                html.Label('Value', className='left header-sec-col'),
+            ],
+            className="header-form",
+            style={'color':'#c8f10f'}
+        ),
         
         build_value_setter_line(
             "value-setter-panel-fix-freq",
             "Frequency:",
-            daq.NumericInput(
-                id="fixed_freq_input", value=state_value["cur_fix_meas_setting"]["frequency"], className="setting-input", size=200, max=9999999
+            dcc.Input(
+                id="fixed_freq_input", value=state_value["cur_fix_meas_setting"]["frequency"], className="setting-input"
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-fix-power",
             "Power:",
-            daq.NumericInput(
+            dcc.Input(
                 id="power_fix_input", value=state_value["cur_fix_meas_setting"]["power"], className="setting-input", size=200, max=9999999
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-fix-time-step",
             "Time step:",
-            daq.NumericInput(
+            dcc.Input(
                 id="time_step_fix_input", value=state_value["cur_fix_meas_setting"]["time_step"], className="setting-input", size=200, max=9999999
             ),
         ),
         html.Div(
             className="button-container",
             children=[
-                html.Button("Accept", id="accept-btn-fix", className="button"),
+                html.Button("Accept", id="accept-btn-fix", className="button form-button"),
             ],
         )
     ]

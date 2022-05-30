@@ -127,6 +127,12 @@
         margin-left: 15%;
     }
 
+    .form-button {
+        height: 100%;
+        font-weight: bold;
+        font-size: large;
+    }
+
     #start-btn {
         color: rgb(17, 17, 17);
         font-size: 1.8rem;
@@ -248,18 +254,45 @@
         color: #f10202;
         position: fixed;
         z-index: 2;
-        height: 60vh;
         width: 70vh;
         margin-left: 30%;
         margin-top: 5%;
         border: solid 2px #f3f5f4;
-        font-size: medium;
+        font-size: 1.5rem;
+    }
+
+    .header-form{
+        margin-top: 5% !important;
+        margin-bottom: 5% !important;
+        font-size: 2rem !important;
+    }
+
+    .header-first-col {
+        margin-left: 5%;
+        width: 40%;
+    }
+
+    .header-sec-col {
+        width: 35%;
+        margin-right: 10%;
+        float: right;
     }
 
     .first_diag_col{
-        width: 45%;
+        margin-left: 5%;
+        width: 40%;
+        padding: 1%;
     }
 
     .sec_diag_col{
-        width: 30%;
+        width: 35%;
+        margin-right: 10%;
+        float: right;
+    }
+
+    .setting-input {
+        width: 100%;
+        min-height: 2.5rem ;
+        margin: 3%;
+        font-size: 2rem;
     }
