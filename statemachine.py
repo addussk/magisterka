@@ -37,7 +37,7 @@ class DataBase(object):
          self.update_setting(MeasSettings, MeasSettings.time_step, parm[5][1])
          self.update_setting(MeasSettings, MeasSettings.state, parm[6])
       
-      # SWEEPING MODE - TBD
+   # SWEEPING MODE - TBD
 
    def read_record_all(self, typeTable):
       return self.ptr_to_database.session.query(typeTable).order_by(typeTable.id).all()

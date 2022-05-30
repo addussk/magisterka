@@ -447,10 +447,20 @@ def register_callbacks(dashapp):
 
             return generate_graph( x_ax, y_ax, "stub")
         else:
-            all_records = Global_DataBase.read_record_all(MeasurementInfo)
-            for one_el in all_records:
+            triggered_by = dash.callback_context.triggered[0]
+            
+            if None == triggered_by['value']:
+                last_measurement = Global_DataBase.read_last_record(MeasurementInfo)
+                results_table = Global_DataBase.read_filtered_table(last_measurement.get_time_scope())
+               
+                x_ax = [ el.get_data_meas() for el in results_table]
                 
+                y_ax.append([ el.get_meas_pwr() for el in results_table])
+                y_ax.append([ el.get_trans_pwr() for el in results_table])
 
-            retFig =  dash.no_update
+                return generate_graph( x_ax, y_ax, "stub")
+            
+            else:
+                retFig =  dash.no_update
 
         return retFig
