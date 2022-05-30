@@ -354,7 +354,7 @@ def track_meas_tab(state_value):
             "value-setter-panel-track-start-freq",
             "Start Freq:",
             daq.NumericInput(
-                id="start_freq_input", value=100,  className="setting-input", size=200, max=9999999
+                id="start_freq_input", value=state_value["cur_track_meas_setting"]["start_freq"],  className="setting-input", size=200, max=9999999
             ),
         ),
 

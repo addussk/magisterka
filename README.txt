@@ -21,12 +21,12 @@ in progress.... :)
 Bug list(TODO):
 - (DONE) Refactoring callbacka aktualizujacego graf- na starcie wyswietla ostatni pomiar oraz podczas pomiaru aktualny.
 - Wystylizowanie diag boxow zawierajacych formularz
+- (DONE)Rozwiazanie problemu z handlowaniem freq i pwr dla fix moda. Czy w formularzu powinna byc opcja ustawienia? - po zaktualizowaniu wartosci w glownym widoku, dane widoczne w formualrzu.
 - Poprawic uklad dla grafu, uzyc vp by miescil sie w swoim divie dla kazdej rozdzielczosci,
 - Poprawic init funkcje dla uzupelnienia dcc.Input elementow, zeby czytaly z gen wartosc ustawiona.
 - Dla headera repr status pomiaru dodac funkcje init, ktora bedzie sprawdzac jak ustawic wartosc na starcie
 - Dodanie ograniczenia przy ustawianiu mocy i czestotliwosci
 - Dodanie koloru zielonego dla status headera gdy odbywa sie pomiar
 - Dodanie warning boxow
-- Rozwiazanie problemu z handlowaniem freq i pwr dla fix moda. Czy w formularzu powinna byc opcja ustawienia?
 - Poprawa legendy grafu
 - Mozliwosc wprowadzenia nazwy pomiarow

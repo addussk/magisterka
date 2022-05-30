@@ -13,6 +13,8 @@ Global_DataBase = DataBase(db)
 
 ATTENUATION_LIST = [0, 0.5, 1, 2, 4, 8, 16, 32]
 
+FORM_INPUT_ID_ARR = ["fixed_freq_input", "power_fix_input"]
+
 start_btn_off_style = {
     'backgroundColor': '#065b0a9d',
 }
@@ -430,6 +432,18 @@ def register_callbacks(dashapp):
                 pass
 
         return retVal
+
+    @dashapp.callback(
+        [
+            Output(el, 'value') for el in FORM_INPUT_ID_ARR
+        ],
+        [
+            Input('freq_input', 'value'),
+            Input('power_input', 'value'),
+        ],
+    )
+    def update_freq_input_store(freq_in, pwr_in):
+        return [freq_in, pwr_in]
 
     # Wiele komponentów może się aktualizować za każdym razem, gdy zostanie uruchomiony interwał.
     @dashapp.callback(
