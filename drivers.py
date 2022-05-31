@@ -175,32 +175,32 @@ class DS1820():
             return int(sum/5)
 
 
-class ADC_driver():
-    voltage = None
-    raw_value = None
-
-    def __init__(self) -> None:
-        # libs need by ADC driver, check if it available if not raise Exception.
-        try:
-            import board
-            import busio
-            import adafruit_ads1x15.ads1115 as ADS
-            from adafruit_ads1x15.analog_in import AnalogIn
-        except:
-            raise Exception("Warning: read by ADC is not possible")
-
-    # funckja do odczytu napiecia z czujnika via I2C
-    def read_voltage(self):
-        i2c = busio.I2C(board.SCL, board.SDA)
-        ads = ADS.ADS1115(i2c)
-        #Single Ended Mode
-        chan = AnalogIn(ads, ADS.P0)
-        print(chan.value, chan.voltage)
-
-        self.voltage = chan.voltage
-        self.raw_value = chan.value
-
-        return chan.voltage
+# class ADC_driver():
+#     voltage = None
+#     raw_value = None
+# 
+#     def __init__(self) -> None:
+#         # libs need by ADC driver, check if it available if not raise Exception.
+#         try:
+#             import board
+#             import busio
+#             import adafruit_ads1x15.ads1115 as ADS
+#             from adafruit_ads1x15.analog_in import AnalogIn
+#         except:
+#             raise Exception("Warning: read by ADC is not possible")
+# 
+#     # funckja do odczytu napiecia z czujnika via I2C
+#     def read_voltage(self):
+#         i2c = busio.I2C(board.SCL, board.SDA)
+#         ads = ADS.ADS1115(i2c)
+#         #Single Ended Mode
+#         chan = AnalogIn(ads, ADS.P0)
+#         print(chan.value, chan.voltage)
+# 
+#         self.voltage = chan.voltage
+#         self.raw_value = chan.value
+# 
+#         return chan.voltage
 
 class HMC624():
     # General information: remember to set P/S pin to high to enable serial mode interface    

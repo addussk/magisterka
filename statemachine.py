@@ -3,7 +3,8 @@ from scripts import dummy_val_tracking, dummy_val_tracking_received_pwr
 from defines import *
 import threading
 from dashApp.models import Results, FrontEndInfo, MeasSettings, MeasurementInfo, Temperature
-from drivers import LTDZ, DS1820, ADC_driver, PowerSupply
+from drivers import LTDZ, DS1820, PowerSupply
+from RfPowerDetector import RfPowerDetector
 
 class DataBase(object):
    ptr_to_database = None
@@ -208,7 +209,7 @@ class Measurement(State):
    power = 0
    time_step = 0
    freq_step = 0
-   ptrAdcDriver = None
+   rfPowerDetector = None
 
    def __init__(self, ptr_to_db) -> None:
       self.update_settings()
@@ -216,10 +217,10 @@ class Measurement(State):
       temp_mid = (self.stop_freq + self.start_freq)/2
       self.update_setting(FrontEndInfo, FrontEndInfo.slider_val, temp_mid)
       try:
-         self.ptrAdcDriver = ADC_driver()
+         self.rfPowerDetector = RfPowerDetector()
       except:
          print("Warning: ADC is unavailable")
-         self.ptrAdcDriver = None
+         self.rfPowerDetector = None
 
 
    def managing_measurement(self, type_req, thread_list):
@@ -257,13 +258,13 @@ class Measurement(State):
 
    def measure(self, freq, in_power):
 
-      if self.ptrAdcDriver == None:
+      if self.rfPowerDetector == None:
          print("Watch out! ADC is  unconnected, dummy data will be generated for measurement of received power")
          transmittedPwr = dummy_val_tracking(freq, in_power, self.ptr_to_database)
          receivedPwr = dummy_val_tracking_received_pwr(transmittedPwr)
       else:
-         receivedPwr = self.ptrAdcDriver.read_voltage()
-         transmittedPwr = self.ptrAdcDriver.read_voltage()+1 # 1 tymczasowa wartosc, na razie mierzona wartosc za pomoca jednego channela. Wartosc dodany by rozroznic dwie wartosci
+         receivedPwr = self.rfPowerDetector.getRflPowerDbm()
+         transmittedPwr = self.rfPowerDetector.getFwdPowerDbm()
 
       self.write_to_database_Results(freq, transmittedPwr, receivedPwr)
 
