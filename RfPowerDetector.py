@@ -6,6 +6,7 @@ import numpy as np
 from scipy import interpolate
 import random
 
+
 class RfPowerDetector:
     
     def __init__(self, i2cbus=1, dummy_values=False):
@@ -49,14 +50,14 @@ class RfPowerDetector:
     def getFwdPowerDbm(self):
         ch_id = "fwd"
         v = self.readVoltage(ch_id)
-        pwr = self.__calibration(v, ch_id)
+        pwr = float(self.__calibration(v, ch_id))
         self.__fwdPowerDbm = pwr
         return pwr
     
     def getRflPowerDbm(self):
         ch_id = "rfl"
         v = self.readVoltage(ch_id)
-        pwr = self.__calibration(v, ch_id)
+        pwr = float(self.__calibration(v, ch_id))
         print("---", v, pwr)
         self.__rflPowerDbm = pwr
         return pwr
@@ -65,6 +66,7 @@ class RfPowerDetector:
         rl = self.__fwdPowerDbm - self.__rflPowerDbm 
         return rl
     
+rfPowerDetectorInstance = RfPowerDetector()
 
 
 if __name__=="__main__":

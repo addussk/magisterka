@@ -4,6 +4,7 @@ import random
 #libs potrzebne dla LTDZ
 import serial.tools.list_ports as port_list
 import serial
+from RfPowerDetector import rfPowerDetectorInstance 
 
 from defines import LOG_ON
 #adc
@@ -18,13 +19,13 @@ except:
 import digitalio
 
 def read_output_pwr():
-    return random.randint(10,20)
+    return round(rfPowerDetectorInstance.getFwdPowerDbm(), 2)
 
 def read_reflected_pwr():
-    return random.randint(10,20)
+    return round(rfPowerDetectorInstance.getRflPowerDbm(), 2)
 
 def read_swr():
-    return random.randint(10,20)
+    return round(rfPowerDetectorInstance.getReturnLossDb(), 2)  # TODO: calculate SWR from return loss
 
 def read_freq():
     return random.randint(10,20)
@@ -33,7 +34,7 @@ def read_pa_voltage():
     return random.randint(10,20)
 
 def read_pa_current():
-    return random.randint(10,20)
+    return "---"
 
 def read_pa_temp():
     return random.randint(10,20)

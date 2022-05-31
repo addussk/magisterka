@@ -4,7 +4,7 @@ from defines import *
 import threading
 from dashApp.models import Results, FrontEndInfo, MeasSettings, MeasurementInfo, Temperature
 from drivers import LTDZ, DS1820, PowerSupply
-from RfPowerDetector import RfPowerDetector
+from RfPowerDetector import rfPowerDetectorInstance 
 
 class DataBase(object):
    ptr_to_database = None
@@ -217,7 +217,7 @@ class Measurement(State):
       temp_mid = (self.stop_freq + self.start_freq)/2
       self.update_setting(FrontEndInfo, FrontEndInfo.slider_val, temp_mid)
       try:
-         self.rfPowerDetector = RfPowerDetector()
+         self.rfPowerDetector = rfPowerDetectorInstance
       except:
          print("Warning: ADC is unavailable")
          self.rfPowerDetector = None
