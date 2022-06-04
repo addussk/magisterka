@@ -30,6 +30,10 @@
         float: right;
     }
 
+    .space-2px {
+        margin-right: 2% ;
+    }
+
     .input_div{
         width :20% !important;
         height: 80% !important;

@@ -54,7 +54,7 @@ def generate_output_indicators():
                 # Napis reprezentujacy jednostke dla kazdego wskaznika
                 html.Label(unit, className="right"),
                 # Napis reprezentujacy wartosc odczytana przez sensor
-                html.Label("0", id=el_id+"value", className="right"),
+                html.Label("0", id=el_id+"value", className="right space-2px"),
             ])
         retArr.append(one_row)
     return retArr
