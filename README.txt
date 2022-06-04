@@ -42,3 +42,6 @@ Rzeczy do poprawy(Spotkanie 2.06.2022):
 8) Stworzenie blokad dla kontrolek podczas dzialania jednego trybu i reprezentowanie tego w odpowiedni sposob(wyszarzyc).
 9) Manage result button w miejsce 
 10) jak czesto zapisuja sie elemenety do pamieci na raspberry pi
+11) Przeniesienie btn start na jeden panel z stop btn
+12) Dodanie podswietlenia stp btn po jego wcisnieciu
+13) Zmiana kolorow na neutralne
