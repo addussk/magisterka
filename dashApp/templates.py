@@ -89,8 +89,8 @@ def init_config_storage():
             "turn_on": False,
             "start_freq":90,
             "stop_freq":110,
-            "power":36,
-            "freq_step":1,
+            "power_min":1,
+            "power_max":13,
             "time_step":10,
         },
         "cur_sweep_meas_setting": {
@@ -367,16 +367,16 @@ def track_meas_tab(state_value):
 
         build_value_setter_line(
             "value-setter-panel-track-power",
-            "Power:",
+            "Power Min:",
             dcc.Input(
-                id="power_track_input", value=state_value["cur_track_meas_setting"]["power"], className="setting-input", size=200, max=9999999
+                id="power_track_input", value=state_value["cur_track_meas_setting"]["power_min"], className="setting-input", size=200, max=13
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-freq-step",
-            "Freq Step:",
+            "Power Max:",
             dcc.Input(
-                id="freq_step_input", value=state_value["cur_track_meas_setting"]["freq_step"], className="setting-input", size=200, max=9999999
+                id="freq_step_input", value=state_value["cur_track_meas_setting"]["power_max"], className="setting-input", size=200, max=13
             ),
         ), 
         build_value_setter_line(

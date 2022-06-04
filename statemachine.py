@@ -23,17 +23,18 @@ class DataBase(object):
       if parm[0] == 0:
          self.update_setting(MeasSettings, MeasSettings.mode, parm[0])
          self.update_setting(MeasSettings, MeasSettings.start_freq, parm[1][1])
-         self.update_setting(MeasSettings, MeasSettings.power, parm[2][1])
-         self.update_setting(MeasSettings, MeasSettings.time_step, parm[3][1])
-         self.update_setting(MeasSettings, MeasSettings.state, parm[4])
+         self.update_setting(MeasSettings, MeasSettings.power_min, parm[2][1])
+         self.update_setting(MeasSettings, MeasSettings.power_max, parm[3][1])
+         self.update_setting(MeasSettings, MeasSettings.time_step, parm[4][1])
+         self.update_setting(MeasSettings, MeasSettings.state, parm[5])
 
       # TRACKING MODE 
       if parm[0] == 1:
          self.update_setting(MeasSettings, MeasSettings.mode, parm[0])
          self.update_setting(MeasSettings, MeasSettings.start_freq, parm[1][1])
          self.update_setting(MeasSettings, MeasSettings.stop_freq, parm[2][1])
-         self.update_setting(MeasSettings, MeasSettings.power, parm[3][1])
-         self.update_setting(MeasSettings, MeasSettings.freq_step, parm[4][1])
+         self.update_setting(MeasSettings, MeasSettings.power_min, parm[3][1])
+         self.update_setting(MeasSettings, MeasSettings.power_max, parm[4][1])
          self.update_setting(MeasSettings, MeasSettings.time_step, parm[5][1])
          self.update_setting(MeasSettings, MeasSettings.state, parm[6])
       
@@ -88,8 +89,8 @@ class DataBase(object):
       self.ptr_to_database.session.commit()
 
    # Funkcja do utworzenia record w tablicy MeasSettings przechowujacej ustawienie pomiaru
-   def create_MeasSettings(self, choosenMode=0, measStatus=MEASUREMENT_FREE, startFreq=2400, stopFreq=2400, pwr=10, fStep=1, tStep=5):
-      self.ptr_to_database.session.add(MeasSettings(mode=choosenMode, state=measStatus, start_freq=startFreq, stop_freq=stopFreq, power=pwr, freq_step=fStep, time_step=tStep))
+   def create_MeasSettings(self, choosenMode=0, measStatus=MEASUREMENT_FREE, startFreq=2400, stopFreq=2400, pwr_min=1, pwr_max=13, fStep=1, tStep=5):
+      self.ptr_to_database.session.add(MeasSettings(mode=choosenMode, state=measStatus, start_freq=startFreq, stop_freq=stopFreq, power_min=pwr_min, power_max=pwr_max, freq_step=fStep, time_step=tStep))
       self.ptr_to_database.session.commit()
 
    def create_MeasurementInfo(self, name="init", b_date=datetime.datetime.now(), f_date=datetime.datetime.now()):
@@ -369,7 +370,8 @@ class Measurement(State):
       self.state = self.read_record(MeasSettings, "state")
       self.start_freq = self.read_record(MeasSettings, "start_freq")
       self.stop_freq = self.read_record(MeasSettings, "stop_freq")
-      self.power = self.read_record(MeasSettings, "power")
+      self.power_min = self.read_record(MeasSettings, "power_min")
+      self.power_max = self.read_record(MeasSettings, "power_max")
       self.freq_step = self.read_record(MeasSettings, "freq_step")
       self.time_step = self.read_record(MeasSettings, "time_step")
 

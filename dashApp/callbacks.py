@@ -414,8 +414,8 @@ def register_callbacks(dashapp):
                             "turn_on": True,
                             "start_freq": config_from_form[0][1],
                             "stop_freq":config_from_form[1][1],
-                            "power":config_from_form[2][1],
-                            "freq_step":config_from_form[3][1],
+                            "power_min":config_from_form[2][1],
+                            "power_max":config_from_form[3][1],
                             "time_step":config_from_form[4][1],
                             })
 

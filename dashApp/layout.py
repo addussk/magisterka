@@ -6,17 +6,17 @@ import dash_daq as daq
 DICT_DEFAULT_CFG = {
     "cur_fix_meas_setting": {
             "turn_on": False,
-            "frequency": 1,
-            "power":36,
-            "time_step":10,
+            "frequency": 5000000,
+            "power":10,
+            "time_step":2,
     },
     "cur_track_meas_setting": {
             "turn_on": False,
             "start_freq":90,
             "stop_freq":110,
-            "power":36,
-            "freq_step":1,
-            "time_step":10,
+            "power_min":1,
+            "power_max":13,
+            "time_step":2,
         }
     }
 

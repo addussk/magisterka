@@ -35,7 +35,7 @@ Rzeczy do poprawy(Spotkanie 2.06.2022):
 1) Dodac access do repositorum - (DONE)
 2) dodac blank space miedzy wartosc pomiaru a jednostke. (DONE)
 3) Kwestia klawiatury, standardowa lub custom
-4) p-tracking usunac freq step,  power zamienic power min max.
+4) p-tracking usunac freq step,  power zamienic power min max. (DONE)
 5) pf przekopiowac dialog window z dodaniem pwr min max.
 6) maxksymalny czas grzania dla wszystkich trybow
 7) Nadpisac wartosc w input parm
