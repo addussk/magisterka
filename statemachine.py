@@ -19,14 +19,18 @@ class DataBase(object):
 
    # funkcja do ustawienia parametrow pomiarow
    def configure_measurement(self, parm):
+      if LOG_ON:
+         print("@@ configure measurement input param")
+         print(parm)
       # FIXED MODE 
       if parm[0] == 0:
+         # aktualnie UI zawiera formularz ktory pozwala na wpisanie czest, mocy i kroku czasu. TODO: Dopytac czy potrzeba dla fix moda zakres mocy
          self.update_setting(MeasSettings, MeasSettings.mode, parm[0])
          self.update_setting(MeasSettings, MeasSettings.start_freq, parm[1][1])
          self.update_setting(MeasSettings, MeasSettings.power_min, parm[2][1])
-         self.update_setting(MeasSettings, MeasSettings.power_max, parm[3][1])
-         self.update_setting(MeasSettings, MeasSettings.time_step, parm[4][1])
-         self.update_setting(MeasSettings, MeasSettings.state, parm[5])
+         self.update_setting(MeasSettings, MeasSettings.power_max, parm[2][1])
+         self.update_setting(MeasSettings, MeasSettings.time_step, parm[3][1])
+         self.update_setting(MeasSettings, MeasSettings.state, parm[4])
 
       # TRACKING MODE 
       if parm[0] == 1:
