@@ -110,7 +110,6 @@
         width: 50%;
         height: 100%;
         padding: auto;
-        color: #f22d06;
     }
 
     #baner-text h2 {
@@ -157,7 +156,6 @@
     #header-modes h2 {
         height: 100%;
         margin: auto;
-        color: #f22d06;
         padding: 2%;
     }
 
@@ -172,7 +170,6 @@
     #setting-panel {
         height: 15%;
         font-size: 1.5rem;
-        color: #f22d06;
         margin-top: 2%;
         font-weight: bold;
     }
@@ -185,7 +182,7 @@
     .numeric_input {
         height: 100%;
         width: 100%;
-        color: #f22d06;
+        color: azure;
         background-color: #1e2130;
         font-size: 2rem;
         border: solid 2px darkgrey;
@@ -222,7 +219,6 @@
     }
 
     #stop-btn:hover {
-        color: #111010;
         background-color: #f10202;
     }
 
@@ -255,7 +251,6 @@
     
     .dialog_container {
         background-color:rgba(26, 27, 54, 0.95);
-        color: #f10202;
         position: fixed;
         z-index: 2;
         width: 70vh;
