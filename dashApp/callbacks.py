@@ -23,6 +23,14 @@ start_btn_on_style = {
     'backgroundColor': '#08f614',
 }
 
+stop_btn_off_style = {
+    'backgroundColor': '#731603d3',
+}
+
+stop_btn_on_style = {
+    'backgroundColor': '#f10202',
+}
+
 mode_btns_on_style = {
     'border': 'solid 4px rgb(40, 243, 4)',
 }
@@ -105,25 +113,31 @@ def register_callbacks(dashapp):
     # Funkcja ustawiajaca kolor start btn oraz status headera
     @dashapp.callback(
         [
+            Output('status-header', 'children'),
             Output('start-btn','style'),
-            Output('status-header', 'children')
+            Output('stop-btn','style'),
         ],
-        [Input('start-btn-color', 'data'),],
+        [
+            Input('btns-color', 'data'),
+        ],
     )
     def update_color(data):
+        if LOG_ON:
+            print("@@ update_color input param: ", data)
+
         # W zaleznosci od koloru start btn zaktualizuj wartosc headera
         retHeader = "Status: OFF" if '#065b0a9d' == data['start-btn-style']['backgroundColor'] else "Status: ON"
         
-        return [data['start-btn-style'], retHeader]
+        return [retHeader, data['start-btn-style'], data['stop-btn-style']]
 
     @dashapp.callback(
-        Output('start-btn-color', 'data'),
+        Output('btns-color', 'data'),
         [
             Input('stop-btn', 'n_clicks'),
             Input('start-btn', 'n_clicks'),
         ],
         [
-            State('start-btn-color', 'data'),
+            State('btns-color', 'data'),
             State('mode-btn-hg', 'data'),
             State("cfg-mode-store", "data"),
         ],
@@ -147,12 +161,13 @@ def register_callbacks(dashapp):
         elif ctx.triggered[0]['prop_id'] == 'stop-btn.n_clicks':
             # Btn zostal wcisniety przez uzytkownika
             if MEASUREMENT_FREE == measurement_status:
-                dash.no_update
+                data['stop-btn-style'] = stop_btn_on_style
 
             elif MEASUREMENT_ONGOING == measurement_status:
                 # Zapis  do bazy danych zaczecie pomiaru
                 Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
                 data['start-btn-style'] = start_btn_off_style
+                data['stop-btn-style'] = stop_btn_on_style
                 
         elif ctx.triggered[0]['prop_id'] == 'start-btn.n_clicks':
             cfg_to_store = []
@@ -161,6 +176,7 @@ def register_callbacks(dashapp):
                 # Zapis  do bazy danych zaczecie pomiaru
                 Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_START)
                 data['start-btn-style'] = start_btn_on_style
+                data['stop-btn-style'] = stop_btn_off_style
 
                 if mode_btns_id[MANUAL_MODE] == data_mode:
                     # dodanie mode 0 reprezentujacego tracking mode

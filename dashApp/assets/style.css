@@ -140,7 +140,6 @@
         color: rgb(17, 17, 17);
         font-size: 1.8rem;
         font-weight: normal;
-        background-color: #065b0a9d;
     }
 
     #start-btn:hover {
@@ -214,7 +213,6 @@
         color: rgb(17, 17, 17);
         font-size: 1.8rem;
         font-weight: normal;
-        background-color: #de2e0bd3;
         align-self: flex-end;
     }
 

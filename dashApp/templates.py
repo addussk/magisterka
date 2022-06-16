@@ -109,6 +109,9 @@ def fill_style():
     retDic = {
         'start-btn-style': {
             'backgroundColor':'#065b0a9d',
+        },
+        'stop-btn-style': {
+            'backgroundColor':'#731603d3',
         }
     }
     return retDic
