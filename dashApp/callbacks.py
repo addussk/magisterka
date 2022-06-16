@@ -13,7 +13,7 @@ Global_DataBase = DataBase(db)
 
 ATTENUATION_LIST = [0, 0.5, 1, 2, 4, 8, 16, 32]
 
-FORM_INPUT_ID_ARR = ["fixed_freq_input", "power_fix_input"]
+FORM_INPUT_ID_ARR = ["fixed-freq-input", "power-fix-input"]
 
 start_btn_off_style = {
     'backgroundColor': '#065b0a9d',

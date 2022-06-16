@@ -353,7 +353,7 @@ def track_meas_tab(state_value):
             "value-setter-panel-track-start-freq",
             "Start Freq:",
             dcc.Input(
-                id="start_freq_input", value=state_value["cur_track_meas_setting"]["start_freq"],  className="setting-input", size=200, max=9999999
+                id="start-freq-input", value=state_value["cur_track_meas_setting"]["start_freq"],  className="setting-input", max=9999999
             ),
         ),
 
@@ -361,7 +361,7 @@ def track_meas_tab(state_value):
             "value-setter-panel-track-stop-freq",
             "Stop Freq:",
             dcc.Input(
-                id="stop_freq_input", value=state_value["cur_track_meas_setting"]["stop_freq"], className="setting-input", size=200, max=9999999
+                id="stop-freq-input", value=state_value["cur_track_meas_setting"]["stop_freq"], className="setting-input", max=9999999
             ),
         ),
 
@@ -369,21 +369,21 @@ def track_meas_tab(state_value):
             "value-setter-panel-track-power",
             "Power Min:",
             dcc.Input(
-                id="power_track_input", value=state_value["cur_track_meas_setting"]["power_min"], className="setting-input", size=200, max=13
+                id="power-track-input", value=state_value["cur_track_meas_setting"]["power_min"], className="setting-input", max=13
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-freq-step",
             "Power Max:",
             dcc.Input(
-                id="freq_step_input", value=state_value["cur_track_meas_setting"]["power_max"], className="setting-input", size=200, max=13
+                id="freq-step-input", value=state_value["cur_track_meas_setting"]["power_max"], className="setting-input", max=13
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-track-time-step",
             "Time step:",
             dcc.Input(
-                id="time_step_track_input", value=state_value["cur_track_meas_setting"]["time_step"], className="setting-input", size=200, max=9999999
+                id="time-step-track-input", value=state_value["cur_track_meas_setting"]["time_step"], className="setting-input", max=9999999
             ),
         ),
 
@@ -411,21 +411,21 @@ def fix_meas_tab(state_value):
             "value-setter-panel-fix-freq",
             "Frequency:",
             dcc.Input(
-                id="fixed_freq_input", value=state_value["cur_fix_meas_setting"]["frequency"], className="setting-input"
+                id="fixed-freq-input", value=state_value["cur_fix_meas_setting"]["frequency"], className="setting-input"
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-fix-power",
             "Power:",
             dcc.Input(
-                id="power_fix_input", value=state_value["cur_fix_meas_setting"]["power"], className="setting-input", size=200, max=9999999
+                id="power-fix-input", value=state_value["cur_fix_meas_setting"]["power"], className="setting-input", max=9999999
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-fix-time-step",
             "Time step:",
             dcc.Input(
-                id="time_step_fix_input", value=state_value["cur_fix_meas_setting"]["time_step"], className="setting-input", size=200, max=9999999
+                id="time-step-fix-input", value=state_value["cur_fix_meas_setting"]["time_step"], className="setting-input", max=9999999
             ),
         ),
         html.Div(
