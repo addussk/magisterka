@@ -241,26 +241,20 @@ def register_callbacks(dashapp):
                 raise Exception("Fail in mode_btn fnc")
   
         return data
-    
-    # Funkcja wykorzystujaca storage, kazda zmiana tej wartosci powoduje aktualizacje elementu input dla czestotliwosci
-    @dashapp.callback(
-        Output('freq_input', 'value'),
-        Input('freq-input-val', 'data'),
-    )
-    def update_freq_input(data):
-        return int(data)
-    
+     
     # Funkcja obslugujace przyciski do ustawiania czestotliwosci
     @dashapp.callback(
-        Output('freq-input-val', 'data'),
+        [
+            Output('freq_input', 'value'),
+            Output('freq-input-val', 'data'),
+        ],
         [
             Input('freq-inc-btn', 'n_clicks'),
             Input('freq-dec-btn', 'n_clicks'),
-            Input('freq_input', 'value'),
         ],
         [State('freq-input-val', 'data'),],
     )
-    def inc_dec_freq(inc_freq_clicked, dec_freq_clicked, input_value, current_freq):
+    def inc_dec_freq(inc_freq_clicked, dec_freq_clicked, current_freq):
         triggered_by = dash.callback_context.triggered[0]['prop_id']
         retValue = current_freq
 
@@ -273,31 +267,25 @@ def register_callbacks(dashapp):
                 retValue = current_freq + UNIT_TO_INC_DEC
             elif triggered_by == 'freq-dec-btn.n_clicks':
                 retValue = current_freq - UNIT_TO_INC_DEC
-            elif triggered_by == 'freq_input.value':
-                retValue = input_value
             else:
                 raise Exception("Error in inc_dec_freq fnc")
-        return int(retValue)
-
-    # Funkcja wykorzystujaca storage, kazda zmiana tej wartosci powoduje aktualizacje elementu input dla mocy
-    @dashapp.callback(
-        Output('power_input', 'value'),
-        Input('power-input-val', 'data'),
-    )
-    def update_freq_input(data):
-        return int(data)
+        return [int(retValue), int(retValue)]
 
     # Funkcja obslugujace przyciski do ustawiania mocy
     @dashapp.callback(
-        Output('power-input-val', 'data'),
+        [
+            Output('power_input', 'value'),
+            Output('power-input-val', 'data'),
+        ],
         [
             Input('power-inc-btn', 'n_clicks'),
             Input('power-dec-btn', 'n_clicks'),
-            Input('power_input', 'value'),
         ],
-        [State('power-input-val', 'data'),],
+        [
+            State('power-input-val', 'data'),
+        ],
     )
-    def inc_dec_power(inc_pwr_clicked, dec_pwr_clicked, input_value, current_pwr):
+    def inc_dec_power(inc_pwr_clicked, dec_pwr_clicked, current_pwr):
         triggered_by = dash.callback_context.triggered[0]['prop_id']
         retValue = current_pwr
 
@@ -310,11 +298,9 @@ def register_callbacks(dashapp):
                 retValue = current_pwr + UNIT_TO_INC_DEC
             elif triggered_by == 'power-dec-btn.n_clicks':
                 retValue = current_pwr - UNIT_TO_INC_DEC
-            elif triggered_by == 'power_input.value':
-                retValue = input_value
             else:
                 raise Exception("Error in inc_dec_pwr fnc")
-        return int(retValue)
+        return [int(retValue), int(retValue)]
 
     # Funkcja odpowiedzialna za odczyt pomiaru temperatury z BD i wyswietleniu na kontrolce
     @dashapp.callback(
