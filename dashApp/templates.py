@@ -135,13 +135,6 @@ def build_banner():
                     html.H2("REAKTOR CHEMICZNY"),
                 ]
             ),
-            html.Div(
-                id="baner-btn",
-                className="column",
-                children=[
-                    html.Button("Start!", id="start-btn", className="button"),
-                ]
-            )
         ],
     )
     return html.Div(
@@ -323,6 +316,8 @@ def build_chart_panel():
                 id="stop-btn-container",
                 className="column",
                 children=[
+                    html.Button("Start!", id="start-btn", className="button"),
+                    html.Br(),
                     html.Button("Stop!", id="stop-btn", className="button",),
                 ]
             ),

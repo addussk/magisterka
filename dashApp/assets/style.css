@@ -136,16 +136,6 @@
         font-size: large;
     }
 
-    #start-btn {
-        color: rgb(17, 17, 17);
-        font-size: 1.8rem;
-        font-weight: normal;
-    }
-
-    #start-btn:hover {
-        background-color: #08f614;
-    }
-
     #header-modes {
         margin-top: 1%;
         font-weight: bold;
@@ -206,14 +196,28 @@
     #stop-btn-container {
         width: 21%;
         display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
-    
-    #stop-btn {
+
+    #stop-btn-container > button {
+        margin-left: 5%;
         height: 20%;
         color: rgb(17, 17, 17);
         font-size: 1.8rem;
         font-weight: normal;
-        align-self: flex-end;
+    }
+
+    #start-btn {
+        margin-top: 5%;
+    }
+
+    #start-btn:hover {
+        background-color: #08f614;
+    }
+
+    #stop-btn {
+        margin-top: 15%;
     }
 
     #stop-btn:hover {
