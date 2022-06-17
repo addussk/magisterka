@@ -153,10 +153,12 @@ def register_callbacks(dashapp):
             # jesli pomiar nie jest wystartowany, ustaw odpowiedni kolor
             if MEASUREMENT_FREE == measurement_status:
                 data['start-btn-style'] = start_btn_off_style
+                data['stop-btn-style'] = stop_btn_on_style
 
             # case dla pomiaru ktory jest dokonywany, kolor ma wskazywac ze pomiar jest pobierany
             else:
                 data['start-btn-style']=start_btn_on_style
+                data['stop-btn-style'] = stop_btn_off_style
 
         elif ctx.triggered[0]['prop_id'] == 'stop-btn.n_clicks':
             # Btn zostal wcisniety przez uzytkownika

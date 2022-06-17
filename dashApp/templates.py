@@ -111,7 +111,7 @@ def fill_style():
             'backgroundColor':'#065b0a9d',
         },
         'stop-btn-style': {
-            'backgroundColor':'#731603d3',
+            'backgroundColor':'#f10202',
         }
     }
     return retDic
