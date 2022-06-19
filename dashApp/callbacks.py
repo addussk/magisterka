@@ -122,8 +122,8 @@ def register_callbacks(dashapp):
         ],
     )
     def update_color(data):
-        if LOG_ON:
-            print("@@ update_color input param: ", data)
+        if LOG_INPUT_PARAM_ON:
+            print("[CALLBACK] update_color input param: ", data)
 
         # W zaleznosci od koloru start btn zaktualizuj wartosc headera
         retHeader = "Status: OFF" if '#065b0a9d' == data['start-btn-style']['backgroundColor'] else "Status: ON"
@@ -143,6 +143,9 @@ def register_callbacks(dashapp):
         ],
     )
     def start_stop_btn(n_clicks_stp, n_clicks_str, data, data_mode, cfg_mode):
+        if LOG_INPUT_PARAM_ON:
+            print("[CALLBACK]start_stop_btn [mode-btn-hg, cfg-mode-store]: ", data_mode, cfg_mode)
+
         # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
         ctx = dash.callback_context
         # Odczytanie stanu czy pomiar jest dokonywany
@@ -191,7 +194,7 @@ def register_callbacks(dashapp):
                     
                 elif mode_btns_id[P_TRACKING_MODE] == data_mode:
                     # dodanie mode 1 reprezentujacego tracking mode
-                    cfg_to_store.append(1)
+                    cfg_to_store.append(P_TRACKING_MODE)
 
                     for key, value in cfg_mode['cur_track_meas_setting'].items():
                         if key != "turn_on":
@@ -210,6 +213,9 @@ def register_callbacks(dashapp):
                 cfg_to_store.append(MEASUREMENT_START)
 
                 # zapisujemy do bazy danych configuracje dla wybranego trybu
+                if LOG_DB_ON:
+                    print("[CALLBACK] start_stop_btn read cfg from the form: ",cfg_to_store)
+
                 Global_DataBase.configure_measurement(cfg_to_store)
                 Global_DataBase.create_MeasurementInfo("badanie {}".format(datetime.datetime.now()), datetime.datetime.now())
 

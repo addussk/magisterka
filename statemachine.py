@@ -19,9 +19,9 @@ class DataBase(object):
 
    # funkcja do ustawienia parametrow pomiarow
    def configure_measurement(self, parm):
-      if LOG_ON:
-         print("@@ configure measurement input param")
-         print(parm)
+      if LOG_INPUT_PARAM_ON:
+         print("[DB] Function: configure_measurement input param: ", parm)
+
       # FIXED MODE 
       if parm[0] == 0:
          # aktualnie UI zawiera formularz ktory pozwala na wpisanie czest, mocy i kroku czasu. TODO: Dopytac czy potrzeba dla fix moda zakres mocy
@@ -224,6 +224,9 @@ class Measurement(State):
    ptrAdcDriver = None
 
    def __init__(self, ptr_to_db) -> None:
+      if LOG_DB_ON:
+         print("[MEASUREMENT] Init phase: Measurement settings: ", self.read_table(MeasSettings).get_all())
+
       self.update_settings()
       # Ustawienie wierzcholka funkcji kwadratowej posrodku czestotliwosci poczatkowej a koncowej
       temp_mid = (self.stop_freq + self.start_freq)/2
@@ -234,8 +237,11 @@ class Measurement(State):
          print("Warning: ADC is unavailable")
          self.ptrAdcDriver = None
 
-
    def managing_measurement(self, type_req, thread_list):
+      if LOG_SM_ON:
+         print("[MEASUREMENT] managing_measurement type request: ", type_req)
+         print("[MEASUREMENT] managing_measurement class members[mode, start_freq, stop_freq]: ", self.mode, self.start_freq, self.stop_freq)
+      
       if type_req == MEASUREMENT_START:
          if self.mode == 0:
             thread_list.append(threading.Thread(target=self.fixed__freq_mode))
@@ -408,6 +414,7 @@ class Guard(object):
       "calib_status":False,
    }
 
+   # Przechowuje info nt ostatniego ustawionego pomiaru
    measurement_form = {
       "mode": 0,
       "state": MEASUREMENT_FREE,
@@ -473,7 +480,7 @@ class Guard(object):
 
    # funkcja dokonuje pomiaru temperatury za pomoca classy DS1820
    def measure_temperature(self):
-      if LOG_ON:
+      if LOG_SENSORS_ON:
          print("Measure temperature...")
 
       tmpSensor = DS1820()
@@ -484,12 +491,10 @@ class Guard(object):
    
    # funkcja sprawdzajaca czy uzytkownik wybral jakas akcje, wybiera krok w state machine
    def choose_step(self):
-      if LOG_ON:
-         print("choose step function")
-         print(self.isChangeInSetting())
-         print("CALIB STATUS:")
-         print(self.db.read_record(FrontEndInfo,"calib_status"))
-         print(self.new_settings["calib_status"])
+      if LOG_SM_ON:
+         print("[SM] Has the setting been changed?: ", self.isChangeInSetting())
+         print("[SM] Calibration status: ", self.db.read_record(FrontEndInfo,"calib_status"))
+         print("[SM] Measurement mode in DB: ", self.db.read_record(MeasSettings,"mode"))
 
       # Jesli nie ma zmiany -> STEP_IDLE
       if (not self.isChangeInSetting()):
@@ -522,6 +527,9 @@ class Guard(object):
       read_mes_set = self.db.read_table(MeasSettings)
       current_step = self.choose_step()
 
+      if LOG_SM_ON:
+         print("[SM] Current Step: ", current_step)
+
       if  current_step == STEP_IDLE:
          print("Nothing change, stay in ", self.state.__class__)
          if self.state.__class__ != Idle and self.state.__class__ != Measurement:
@@ -541,8 +549,8 @@ class Guard(object):
          self.new_settings["calib_status"] = STOP_CALIBRATE
       
       elif current_step == STEP_MEASUREMENT:
-         if LOG_ON:
-            print("MEASUREMENT MODE")
+         if LOG_SM_ON:
+            print("[SM] MEASUREMENT MODE: ", self.measurement_form)
             
          if read_mes_set.get_state() == MEASUREMENT_START:
             self.change_state(Measurement)
