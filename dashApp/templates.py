@@ -388,7 +388,7 @@ def track_meas_tab(state_value):
         html.Div(
             className="button-container",
             children=[
-                html.Button("Accept", id="accept-btn-p-track", className="button form-button"),
+                html.Button("Accept", id="accept-btn-p", className="button form-button"),
             ],
         )
     ]
@@ -430,6 +430,64 @@ def fix_meas_tab(state_value):
             className="button-container",
             children=[
                 html.Button("Accept", id="accept-btn-fix", className="button form-button"),
+            ],
+        )
+    ]
+
+def pf_meas_tab(state_value):
+    return [
+        html.Div(
+            id='value-setter-panel-pf-header',
+            children=[
+                html.Label('Parameter', className='left header-first-col'),
+                html.Label('Value', className='left header-sec-col'),
+            ],
+            className="header-form",
+            style={'color':'#c8f10f'}
+        ),
+        
+        build_value_setter_line(
+            "value-setter-panel-pf-start-freq",
+            "Start Freq:",
+            dcc.Input(
+                id="pf-start-freq-input", value=state_value["cur_sweep_meas_setting"]["start_freq"],  className="setting-input", max=9999999
+            ),
+        ),
+
+        build_value_setter_line(
+            "value-setter-panel-pf-stop-freq",
+            "Stop Freq:",
+            dcc.Input(
+                id="pf-stop-freq-input", value=state_value["cur_sweep_meas_setting"]["stop_freq"], className="setting-input", max=9999999
+            ),
+        ),
+
+        build_value_setter_line(
+            "value-setter-panel-pf-pwr-min",
+            "Power Min:",
+            dcc.Input(
+                id="pf-power-min-input", value=state_value["cur_sweep_meas_setting"]["power_min"], className="setting-input", max=13
+            ),
+        ), 
+        build_value_setter_line(
+            "value-setter-panel-pf-pwr-max",
+            "Power Max:",
+            dcc.Input(
+                id="pf-freq-step-input", value=state_value["cur_sweep_meas_setting"]["power_max"], className="setting-input", max=13
+            ),
+        ), 
+        build_value_setter_line(
+            "value-setter-panel-pf-time-step",
+            "Time step:",
+            dcc.Input(
+                id="pf-time-step-input", value=state_value["cur_sweep_meas_setting"]["time_step"], className="setting-input", max=9999999
+            ),
+        ),
+
+        html.Div(
+            className="button-container",
+            children=[
+                html.Button("Accept", id="accept-btn-pf", className="button form-button"),
             ],
         )
     ]

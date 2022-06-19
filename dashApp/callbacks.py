@@ -177,12 +177,13 @@ def register_callbacks(dashapp):
             if MEASUREMENT_FREE == measurement_status:
                 # Zapis  do bazy danych zaczecie pomiaru
                 Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_START)
+                # Ustawienie odpowiednich kolorow dla przyciskow w celu informowania czy pomiar odbywa sie w danej chwili
                 data['start-btn-style'] = start_btn_on_style
                 data['stop-btn-style'] = stop_btn_off_style
 
                 if mode_btns_id[MANUAL_MODE] == data_mode:
                     # dodanie mode 0 reprezentujacego tracking mode
-                    cfg_to_store.append(0)
+                    cfg_to_store.append(MANUAL_MODE)
                     
                     for key, value in cfg_mode['cur_fix_meas_setting'].items():
                         if key != "turn_on":
@@ -193,6 +194,14 @@ def register_callbacks(dashapp):
                     cfg_to_store.append(1)
 
                     for key, value in cfg_mode['cur_track_meas_setting'].items():
+                        if key != "turn_on":
+                            cfg_to_store.append((key,value))
+                
+                elif mode_btns_id[PF_TRACKING_MODE] == data_mode:
+                    # dodanie mode 2 reprezentujacego tracking mode
+                    cfg_to_store.append(PF_TRACKING_MODE)
+
+                    for key, value in cfg_mode['cur_sweep_meas_setting'].items():
                         if key != "turn_on":
                             cfg_to_store.append((key,value))
                 else:
@@ -360,10 +369,11 @@ def register_callbacks(dashapp):
             Input('p-track-mode-btn', 'n_clicks' ),
             Input('pf-track-mode-btn', 'n_clicks' ),
             Input('accept-btn-fix', 'n_clicks'),
-            Input('accept-btn-p-track', 'n_clicks'),
+            Input('accept-btn-p', 'n_clicks'),
+            Input('accept-btn-pf', 'n_clicks'),
         ],
     )
-    def diag_box_on_off(fix_btn, p_btn, pf_btn, accept_btn_f, accept_btn_p_tr):
+    def diag_box_on_off(fix_btn, p_btn, pf_btn, accept_btn_f, accept_btn_p, accept_btn_pf):
         style = [ dash.no_update, dash.no_update, dash.no_update ]
 
         triggered_by = dash.callback_context.triggered[0]['prop_id']
@@ -386,11 +396,12 @@ def register_callbacks(dashapp):
             Input('dialog-form-p-tracking', 'children'),
             Input('dialog-form-pf-tracking', 'children'),
             Input('accept-btn-fix', 'n_clicks'),
-            Input('accept-btn-p-track', 'n_clicks'),
+            Input('accept-btn-p', 'n_clicks'),
+            Input('accept-btn-pf', 'n_clicks'),
         ],
         State("cfg-mode-store", "data"),
     )
-    def store_measurment_settings(form_fix, form_p_track, form_pf_track, acc_btn_fix, acc_btn_p , cfg_mode):
+    def store_measurment_settings(form_fix, form_p_track, form_pf_track, acc_btn_fix, acc_btn_p, acc_btn_pf, cfg_mode):
         retVal, config_from_form = cfg_mode, []
         state_measurement = Global_DataBase.read_table(MeasSettings)
         triggered_by = dash.callback_context.triggered[0]
@@ -400,40 +411,55 @@ def register_callbacks(dashapp):
         else:
             # sprawdz czy mozna zaczac nowy pomiar
             if state_measurement.get_state() in [None, MEASUREMENT_FREE]:
-                config_from_form = unpack_html_element(form_fix)
-                if 'accept-btn-fix.n_clicks' == triggered_by['prop_id']:
-                    temp_dict = {}
+                temp_dict = {}
 
-                    if triggered_by['prop_id'] == 'accept-btn-fix.n_clicks':
-                        temp_dict.update({
-                            "turn_on": True,
-                            "frequency": config_from_form[0][1],
-                            "power":config_from_form[1][1],
-                            "time_step":config_from_form[2][1],})
+                if triggered_by['prop_id'] == 'accept-btn-fix.n_clicks':
+                    config_from_form = unpack_html_element(form_fix)
 
-                        cfg_mode['cur_fix_meas_setting'] = temp_dict
+                    temp_dict.update({
+                        "turn_on": True,
+                        "frequency": config_from_form[0][1],
+                        "power":config_from_form[1][1],
+                        "time_step":config_from_form[2][1],})
 
-                    elif triggered_by['prop_id'] == 'accept-btn-p-track.n_clicks':
-                        temp_dict.update({
-                            "turn_on": True,
-                            "start_freq": config_from_form[0][1],
-                            "stop_freq":config_from_form[1][1],
-                            "power_min":config_from_form[2][1],
-                            "power_max":config_from_form[3][1],
-                            "time_step":config_from_form[4][1],
-                            })
+                    cfg_mode['cur_fix_meas_setting'] = temp_dict
 
-                        cfg_mode['cur_track_meas_setting'] = temp_dict
+                elif triggered_by['prop_id'] == 'accept-btn-p.n_clicks':
+                    config_from_form = unpack_html_element(form_p_track)
 
-                    # TODO: opcja dla sweeping mode
-                    # elif triggered_by['prop_id'] == 'accept-btn-pf-track.n_clicks':
-                        # cfg_mode['']
-                    else:
-                        raise Exception("Fail in store_measurment_settings fnc")
+                    temp_dict.update({
+                        "turn_on": True,
+                        "start_freq": config_from_form[0][1],
+                        "stop_freq":config_from_form[1][1],
+                        "power_min":config_from_form[2][1],
+                        "power_max":config_from_form[3][1],
+                        "time_step":config_from_form[4][1],
+                        })
+
+                    cfg_mode['cur_track_meas_setting'] = temp_dict
+
+                elif triggered_by['prop_id'] == 'accept-btn-pf.n_clicks':
+                    config_from_form = unpack_html_element(form_pf_track)
+
+                    temp_dict.update({
+                        "turn_on": True,
+                        "start_freq": config_from_form[0][1],
+                        "stop_freq":config_from_form[1][1],
+                        "power_min":config_from_form[2][1],
+                        "power_max":config_from_form[3][1],
+                        "time_step":config_from_form[4][1],
+                    })
+
+                    cfg_mode['cur_sweep_meas_setting'] = temp_dict
+
+                else:
+                    raise Exception("Fail in store_measurment_settings fnc")
 
             else:
                 # TODO : komunikat ze trwa aktualnie pomiar
                 pass
+
+        retVal = cfg_mode
 
         return retVal
 

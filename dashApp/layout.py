@@ -17,6 +17,14 @@ DICT_DEFAULT_CFG = {
             "power_min":1,
             "power_max":13,
             "time_step":2,
+    },
+    "cur_sweep_meas_setting": {
+            "turn_on": False,
+            "start_freq":90,
+            "stop_freq":110,
+            "power_min":1,
+            "power_max":13,
+            "time_step":2,
         }
     }
 
@@ -89,7 +97,7 @@ layout_main = html.Div(
         html.Div(
             id="dialog-form-pf-tracking",
             className="dialog_container",
-            # children=track_meas_tab(DICT_DEFAULT_CFG),
+            children=pf_meas_tab(DICT_DEFAULT_CFG),
             style={
                 'display':'none',
             }

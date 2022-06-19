@@ -42,7 +42,15 @@ class DataBase(object):
          self.update_setting(MeasSettings, MeasSettings.time_step, parm[5][1])
          self.update_setting(MeasSettings, MeasSettings.state, parm[6])
       
-   # SWEEPING MODE - TBD
+      # SWEEPING MODE
+      if parm[0] == 2:
+         self.update_setting(MeasSettings, MeasSettings.mode, parm[0])
+         self.update_setting(MeasSettings, MeasSettings.start_freq, parm[1][1])
+         self.update_setting(MeasSettings, MeasSettings.stop_freq, parm[2][1])
+         self.update_setting(MeasSettings, MeasSettings.power_min, parm[3][1])
+         self.update_setting(MeasSettings, MeasSettings.power_max, parm[4][1])
+         self.update_setting(MeasSettings, MeasSettings.time_step, parm[5][1])
+         self.update_setting(MeasSettings, MeasSettings.state, parm[6])
 
    def read_record_all(self, typeTable):
       return self.ptr_to_database.session.query(typeTable).order_by(typeTable.id).all()
@@ -459,7 +467,6 @@ class Guard(object):
             raise Exception("Wrong member")
          
          if read_record != self.measurement_form[key]:
-            print("Diff state ", read_record , " ", self.measurement_form[key])
             return True
 
       return False
