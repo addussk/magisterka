@@ -38,7 +38,7 @@ Rzeczy do poprawy(Spotkanie 2.06.2022):
 4) p-tracking usunac freq step,  power zamienic power min max. (DONE)
 5) pf przekopiowac dialog window z dodaniem pwr min max. (DONE)
 6) maxksymalny czas grzania dla wszystkich trybow
-7) Nadpisac wartosc w input parm
+7) Aktualizacja wartosci czestotliwosci po zaakceptowaniu ustawien danego trybu (DONE)
 8) Stworzenie blokad dla kontrolek podczas dzialania jednego trybu i reprezentowanie tego w odpowiedni sposob(wyszarzyc).
 9) Manage result button w miejsce 
 10) jak czesto zapisuja sie elemenety do pamieci na raspberry pi
