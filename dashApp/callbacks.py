@@ -416,6 +416,9 @@ def register_callbacks(dashapp):
         State("cfg-mode-store", "data"),
     )
     def store_measurment_settings(form_fix, form_p_track, form_pf_track, acc_btn_fix, acc_btn_p, acc_btn_pf, cfg_mode):
+        if LOG_CALL_SEQUENCE:
+            print("[CALLBACK] store_measurment_settings ")
+            
         retVal, config_from_form = cfg_mode, []
         state_measurement = Global_DataBase.read_table(MeasSettings)
         triggered_by = dash.callback_context.triggered[0]
