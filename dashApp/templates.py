@@ -81,7 +81,7 @@ def init_config_storage():
     ret = {
         "cur_fix_meas_setting": {
             "turn_on": False,
-            "frequency": 1,
+            "start_freq": 1,
             "power":36,
             "time_step":10,
         },
@@ -409,7 +409,7 @@ def fix_meas_tab(state_value):
             "value-setter-panel-fix-freq",
             "Frequency:",
             dcc.Input(
-                id="fixed-freq-input", value=state_value["cur_fix_meas_setting"]["frequency"], className="setting-input"
+                id="fixed-freq-input", value=state_value["cur_fix_meas_setting"]["start_freq"], className="setting-input"
             ),
         ), 
         build_value_setter_line(

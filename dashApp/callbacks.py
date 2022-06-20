@@ -284,16 +284,24 @@ def register_callbacks(dashapp):
         [
             Input('freq-inc-btn', 'n_clicks'),
             Input('freq-dec-btn', 'n_clicks'),
+            Input("cfg-mode-store", "data"),
         ],
-        [State('freq-input-val', 'data'),],
+        [
+            State('freq-input-val', 'data'),
+        ],
     )
-    def inc_dec_freq(inc_freq_clicked, dec_freq_clicked, current_freq):
+    def inc_dec_freq(inc_freq_clicked, dec_freq_clicked, settings, current_freq):
         triggered_by = dash.callback_context.triggered[0]['prop_id']
+        triggered_value = dash.callback_context.triggered[0]['value']
         retValue = current_freq
-
         # Init seq
-        if dash.callback_context.triggered[0]['value'] == None:
+        if triggered_value == None:
             pass
+        elif triggered_by == 'cfg-mode-store.data':
+            for mode in ['cur_fix_meas_setting', 'cur_track_meas_setting', 'cur_sweep_meas_setting']:
+                isTurnOn = triggered_value[mode]['turn_on'] 
+                if isTurnOn:
+                    retValue = settings[mode]['start_freq']
         # Service seq
         else:
             if triggered_by == 'freq-inc-btn.n_clicks':
@@ -424,11 +432,14 @@ def register_callbacks(dashapp):
 
                     temp_dict.update({
                         "turn_on": True,
-                        "frequency": config_from_form[0][1],
+                        "start_freq": config_from_form[0][1],
                         "power":config_from_form[1][1],
                         "time_step":config_from_form[2][1],})
 
                     cfg_mode['cur_fix_meas_setting'] = temp_dict
+
+                    cfg_mode['cur_track_meas_setting']['turn_on'] = False
+                    cfg_mode['cur_sweep_meas_setting']['turn_on'] = False
 
                 elif triggered_by['prop_id'] == 'accept-btn-p.n_clicks':
                     config_from_form = unpack_html_element(form_p_track)
@@ -444,6 +455,9 @@ def register_callbacks(dashapp):
 
                     cfg_mode['cur_track_meas_setting'] = temp_dict
 
+                    cfg_mode['cur_fix_meas_setting']['turn_on'] = False
+                    cfg_mode['cur_sweep_meas_setting']['turn_on'] = False
+
                 elif triggered_by['prop_id'] == 'accept-btn-pf.n_clicks':
                     config_from_form = unpack_html_element(form_pf_track)
 
@@ -458,6 +472,8 @@ def register_callbacks(dashapp):
 
                     cfg_mode['cur_sweep_meas_setting'] = temp_dict
 
+                    cfg_mode['cur_fix_meas_setting']['turn_on'] = False
+                    cfg_mode['cur_track_meas_setting']['turn_on'] = False
                 else:
                     raise Exception("Fail in store_measurment_settings fnc")
 
