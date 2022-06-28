@@ -5,7 +5,7 @@ from adafruit_ads1x15.analog_in import AnalogIn
 import numpy as np
 from scipy import interpolate
 import random
-
+from MlxSensorArray import i2cMutex
 
 class RfPowerDetector:
     
@@ -27,19 +27,25 @@ class RfPowerDetector:
 
     def readVoltage(self, ch="fwd"):
         if not self.dummy_values:
-            i2c = busio.I2C(board.SCL, board.SDA)
-            ads = ADS.ADS1115(i2c)
-            #Single Ended Mode
-            chan = None
-            if ch=="fwd":
-                chan = AnalogIn(ads, ADS.P0)
-            elif ch=="rfl":
-                chan = AnalogIn(ads, ADS.P1)
-            else:
+            if ch not in ["fwd", "rfl"]:
                 raise Exception(f"ADC: Incorrect channel, given: {ch}")
+            voltage = 0
+            i2cMutex.acquire()
+            try:
+                i2c = busio.I2C(board.SCL, board.SDA)
+                ads = ADS.ADS1115(i2c)
+                #Single Ended Mode
+                chan = None
+                if ch=="fwd":
+                    chan = AnalogIn(ads, ADS.P0)
+                elif ch=="rfl":
+                    chan = AnalogIn(ads, ADS.P1)
+                voltage = chan.voltage    # actual I2C read - must be secured by i2c mutex!
+            finally:
+                i2cMutex.release()
             
-            print(f"Reading for ch={ch}: adc={chan.value}, voltage={chan.voltage}")
-            return chan.voltage
+            #print(f"Reading for ch={ch}: adc={chan.value}, voltage={chan.voltage}")
+            return voltage
         else:
             return random.uniform(1.0, 1.2)   # dummy, random numbers
     

@@ -1,6 +1,9 @@
 from smbus2 import SMBus
 from mlx90614 import MLX90614
 from random import random
+from threading import Lock
+
+i2cMutex = Lock()
 
 class MlxSensorArray:
     
@@ -26,6 +29,7 @@ class MlxSensorArray:
         try:
             if not self.dummy_values:
                 sensor = self.__sensors[sensor_idx]
+                i2cMutex.acquire()
                 temperature = sensor.get_obj_temp()
                 temperature = round(temperature, 3)  # there is no more accuracy in the sensor
             else:
@@ -33,6 +37,8 @@ class MlxSensorArray:
         except e:
             print(f"Exception during object temperature IR sensor read idx={sensor_idx}, message:{e}")
             temperature = None
+        finally:
+            i2cMutex.release()
         self.__object_temperatures[sensor_idx] = temperature
         return temperature
 
@@ -41,6 +47,7 @@ class MlxSensorArray:
         try:
             if not self.dummy_values:
                 sensor = self.__sensors[sensor_idx]
+                i2cMutex.acquire()
                 temperature = sensor.get_amb_temp()
                 temperature = round(temperature, 3)  # there is no more accuracy in the sensor
             else:
@@ -48,6 +55,8 @@ class MlxSensorArray:
         except e:
             print(f"Exception during ambient temperature IR sensor read idx={sensor_idx}, message:{e}")
             temperature = None
+        finally:
+            i2cMutex.release()            
         self.__ambient_temperatures[sensor_idx] = temperature
         return temperature
 
