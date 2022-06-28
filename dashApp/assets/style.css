@@ -30,6 +30,10 @@
         float: right;
     }
 
+    .space-2px {
+        margin-right: 2% ;
+    }
+
     .input_div{
         width :20% !important;
         height: 80% !important;
@@ -106,7 +110,6 @@
         width: 50%;
         height: 100%;
         padding: auto;
-        color: #f22d06;
     }
 
     #baner-text h2 {
@@ -133,17 +136,6 @@
         font-size: large;
     }
 
-    #start-btn {
-        color: rgb(17, 17, 17);
-        font-size: 1.8rem;
-        font-weight: normal;
-        background-color: #065b0a9d;
-    }
-
-    #start-btn:hover {
-        background-color: #08f614;
-    }
-
     #header-modes {
         margin-top: 1%;
         font-weight: bold;
@@ -153,7 +145,6 @@
     #header-modes h2 {
         height: 100%;
         margin: auto;
-        color: #f22d06;
         padding: 2%;
     }
 
@@ -168,7 +159,6 @@
     #setting-panel {
         height: 15%;
         font-size: 1.5rem;
-        color: #f22d06;
         margin-top: 2%;
         font-weight: bold;
     }
@@ -181,7 +171,7 @@
     .numeric_input {
         height: 100%;
         width: 100%;
-        color: #f22d06;
+        color: azure;
         background-color: #1e2130;
         font-size: 2rem;
         border: solid 2px darkgrey;
@@ -206,19 +196,31 @@
     #stop-btn-container {
         width: 21%;
         display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
-    
-    #stop-btn {
+
+    #stop-btn-container > button {
+        margin-left: 5%;
         height: 20%;
         color: rgb(17, 17, 17);
         font-size: 1.8rem;
         font-weight: normal;
-        background-color: #de2e0bd3;
-        align-self: flex-end;
+    }
+
+    #start-btn {
+        margin-top: 5%;
+    }
+
+    #start-btn:hover {
+        background-color: #08f614;
+    }
+
+    #stop-btn {
+        margin-top: 15%;
     }
 
     #stop-btn:hover {
-        color: #111010;
         background-color: #f10202;
     }
 
@@ -251,7 +253,6 @@
     
     .dialog_container {
         background-color:rgba(26, 27, 54, 0.95);
-        color: #f10202;
         position: fixed;
         z-index: 2;
         width: 70vh;

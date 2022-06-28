@@ -35,7 +35,7 @@ def make_measurement():
     comp.state.print_state()
 
     while(True):
-        if LOG_ON:
+        if LOG_TASK_INFO_ON:
             print("task started")
             print("the number of Thread objects currently alive: ", threading.active_count())
             print("current thread: ", threading.current_thread())
@@ -49,7 +49,7 @@ def make_measurement():
 
         comp.measure_temperature()
 
-        if LOG_ON:
+        if LOG_TASK_INFO_ON:
             print("task completed")
 
 t2 = threading.Thread(target=make_measurement)

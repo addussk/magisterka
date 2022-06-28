@@ -14,7 +14,7 @@ Global_DataBase = DataBase(db)
 
 ATTENUATION_LIST = [0, 0.5, 1, 2, 4, 8, 16, 32]
 
-FORM_INPUT_ID_ARR = ["fixed_freq_input", "power_fix_input"]
+FORM_INPUT_ID_ARR = ["fixed-freq-input", "power-fix-input"]
 
 start_btn_off_style = {
     'backgroundColor': '#065b0a9d',
@@ -22,6 +22,14 @@ start_btn_off_style = {
 
 start_btn_on_style = {
     'backgroundColor': '#08f614',
+}
+
+stop_btn_off_style = {
+    'backgroundColor': '#731603d3',
+}
+
+stop_btn_on_style = {
+    'backgroundColor': '#f10202',
 }
 
 mode_btns_on_style = {
@@ -107,30 +115,39 @@ def register_callbacks(dashapp):
     # Funkcja ustawiajaca kolor start btn oraz status headera
     @dashapp.callback(
         [
+            Output('status-header', 'children'),
             Output('start-btn','style'),
-            Output('status-header', 'children')
+            Output('stop-btn','style'),
         ],
-        [Input('start-btn-color', 'data'),],
+        [
+            Input('btns-color', 'data'),
+        ],
     )
     def update_color(data):
+        if LOG_INPUT_PARAM_ON:
+            print("[CALLBACK] update_color input param: ", data)
+
         # W zaleznosci od koloru start btn zaktualizuj wartosc headera
         retHeader = "Status: OFF" if '#065b0a9d' == data['start-btn-style']['backgroundColor'] else "Status: ON"
         
-        return [data['start-btn-style'], retHeader]
+        return [retHeader, data['start-btn-style'], data['stop-btn-style']]
 
     @dashapp.callback(
-        Output('start-btn-color', 'data'),
+        Output('btns-color', 'data'),
         [
             Input('stop-btn', 'n_clicks'),
             Input('start-btn', 'n_clicks'),
         ],
         [
-            State('start-btn-color', 'data'),
+            State('btns-color', 'data'),
             State('mode-btn-hg', 'data'),
             State("cfg-mode-store", "data"),
         ],
     )
     def start_stop_btn(n_clicks_stp, n_clicks_str, data, data_mode, cfg_mode):
+        if LOG_INPUT_PARAM_ON:
+            print("[CALLBACK]start_stop_btn [mode-btn-hg, cfg-mode-store]: ", data_mode, cfg_mode)
+
         # callback context sluzy do sprawdzenia czy callback wywolany jest podczas inicjalizacji
         ctx = dash.callback_context
         # Odczytanie stanu czy pomiar jest dokonywany
@@ -141,20 +158,23 @@ def register_callbacks(dashapp):
             # jesli pomiar nie jest wystartowany, ustaw odpowiedni kolor
             if MEASUREMENT_FREE == measurement_status:
                 data['start-btn-style'] = start_btn_off_style
+                data['stop-btn-style'] = stop_btn_on_style
 
             # case dla pomiaru ktory jest dokonywany, kolor ma wskazywac ze pomiar jest pobierany
             else:
                 data['start-btn-style']=start_btn_on_style
+                data['stop-btn-style'] = stop_btn_off_style
 
         elif ctx.triggered[0]['prop_id'] == 'stop-btn.n_clicks':
             # Btn zostal wcisniety przez uzytkownika
             if MEASUREMENT_FREE == measurement_status:
-                dash.no_update
+                data['stop-btn-style'] = stop_btn_on_style
 
             elif MEASUREMENT_ONGOING == measurement_status:
                 # Zapis  do bazy danych zaczecie pomiaru
                 Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
                 data['start-btn-style'] = start_btn_off_style
+                data['stop-btn-style'] = stop_btn_on_style
                 
         elif ctx.triggered[0]['prop_id'] == 'start-btn.n_clicks':
             cfg_to_store = []
@@ -162,11 +182,13 @@ def register_callbacks(dashapp):
             if MEASUREMENT_FREE == measurement_status:
                 # Zapis  do bazy danych zaczecie pomiaru
                 Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_START)
+                # Ustawienie odpowiednich kolorow dla przyciskow w celu informowania czy pomiar odbywa sie w danej chwili
                 data['start-btn-style'] = start_btn_on_style
+                data['stop-btn-style'] = stop_btn_off_style
 
                 if mode_btns_id[MANUAL_MODE] == data_mode:
                     # dodanie mode 0 reprezentujacego tracking mode
-                    cfg_to_store.append(0)
+                    cfg_to_store.append(MANUAL_MODE)
                     
                     for key, value in cfg_mode['cur_fix_meas_setting'].items():
                         if key != "turn_on":
@@ -174,9 +196,17 @@ def register_callbacks(dashapp):
                     
                 elif mode_btns_id[P_TRACKING_MODE] == data_mode:
                     # dodanie mode 1 reprezentujacego tracking mode
-                    cfg_to_store.append(1)
+                    cfg_to_store.append(P_TRACKING_MODE)
 
                     for key, value in cfg_mode['cur_track_meas_setting'].items():
+                        if key != "turn_on":
+                            cfg_to_store.append((key,value))
+                
+                elif mode_btns_id[PF_TRACKING_MODE] == data_mode:
+                    # dodanie mode 2 reprezentujacego tracking mode
+                    cfg_to_store.append(PF_TRACKING_MODE)
+
+                    for key, value in cfg_mode['cur_sweep_meas_setting'].items():
                         if key != "turn_on":
                             cfg_to_store.append((key,value))
                 else:
@@ -185,6 +215,9 @@ def register_callbacks(dashapp):
                 cfg_to_store.append(MEASUREMENT_START)
 
                 # zapisujemy do bazy danych configuracje dla wybranego trybu
+                if LOG_DB_ON:
+                    print("[CALLBACK] start_stop_btn read cfg from the form: ",cfg_to_store)
+
                 Global_DataBase.configure_measurement(cfg_to_store)
                 Global_DataBase.create_MeasurementInfo("badanie {}".format(datetime.datetime.now()), datetime.datetime.now())
 
@@ -243,63 +276,59 @@ def register_callbacks(dashapp):
                 raise Exception("Fail in mode_btn fnc")
   
         return data
-    
-    # Funkcja wykorzystujaca storage, kazda zmiana tej wartosci powoduje aktualizacje elementu input dla czestotliwosci
-    @dashapp.callback(
-        Output('freq_input', 'value'),
-        Input('freq-input-val', 'data'),
-    )
-    def update_freq_input(data):
-        return int(data)
-    
+     
     # Funkcja obslugujace przyciski do ustawiania czestotliwosci
     @dashapp.callback(
-        Output('freq-input-val', 'data'),
+        [
+            Output('freq_input', 'value'),
+            Output('freq-input-val', 'data'),
+        ],
         [
             Input('freq-inc-btn', 'n_clicks'),
             Input('freq-dec-btn', 'n_clicks'),
-            Input('freq_input', 'value'),
+            Input("cfg-mode-store", "data"),
         ],
-        [State('freq-input-val', 'data'),],
+        [
+            State('freq-input-val', 'data'),
+        ],
     )
-    def inc_dec_freq(inc_freq_clicked, dec_freq_clicked, input_value, current_freq):
+    def inc_dec_freq(inc_freq_clicked, dec_freq_clicked, settings, current_freq):
         triggered_by = dash.callback_context.triggered[0]['prop_id']
+        triggered_value = dash.callback_context.triggered[0]['value']
         retValue = current_freq
-
         # Init seq
-        if dash.callback_context.triggered[0]['value'] == None:
+        if triggered_value == None:
             pass
+        elif triggered_by == 'cfg-mode-store.data':
+            for mode in ['cur_fix_meas_setting', 'cur_track_meas_setting', 'cur_sweep_meas_setting']:
+                isTurnOn = triggered_value[mode]['turn_on'] 
+                if isTurnOn:
+                    retValue = settings[mode]['start_freq']
         # Service seq
         else:
             if triggered_by == 'freq-inc-btn.n_clicks':
                 retValue = current_freq + UNIT_TO_INC_DEC
             elif triggered_by == 'freq-dec-btn.n_clicks':
                 retValue = current_freq - UNIT_TO_INC_DEC
-            elif triggered_by == 'freq_input.value':
-                retValue = input_value
             else:
                 raise Exception("Error in inc_dec_freq fnc")
-        return int(retValue)
-
-    # Funkcja wykorzystujaca storage, kazda zmiana tej wartosci powoduje aktualizacje elementu input dla mocy
-    @dashapp.callback(
-        Output('power_input', 'value'),
-        Input('power-input-val', 'data'),
-    )
-    def update_freq_input(data):
-        return int(data)
+        return [int(retValue), int(retValue)]
 
     # Funkcja obslugujace przyciski do ustawiania mocy
     @dashapp.callback(
-        Output('power-input-val', 'data'),
+        [
+            Output('power_input', 'value'),
+            Output('power-input-val', 'data'),
+        ],
         [
             Input('power-inc-btn', 'n_clicks'),
             Input('power-dec-btn', 'n_clicks'),
-            Input('power_input', 'value'),
         ],
-        [State('power-input-val', 'data'),],
+        [
+            State('power-input-val', 'data'),
+        ],
     )
-    def inc_dec_power(inc_pwr_clicked, dec_pwr_clicked, input_value, current_pwr):
+    def inc_dec_power(inc_pwr_clicked, dec_pwr_clicked, current_pwr):
         triggered_by = dash.callback_context.triggered[0]['prop_id']
         retValue = current_pwr
 
@@ -312,11 +341,9 @@ def register_callbacks(dashapp):
                 retValue = current_pwr + UNIT_TO_INC_DEC
             elif triggered_by == 'power-dec-btn.n_clicks':
                 retValue = current_pwr - UNIT_TO_INC_DEC
-            elif triggered_by == 'power_input.value':
-                retValue = input_value
             else:
                 raise Exception("Error in inc_dec_pwr fnc")
-        return int(retValue)
+        return [int(retValue), int(retValue)]
 
 
     # Funkcja odpowiedzialna za odczyt pomiaru temperatury z BD i wyswietleniu na kontrolce
@@ -355,10 +382,11 @@ def register_callbacks(dashapp):
             Input('p-track-mode-btn', 'n_clicks' ),
             Input('pf-track-mode-btn', 'n_clicks' ),
             Input('accept-btn-fix', 'n_clicks'),
-            Input('accept-btn-p-track', 'n_clicks'),
+            Input('accept-btn-p', 'n_clicks'),
+            Input('accept-btn-pf', 'n_clicks'),
         ],
     )
-    def diag_box_on_off(fix_btn, p_btn, pf_btn, accept_btn_f, accept_btn_p_tr):
+    def diag_box_on_off(fix_btn, p_btn, pf_btn, accept_btn_f, accept_btn_p, accept_btn_pf):
         style = [ dash.no_update, dash.no_update, dash.no_update ]
 
         triggered_by = dash.callback_context.triggered[0]['prop_id']
@@ -401,11 +429,15 @@ def register_callbacks(dashapp):
             Input('dialog-form-p-tracking', 'children'),
             Input('dialog-form-pf-tracking', 'children'),
             Input('accept-btn-fix', 'n_clicks'),
-            Input('accept-btn-p-track', 'n_clicks'),
+            Input('accept-btn-p', 'n_clicks'),
+            Input('accept-btn-pf', 'n_clicks'),
         ],
         State("cfg-mode-store", "data"),
     )
-    def store_measurment_settings(form_fix, form_p_track, form_pf_track, acc_btn_fix, acc_btn_p , cfg_mode):
+    def store_measurment_settings(form_fix, form_p_track, form_pf_track, acc_btn_fix, acc_btn_p, acc_btn_pf, cfg_mode):
+        if LOG_CALL_SEQUENCE:
+            print("[CALLBACK] store_measurment_settings ")
+            
         retVal, config_from_form = cfg_mode, []
         state_measurement = Global_DataBase.read_table(MeasSettings)
         triggered_by = dash.callback_context.triggered[0]
@@ -415,40 +447,63 @@ def register_callbacks(dashapp):
         else:
             # sprawdz czy mozna zaczac nowy pomiar
             if state_measurement.get_state() in [None, MEASUREMENT_FREE]:
-                config_from_form = unpack_html_element(form_fix)
-                if 'accept-btn-fix.n_clicks' == triggered_by['prop_id']:
-                    temp_dict = {}
+                temp_dict = {}
 
-                    if triggered_by['prop_id'] == 'accept-btn-fix.n_clicks':
-                        temp_dict.update({
-                            "turn_on": True,
-                            "frequency": config_from_form[0][1],
-                            "power":config_from_form[1][1],
-                            "time_step":config_from_form[2][1],})
+                if triggered_by['prop_id'] == 'accept-btn-fix.n_clicks':
+                    config_from_form = unpack_html_element(form_fix)
 
-                        cfg_mode['cur_fix_meas_setting'] = temp_dict
+                    temp_dict.update({
+                        "turn_on": True,
+                        "start_freq": config_from_form[0][1],
+                        "power":config_from_form[1][1],
+                        "time_step":config_from_form[2][1],})
 
-                    elif triggered_by['prop_id'] == 'accept-btn-p-track.n_clicks':
-                        temp_dict.update({
-                            "turn_on": True,
-                            "start_freq": config_from_form[0][1],
-                            "stop_freq":config_from_form[1][1],
-                            "power":config_from_form[2][1],
-                            "freq_step":config_from_form[3][1],
-                            "time_step":config_from_form[4][1],
-                            })
+                    cfg_mode['cur_fix_meas_setting'] = temp_dict
 
-                        cfg_mode['cur_track_meas_setting'] = temp_dict
+                    cfg_mode['cur_track_meas_setting']['turn_on'] = False
+                    cfg_mode['cur_sweep_meas_setting']['turn_on'] = False
 
-                    # TODO: opcja dla sweeping mode
-                    # elif triggered_by['prop_id'] == 'accept-btn-pf-track.n_clicks':
-                        # cfg_mode['']
-                    else:
-                        raise Exception("Fail in store_measurment_settings fnc")
+                elif triggered_by['prop_id'] == 'accept-btn-p.n_clicks':
+                    config_from_form = unpack_html_element(form_p_track)
+
+                    temp_dict.update({
+                        "turn_on": True,
+                        "start_freq": config_from_form[0][1],
+                        "stop_freq":config_from_form[1][1],
+                        "power_min":config_from_form[2][1],
+                        "power_max":config_from_form[3][1],
+                        "time_step":config_from_form[4][1],
+                        })
+
+                    cfg_mode['cur_track_meas_setting'] = temp_dict
+
+                    cfg_mode['cur_fix_meas_setting']['turn_on'] = False
+                    cfg_mode['cur_sweep_meas_setting']['turn_on'] = False
+
+                elif triggered_by['prop_id'] == 'accept-btn-pf.n_clicks':
+                    config_from_form = unpack_html_element(form_pf_track)
+
+                    temp_dict.update({
+                        "turn_on": True,
+                        "start_freq": config_from_form[0][1],
+                        "stop_freq":config_from_form[1][1],
+                        "power_min":config_from_form[2][1],
+                        "power_max":config_from_form[3][1],
+                        "time_step":config_from_form[4][1],
+                    })
+
+                    cfg_mode['cur_sweep_meas_setting'] = temp_dict
+
+                    cfg_mode['cur_fix_meas_setting']['turn_on'] = False
+                    cfg_mode['cur_track_meas_setting']['turn_on'] = False
+                else:
+                    raise Exception("Fail in store_measurment_settings fnc")
 
             else:
                 # TODO : komunikat ze trwa aktualnie pomiar
                 pass
+
+        retVal = cfg_mode
 
         return retVal
 

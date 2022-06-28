@@ -84,7 +84,8 @@ class MeasSettings(db.Model):
     state = db.Column(db.Integer, nullable=False)
     start_freq = db.Column(db.Integer, nullable=False)
     stop_freq = db.Column(db.Integer, nullable=False)
-    power = db.Column(db.Integer, nullable=False)
+    power_min = db.Column(db.Integer, nullable=False)
+    power_max = db.Column(db.Integer, nullable=False)
     freq_step = db.Column(db.Integer, nullable=False)
     time_step = db.Column(db.Integer, nullable=False)
     best_scan_freq = db.Column(db.Integer)
@@ -99,7 +100,8 @@ class MeasSettings(db.Model):
         self.state = 3 # MEASUREMENT_FREE
         self.start_freq = 2400
         self.stop_freq = 2400
-        self.power = 10
+        self.power_min = 1
+        self.power_max = 13
         self.freq_step = 1
         self.time_step = 5
         
@@ -116,8 +118,11 @@ class MeasSettings(db.Model):
         elif member == "stop_freq":
             return self.stop_freq
         
-        elif member == "power":
-            return self.power
+        elif member == "power_min":
+            return self.power_min
+        
+        elif member == "power_max":
+            return self.power_max
 
         elif member == "freq_step":
             return self.freq_step
@@ -137,7 +142,7 @@ class MeasSettings(db.Model):
         return [self.best_scan_power, self.best_scan_freq]
 
     def get_all(self):
-        return self.id, self.mode, self.state, self.start_freq, self.stop_freq, self.power, self.freq_step, self.time_step
+        return self.id, self.mode, self.state, self.start_freq, self.stop_freq, self.power_max, self.freq_step, self.time_step
     
 class FrontEndInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -54,7 +54,7 @@ def generate_output_indicators():
                 # Napis reprezentujacy jednostke dla kazdego wskaznika
                 html.Label(unit, className="right"),
                 # Napis reprezentujacy wartosc odczytana przez sensor
-                html.Label("0", id=el_id+"value", className="right"),
+                html.Label("0", id=el_id+"value", className="right space-2px"),
             ])
         retArr.append(one_row)
     return retArr
@@ -134,7 +134,7 @@ def init_config_storage():
     ret = {
         "cur_fix_meas_setting": {
             "turn_on": False,
-            "frequency": 1,
+            "start_freq": 1,
             "power":36,
             "time_step":10,
         },
@@ -162,6 +162,9 @@ def fill_style():
     retDic = {
         'start-btn-style': {
             'backgroundColor':'#065b0a9d',
+        },
+        'stop-btn-style': {
+            'backgroundColor':'#f10202',
         }
     }
     return retDic
@@ -185,13 +188,6 @@ def build_banner():
                     html.H2("Intelligent RF Power Source"),
                 ]
             ),
-            html.Div(
-                id="baner-btn",
-                className="column",
-                children=[
-                    html.Button("Start!", id="start-btn", className="button"),
-                ]
-            )
         ],
     )
     return html.Div(
@@ -373,6 +369,8 @@ def build_chart_panel():
                 id="stop-btn-container",
                 className="column",
                 children=[
+                    html.Button("Start!", id="start-btn", className="button"),
+                    html.Br(),
                     html.Button("Stop!", id="stop-btn", className="button",),
                 ]
             ),
@@ -406,7 +404,7 @@ def track_meas_tab(state_value):
             "value-setter-panel-track-start-freq",
             "Start Freq:",
             dcc.Input(
-                id="start_freq_input", value=state_value["cur_track_meas_setting"]["start_freq"],  className="setting-input", size=200, max=9999999
+                id="start-freq-input", value=state_value["cur_track_meas_setting"]["start_freq"],  className="setting-input", max=9999999
             ),
         ),
 
@@ -414,36 +412,36 @@ def track_meas_tab(state_value):
             "value-setter-panel-track-stop-freq",
             "Stop Freq:",
             dcc.Input(
-                id="stop_freq_input", value=state_value["cur_track_meas_setting"]["stop_freq"], className="setting-input", size=200, max=9999999
+                id="stop-freq-input", value=state_value["cur_track_meas_setting"]["stop_freq"], className="setting-input", max=9999999
             ),
         ),
 
         build_value_setter_line(
             "value-setter-panel-track-power",
-            "Power:",
+            "Power Min:",
             dcc.Input(
-                id="power_track_input", value=state_value["cur_track_meas_setting"]["power"], className="setting-input", size=200, max=9999999
+                id="power-track-input", value=state_value["cur_track_meas_setting"]["power_min"], className="setting-input", max=13
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-freq-step",
-            "Freq Step:",
+            "Power Max:",
             dcc.Input(
-                id="freq_step_input", value=state_value["cur_track_meas_setting"]["freq_step"], className="setting-input", size=200, max=9999999
+                id="freq-step-input", value=state_value["cur_track_meas_setting"]["power_max"], className="setting-input", max=13
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-track-time-step",
             "Time step:",
             dcc.Input(
-                id="time_step_track_input", value=state_value["cur_track_meas_setting"]["time_step"], className="setting-input", size=200, max=9999999
+                id="time-step-track-input", value=state_value["cur_track_meas_setting"]["time_step"], className="setting-input", max=9999999
             ),
         ),
 
         html.Div(
             className="button-container",
             children=[
-                html.Button("Accept", id="accept-btn-p-track", className="button form-button"),
+                html.Button("Accept", id="accept-btn-p", className="button form-button"),
             ],
         )
     ]
@@ -464,27 +462,85 @@ def fix_meas_tab(state_value):
             "value-setter-panel-fix-freq",
             "Frequency:",
             dcc.Input(
-                id="fixed_freq_input", value=state_value["cur_fix_meas_setting"]["frequency"], className="setting-input"
+                id="fixed-freq-input", value=state_value["cur_fix_meas_setting"]["start_freq"], className="setting-input"
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-fix-power",
             "Power:",
             dcc.Input(
-                id="power_fix_input", value=state_value["cur_fix_meas_setting"]["power"], className="setting-input", size=200, max=9999999
+                id="power-fix-input", value=state_value["cur_fix_meas_setting"]["power"], className="setting-input", max=9999999
             ),
         ), 
         build_value_setter_line(
             "value-setter-panel-fix-time-step",
             "Time step:",
             dcc.Input(
-                id="time_step_fix_input", value=state_value["cur_fix_meas_setting"]["time_step"], className="setting-input", size=200, max=9999999
+                id="time-step-fix-input", value=state_value["cur_fix_meas_setting"]["time_step"], className="setting-input", max=9999999
             ),
         ),
         html.Div(
             className="button-container",
             children=[
                 html.Button("Accept", id="accept-btn-fix", className="button form-button"),
+            ],
+        )
+    ]
+
+def pf_meas_tab(state_value):
+    return [
+        html.Div(
+            id='value-setter-panel-pf-header',
+            children=[
+                html.Label('Parameter', className='left header-first-col'),
+                html.Label('Value', className='left header-sec-col'),
+            ],
+            className="header-form",
+            style={'color':'#c8f10f'}
+        ),
+        
+        build_value_setter_line(
+            "value-setter-panel-pf-start-freq",
+            "Start Freq:",
+            dcc.Input(
+                id="pf-start-freq-input", value=state_value["cur_sweep_meas_setting"]["start_freq"],  className="setting-input", max=9999999
+            ),
+        ),
+
+        build_value_setter_line(
+            "value-setter-panel-pf-stop-freq",
+            "Stop Freq:",
+            dcc.Input(
+                id="pf-stop-freq-input", value=state_value["cur_sweep_meas_setting"]["stop_freq"], className="setting-input", max=9999999
+            ),
+        ),
+
+        build_value_setter_line(
+            "value-setter-panel-pf-pwr-min",
+            "Power Min:",
+            dcc.Input(
+                id="pf-power-min-input", value=state_value["cur_sweep_meas_setting"]["power_min"], className="setting-input", max=13
+            ),
+        ), 
+        build_value_setter_line(
+            "value-setter-panel-pf-pwr-max",
+            "Power Max:",
+            dcc.Input(
+                id="pf-freq-step-input", value=state_value["cur_sweep_meas_setting"]["power_max"], className="setting-input", max=13
+            ),
+        ), 
+        build_value_setter_line(
+            "value-setter-panel-pf-time-step",
+            "Time step:",
+            dcc.Input(
+                id="pf-time-step-input", value=state_value["cur_sweep_meas_setting"]["time_step"], className="setting-input", max=9999999
+            ),
+        ),
+
+        html.Div(
+            className="button-container",
+            children=[
+                html.Button("Accept", id="accept-btn-pf", className="button form-button"),
             ],
         )
     ]

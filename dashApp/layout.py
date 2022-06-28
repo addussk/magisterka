@@ -6,17 +6,25 @@ import dash_daq as daq
 DICT_DEFAULT_CFG = {
     "cur_fix_meas_setting": {
             "turn_on": False,
-            "frequency": 1,
-            "power":36,
-            "time_step":10,
+            "start_freq": 5000000,
+            "power":10,
+            "time_step":2,
     },
     "cur_track_meas_setting": {
             "turn_on": False,
             "start_freq":90,
             "stop_freq":110,
-            "power":36,
-            "freq_step":1,
-            "time_step":10,
+            "power_min":1,
+            "power_max":13,
+            "time_step":2,
+    },
+    "cur_sweep_meas_setting": {
+            "turn_on": False,
+            "start_freq":90,
+            "stop_freq":110,
+            "power_min":1,
+            "power_max":13,
+            "time_step":2,
         }
     }
 
@@ -25,7 +33,7 @@ layout_main = html.Div(
     children=[
         # Po refactoringu:
         # Przetrzymuje dane od pierwszego zaladowania strony do czasu wyczysczenia
-        dcc.Store(id='start-btn-color', storage_type='local', data=fill_style()),
+        dcc.Store(id='btns-color', storage_type='local', data=fill_style()),
         dcc.Store(id='mode-btn-hg', storage_type='local', data=""),
         dcc.Store(id='freq-input-val', storage_type='local', data=0),
         dcc.Store(id='power-input-val', storage_type='local', data=0),
@@ -89,7 +97,7 @@ layout_main = html.Div(
         html.Div(
             id="dialog-form-pf-tracking",
             className="dialog_container",
-            # children=track_meas_tab(DICT_DEFAULT_CFG),
+            children=pf_meas_tab(DICT_DEFAULT_CFG),
             style={
                 'display':'none',
             }
