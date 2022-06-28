@@ -10,6 +10,7 @@ import datetime
 from drivers import OUTPUT_INDICATORS_FNC
 from MlxSensorArray import mlxSensorArrayInstance
 from uwave_starter import checkIfUwaveIsRunning, startUwaveProcess
+from PiecykAutomationInterface import PAI_Instance
 
 Global_DataBase = DataBase(db)
 

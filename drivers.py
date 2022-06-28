@@ -5,6 +5,9 @@ import random
 import serial.tools.list_ports as port_list
 import serial
 from RfPowerDetector import rfPowerDetectorInstance 
+import PiecykAutomationInterface
+from PiecykAutomationInterface import PAI_Instance
+from PiecykRequest import PRStartExperiment, PRStopExperiment, PRFakeTemperature, PRSynthFreq, PRSynthLevel, PRSynthRfEnable, PRAttenuator, PRExit, PRPing
 
 from defines import LOG_ON
 #adc
@@ -28,8 +31,14 @@ def read_swr():
     return round(rfPowerDetectorInstance.getReturnLossDb(), 2)  # TODO: calculate SWR from return loss
 
 def read_freq():
-    return random.randint(10,20)
-
+#    try:
+#        oac = PAI_Instance.qUdpAnswers.get_nowait()
+#    except Queue.Empty as e:
+#       return "---"
+    resp = PAI_Instance.request(PRPing("TestPing"))
+    
+    return resp.frequency / 1e9
+    
 def read_pa_voltage():
     return random.randint(10,20)
 
