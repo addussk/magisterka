@@ -1,0 +1,43 @@
+#sep=*
+port=30033
+isep=0
+def_ans_ip=127.0.0.1
+def_ans_port=30034
+
+stty=1
+
+#limits
+freqmin=5.725e9
+freqmax=5.875e9
+
+
+#initials, must be within limits
+freq0=5.7777777e9
+level0=3
+atten0=29
+
+#USB request-response time gap
+s_usec=50
+
+#profiler enable, profiler table size
+prof_en=1
+prof_size=9
+
+#controller interval in [s]
+ctrltick=1
+#time after which "still waiting" message is issued in [s]
+stillwaiting=15
+
+#controller settings
+Pmax=15.0
+k0=17.9885
+k1=-0.9411
+k2=-8.8395
+
+autorun=1
+show_fake_temp_info=1
+show_temp_info=1 
+show_rf_info=1
+show_atten_info=1
+show_freq_info=1
+show_level_info=1

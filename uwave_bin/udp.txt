@@ -1,0 +1,31 @@
+Uwaga, każde polecenie i odpowiedź muszą być zakończone znakiem \0 (ASCII 0)
+
+Polecenia:
+
+START_EX - rozpoczecie eksperymentu
+STOP_EX - zakończenie eksperymentu
+FAKE_TEMP=x  - przejście termometru w tryb symulacji i ustawienie temp. na XXX.
+SYNTH_PING=x - pinganie syntezera ciągiem x
+SYNTH_FREQ=x - ustawianie częstotliwości syntezera + wymuszanie trybu manualnego 
+SYNTH_LEVEL=x - ustawianie poziomu mocy syntezera + wymuszanie trybu manualnego 
+SYNTH_RF=x - włącznie(1)/wyłącznaie(0) syntezera + wymuszanie trybu manualnego 
+ATTEN=x - ustawianie tłumienia + wymuszanie trybu manualnego 
+EXIT - zakończenie programu
+PING=x = pingnięcie aplikacji ciągiem x, aplikacja odsyła x
+
+
+Odpowiedzi:
+
+<_>:tXXX:TXXX:DXXX:aXXX:pXXX:fXXX:rYYY:cYYY
+
+gdzie: 
+XXX to odpowednie wartości liczbowe
+YYY to 0 (off) lub 1 (on)
+t - czas od momentu rozpoczęcia eksperymentu w [s]
+T - bieżąca temperatura w [oC]
+D - pożądana temperatura w [oC]
+a - tłumienie
+p - poziom mocy syntezera
+f - bieząca częstotliwość w [Hz]
+r - RF on/off
+c - automatyczne sterowanie on/off
