@@ -8,6 +8,7 @@ from defines import *
 import dash
 import datetime
 from drivers import OUTPUT_INDICATORS_FNC
+from MlxSensorArray import mlxSensorArrayInstance
 
 Global_DataBase = DataBase(db)
 
@@ -26,6 +27,7 @@ start_btn_on_style = {
 mode_btns_on_style = {
     'border': 'solid 4px rgb(40, 243, 4)',
 }
+
 
 mode_btns_id = ['manual-mode-btn', 'p-track-mode-btn', 'pf-track-mode-btn']
 
@@ -316,18 +318,15 @@ def register_callbacks(dashapp):
                 raise Exception("Error in inc_dec_pwr fnc")
         return int(retValue)
 
+
     # Funkcja odpowiedzialna za odczyt pomiaru temperatury z BD i wyswietleniu na kontrolce
     @dashapp.callback(
         Output('thermometer-indicator', 'value'),
-        [Input('interval-component', 'n_intervals')],
+        Input('interval-component', 'n_intervals'),
     )
     def update_therm_col(val):
-        last_measurement = db.session.query(Temperature).order_by(Temperature.id.desc()).first()
-
-        if last_measurement == None:
-            pass
-        else:
-            return int(last_measurement.get_sys_temperature())
+     #   last_measurement = db.session.query(Temperature).order_by(Temperature.id.desc()).first()     # CO TO JEST ??????? Czemu to idzie przez bazę danych?
+        return mlxSensorArrayInstance.get_averaged_temperature()
 
     # Callback obslugujacy odczyt kazdego z sensorow za pomoca tablicy zawierajacej wskaznik na funkcje do ich odczytu
     @dashapp.callback(
@@ -374,6 +373,26 @@ def register_callbacks(dashapp):
             style = [ {'display':'none'}, {'display':'none'}, {'display':'none'} ]
 
         return style
+    
+
+    @dashapp.callback(
+        [ Output('mlx-sensor-0', 'value'),
+          Output('mlx-sensor-1', 'value'),
+          Output('mlx-sensor-2', 'value'),
+          Output('mlx-sensor-3', 'value'),
+          Output('mlx-sensor-4', 'value')
+        ],  
+        Input('interval-component', 'n_intervals')
+    )
+    def update_mlx_sensors(value):
+        mlxSensorArrayInstance.update_readings()
+        values = []
+        for i in range(len(mlxSensorArrayInstance)):
+            temps = mlxSensorArrayInstance[i]
+            v = temps["object"]
+            values.append(str(v))
+        return values
+    
     
     @dashapp.callback(
         Output("cfg-mode-store", "data"),

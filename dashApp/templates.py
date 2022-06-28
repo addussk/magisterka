@@ -33,13 +33,13 @@ theme = {
 
 # id : label content
 OUTPUT_INDICATORS = {
-    'O_PWR':"Output PWR:,[W]",
-    'Refl_PWR': "Reflected PWR:,[W]",
-    'SWR': "SWR:,[W]",
-    'Freq': "Frequency:,[GHz]",
-    'PA_V': "PA Voltage:,[V]",
-    'PA_C': "PA Current:,[A]",
-    'PA_T': "PA Temperature:,[C]",
+    'O_PWR':"Output PWR:, [dBm]",
+    'Refl_PWR': "Reflected PWR:, [dBm]",
+    'SWR': "SWR:,",
+    'Freq': "Frequency:, [GHz]",
+    'PA_V': "PA Voltage:, [V]",
+    'PA_C': "PA Current:, [A]",
+    'PA_T': "PA Temperature:, [C]",
 }
 
 def generate_output_indicators():
@@ -60,18 +60,71 @@ def generate_output_indicators():
     return retArr
 
 def generate_temp_indicator():
+    temp_sensor_size = 20
+    led_style = {"margin":"-6px"}
     return  html.Div(
                 id="thermometer-card",
+                style={},
                 children=[
                     daq.Thermometer(
                         id="thermometer-indicator",
+                        label="Averaged:",
                         min=0,
                         max=105,
                         value=50, # should be update in runtime
                         showCurrentValue=True,
                         units="C",
-                        color="#f71606",
-                        style={ }
+                        color="#4adc65",
+                        height=150,
+                        style={"width":"50%"}
+                    ),
+                    html.Div(
+                        style={"width":"50%", "float": "right"},
+                        children = [
+                            daq.LEDDisplay(
+                                id='mlx-sensor-0',
+                                value="12.3",
+                                size=temp_sensor_size,
+                                backgroundColor="#1e2130",
+                                color="#4adc65",
+                                style=led_style
+                            ),
+                            daq.LEDDisplay(
+                                id='mlx-sensor-1',
+                                value="12.3",
+                                size=temp_sensor_size,
+                                backgroundColor="#1e2130",
+                                color="#4adc65",
+                                style=led_style
+                            ),
+                            daq.LEDDisplay(
+                                id='mlx-sensor-2',
+                                value="12.3",
+                                size=temp_sensor_size,
+                                backgroundColor="#1e2130",
+                                color="#4adc65",
+                                style=led_style
+                            ),
+                            daq.LEDDisplay(
+                                id='mlx-sensor-3',
+                                value="12.3",
+                                size=temp_sensor_size,
+                                backgroundColor="#1e2130",
+                                color="#4adc65",
+                                style=led_style
+                            ),
+                            daq.LEDDisplay(
+                                id='mlx-sensor-4',
+                                value="12.3",
+                                size=temp_sensor_size,
+                                backgroundColor="#1e2130",
+                                color="#4adc65",
+                                className='dark-theme-control',
+                                style=led_style
+                            ),
+                            
+                            
+                        ]
                     )
                 ]
             )  
@@ -87,16 +140,16 @@ def init_config_storage():
         },
         "cur_track_meas_setting": {
             "turn_on": False,
-            "start_freq":90,
-            "stop_freq":110,
+            "start_freq":5600,
+            "stop_freq":5900,
             "power":36,
             "freq_step":1,
             "time_step":10,
         },
         "cur_sweep_meas_setting": {
             "turn_on": False,
-            "start_freq":90,
-            "stop_freq":110,
+            "start_freq":5600,
+            "stop_freq":5900,
             "power":36,
             "freq_step":1,
             "time_step":10,
@@ -129,7 +182,7 @@ def build_banner():
                 id="baner-text",
                 className="column",
                 children=[
-                    html.H2("REAKTOR CHEMICZNY"),
+                    html.H2("Intelligent RF Power Source"),
                 ]
             ),
             html.Div(
