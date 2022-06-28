@@ -57,6 +57,12 @@ def generate_output_indicators():
                 html.Label("0", id=el_id+"value", className="right space-2px"),
             ])
         retArr.append(one_row)
+    retArr.append(html.Div(
+        id="uwave",
+        children=[
+           html.Label("uwave module:", className="left"),
+           html.Label("---", id="uwave_status_txt", className="right")
+        ]))
     return retArr
 
 def generate_temp_indicator():

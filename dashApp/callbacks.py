@@ -9,6 +9,7 @@ import dash
 import datetime
 from drivers import OUTPUT_INDICATORS_FNC
 from MlxSensorArray import mlxSensorArrayInstance
+from uwave_starter import checkIfUwaveIsRunning, startUwaveProcess
 
 Global_DataBase = DataBase(db)
 
@@ -420,6 +421,23 @@ def register_callbacks(dashapp):
             v = temps["object"]
             values.append(str(v))
         return values
+    
+    @dashapp.callback(
+        Output('uwave_status_txt','children'),
+        Input('interval-component', 'n_intervals')
+    )
+    def update_uwave_status(value):
+        UWAVE_PROCESS_NAME = "uwave"
+        if checkIfUwaveIsRunning():
+            return "RUNNING"
+        else:
+            # start process
+            startUwaveProcess()
+            if checkIfUwaveIsRunning():
+                return "process started"
+            else:
+                return "STOPPED"
+        
     
     
     @dashapp.callback(
