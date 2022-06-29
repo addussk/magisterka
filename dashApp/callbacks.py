@@ -10,7 +10,8 @@ import datetime
 from drivers import OUTPUT_INDICATORS_FNC
 from MlxSensorArray import mlxSensorArrayInstance
 from uwave_starter import checkIfUwaveIsRunning, startUwaveProcess
-from PiecykAutomationInterface import PAI_Instance
+from PiecykAutomationInterface import PAI_Instance as pai
+from PiecykRequest import PRStartExperiment, PRStopExperiment, PRFakeTemperature, PRSynthFreq, PRSynthLevel, PRSynthRfEnable, PRAttenuator, PRExit, PRPing
 
 Global_DataBase = DataBase(db)
 
@@ -310,8 +311,10 @@ def register_callbacks(dashapp):
         else:
             if triggered_by == 'freq-inc-btn.n_clicks':
                 retValue = current_freq + UNIT_TO_INC_DEC
+                pai.request(PRSynthFreq(retValue * 1e6)) 
             elif triggered_by == 'freq-dec-btn.n_clicks':
                 retValue = current_freq - UNIT_TO_INC_DEC
+                pai.request(PRSynthFreq(retValue * 1e6)) 
             else:
                 raise Exception("Error in inc_dec_freq fnc")
         return [int(retValue), int(retValue)]

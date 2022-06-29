@@ -45,7 +45,7 @@ def make_measurement():
         
         # comp.state.print_state()
         comp.state_machine()
-        time.sleep(5)
+        time.sleep(1)
 
         comp.measure_temperature()
 

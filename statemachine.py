@@ -5,6 +5,8 @@ import threading
 from dashApp.models import Results, FrontEndInfo, MeasSettings, MeasurementInfo, Temperature
 from drivers import LTDZ, DS1820, PowerSupply
 from RfPowerDetector import rfPowerDetectorInstance 
+from PiecykAutomationInterface import PAI_Instance as pai
+from PiecykRequest import PRStartExperiment, PRStopExperiment, PRFakeTemperature, PRSynthFreq, PRSynthLevel, PRSynthRfEnable, PRAttenuator, PRExit, PRPing
 
 class DataBase(object):
    ptr_to_database = None
@@ -263,17 +265,19 @@ class Measurement(State):
    def stop_measurement(self):
       print("Stopped measurement")
       self.state = MEASUREMENT_FREE
-      try:
-         # skonfigurowanie polaczenia z syntezatorem czestotliwosci
-         x = LTDZ()
-         x.find_device()
-
-         # wylaczenie syntezatora
-         x.turn_RF_out_off(x.config_serial())
-         x.turn_chip_off(x.config_serial())
-      except:
-         print("Warning:LTDZ has not been power down")
-         pass
+#      try:
+#         # skonfigurowanie polaczenia z syntezatorem czestotliwosci
+#         x = LTDZ()
+#         x.find_device()
+#
+#         # wylaczenie syntezatora
+#         x.turn_RF_out_off(x.config_serial())
+#         x.turn_chip_off(x.config_serial())
+#      except:
+#         print("Warning:LTDZ has not been power down")
+#         pass
+      pai.request(PRStopExperiment())
+      pai.request(PRSynthRfEnable(0))      
 
    def measure(self, freq, in_power):
 
@@ -358,25 +362,30 @@ class Measurement(State):
 
    def fixed__freq_mode(self):
 
-      try:
-         # skonfigurowanie polaczenia z syntezatorem czestotliwosci
-         x = LTDZ()
-         x.find_device()
-      except:
-         print("Warning: NO COMMUNICATION with LTDZ")
+#      try:
+#         # skonfigurowanie polaczenia z syntezatorem czestotliwosci
+#         x = LTDZ()
+#         x.find_device()
+#      except:
+#         print("Warning: NO COMMUNICATION with LTDZ")
+#
+#      try:
+#         # wlaczenie syntezatora
+#         print("turn chip")
+#         x.turn_chip_on(x.config_serial())
+#         print("turn RF out")
+#         x.turn_RF_out_on(x.config_serial())
+#         print("set power:")
+#         x.set_power(x.config_serial(), self.power)
+#         print("set freq")
+#         x.set_freq(x.config_serial(), self.start_freq * self.MHz)
+#      except:
+#         print("Warning: LTDZ has not been configured properly")
 
-      try:
-         # wlaczenie syntezatora
-         print("turn chip")
-         x.turn_chip_on(x.config_serial())
-         print("turn RF out")
-         x.turn_RF_out_on(x.config_serial())
-         print("set power:")
-         x.set_power(x.config_serial(), self.power)
-         print("set freq")
-         x.set_freq(x.config_serial(), self.start_freq * self.MHz)
-      except:
-         print("Warning: LTDZ has not been configured properly")
+      pai.request(PRSynthFreq(self.start_freq * self.MHz))  
+      pai.request(PRSynthLevel(2))         
+      pai.request(PRSynthRfEnable(1))      
+      pai.request(PRAttenuator(5)) 
 
       while self.state == MEASUREMENT_START:
          print("Fixed measurement")
