@@ -118,7 +118,6 @@ def register_callbacks(dashapp):
     # Funkcja ustawiajaca kolor start btn oraz status headera
     @dashapp.callback(
         [
-            Output('status-header', 'children'),
             Output('start-btn','style'),
             Output('stop-btn','style'),
         ],
@@ -131,10 +130,20 @@ def register_callbacks(dashapp):
             print("[CALLBACK] update_color input param: ", data)
 
         # W zaleznosci od koloru start btn zaktualizuj wartosc headera
-        retHeader = "Status: OFF" if '#065b0a9d' == data['start-btn-style']['backgroundColor'] else "Status: ON"
+        #retHeader = "Status: OFF" if '#065b0a9d' == data['start-btn-style']['backgroundColor'] else "Status: ON"
         
-        return [retHeader, data['start-btn-style'], data['stop-btn-style']]
+        return [data['start-btn-style'], data['stop-btn-style']]
 
+
+    @dashapp.callback(
+        Output('status-header', 'children'),
+        Input('interval-component', 'n_intervals')
+    )
+    def update_status(data):
+        resp = pai.request(PRPing("ReadingRfOnOff"))
+        retHeader = "Status: ON" if resp.rfOn else "Status: OFF"
+        return retHeader
+        
     @dashapp.callback(
         Output('btns-color', 'data'),
         [
@@ -310,11 +319,13 @@ def register_callbacks(dashapp):
         # Service seq
         else:
             if triggered_by == 'freq-inc-btn.n_clicks':
-                retValue = current_freq + UNIT_TO_INC_DEC
-                pai.request(PRSynthFreq(retValue * 1e6)) 
+                setValue = current_freq + UNIT_TO_INC_DEC
+                resp = pai.request(PRSynthFreq(setValue * 1e6))
+                retValue = resp.frequency / 1e6
             elif triggered_by == 'freq-dec-btn.n_clicks':
-                retValue = current_freq - UNIT_TO_INC_DEC
-                pai.request(PRSynthFreq(retValue * 1e6)) 
+                setValue = current_freq - UNIT_TO_INC_DEC
+                resp = pai.request(PRSynthFreq(setValue * 1e6))
+                retValue = resp.frequency / 1e6
             else:
                 raise Exception("Error in inc_dec_freq fnc")
         return [int(retValue), int(retValue)]
@@ -343,9 +354,13 @@ def register_callbacks(dashapp):
         # Service seq
         else:
             if triggered_by == 'power-inc-btn.n_clicks':
-                retValue = current_pwr + UNIT_TO_INC_DEC
+                setValue = current_pwr + UNIT_TO_INC_DEC
+                resp = pai.request(PRAttenuator(setValue))
+                retValue = resp.attenuation
             elif triggered_by == 'power-dec-btn.n_clicks':
-                retValue = current_pwr - UNIT_TO_INC_DEC
+                setValue = current_pwr - UNIT_TO_INC_DEC
+                resp = pai.request(PRAttenuator(setValue))
+                retValue = resp.attenuation
             else:
                 raise Exception("Error in inc_dec_pwr fnc")
         return [int(retValue), int(retValue)]

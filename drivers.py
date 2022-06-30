@@ -35,7 +35,7 @@ def read_freq():
 #        oac = PAI_Instance.qUdpAnswers.get_nowait()
 #    except Queue.Empty as e:
 #       return "---"
-    resp = PAI_Instance.request(PRPing("TestPing"))
+    resp = PAI_Instance.request(PRPing("ReadingFreq"))
     
     return resp.frequency / 1e9
     
