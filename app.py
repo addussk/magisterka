@@ -45,10 +45,11 @@ def make_measurement():
         
         # comp.state.print_state()
         comp.state_machine()
-        time.sleep(1)
+        time.sleep(0.5)
 
-        comp.measure_temperature()
-
+     #   comp.measure_temperature()
+     # tymczasowo zablokowałem pomiar temperatury bo DS1820 nie jest podpięty, a poza tym to dość osobliwe miejsce w kodzie na ten pomiar
+     
         if LOG_TASK_INFO_ON:
             print("task completed")
 
