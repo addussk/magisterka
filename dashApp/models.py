@@ -103,7 +103,7 @@ class MeasSettings(db.Model):
         self.power_min = 1
         self.power_max = 13
         self.freq_step = 1
-        self.time_step = 5
+        self.time_step = 1
         
     def get(self, member):
         if member == "mode":

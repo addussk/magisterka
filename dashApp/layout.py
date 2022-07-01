@@ -8,7 +8,7 @@ DICT_DEFAULT_CFG = {
             "turn_on": False,
             "start_freq": 5000000,
             "power":10,
-            "time_step":2,
+            "time_step":1,
     },
     "cur_track_meas_setting": {
             "turn_on": False,
@@ -16,7 +16,7 @@ DICT_DEFAULT_CFG = {
             "stop_freq":110,
             "power_min":1,
             "power_max":13,
-            "time_step":2,
+            "time_step":1,
     },
     "cur_sweep_meas_setting": {
             "turn_on": False,
@@ -24,7 +24,7 @@ DICT_DEFAULT_CFG = {
             "stop_freq":110,
             "power_min":1,
             "power_max":13,
-            "time_step":2,
+            "time_step":1,
         }
     }
 

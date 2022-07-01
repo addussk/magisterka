@@ -104,7 +104,7 @@ class DataBase(object):
       self.ptr_to_database.session.commit()
 
    # Funkcja do utworzenia record w tablicy MeasSettings przechowujacej ustawienie pomiaru
-   def create_MeasSettings(self, choosenMode=0, measStatus=MEASUREMENT_FREE, startFreq=2400, stopFreq=2400, pwr_min=1, pwr_max=13, fStep=1, tStep=5):
+   def create_MeasSettings(self, choosenMode=0, measStatus=MEASUREMENT_FREE, startFreq=2400, stopFreq=2400, pwr_min=1, pwr_max=13, fStep=1, tStep=1):
       self.ptr_to_database.session.add(MeasSettings(mode=choosenMode, state=measStatus, start_freq=startFreq, stop_freq=stopFreq, power_min=pwr_min, power_max=pwr_max, freq_step=fStep, time_step=tStep))
       self.ptr_to_database.session.commit()
 
@@ -432,7 +432,7 @@ class Guard(object):
       "stop_freq": 2400,
       "power": 10,
       "freq_step": 1,
-      "time_step": 5,
+      "time_step": 1,
    }
 
    def __init__(self, in_name='Main', database_ptr = None):

@@ -142,7 +142,7 @@ def init_config_storage():
             "turn_on": False,
             "start_freq": 1,
             "power":36,
-            "time_step":10,
+            "time_step":1,
         },
         "cur_track_meas_setting": {
             "turn_on": False,
@@ -150,7 +150,7 @@ def init_config_storage():
             "stop_freq":5900,
             "power":36,
             "freq_step":1,
-            "time_step":10,
+            "time_step":1,
         },
         "cur_sweep_meas_setting": {
             "turn_on": False,
@@ -158,7 +158,7 @@ def init_config_storage():
             "stop_freq":5900,
             "power":36,
             "freq_step":1,
-            "time_step":10,
+            "time_step":1,
         }
     }
     
