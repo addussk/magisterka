@@ -35,7 +35,7 @@
     }
 
     .input_div{
-        width :20% !important;
+        width :15% !important;
         height: 80% !important;
         float :left; 
         margin: 1%;
@@ -60,7 +60,7 @@
     }
 
     .column-set {
-        width: 25%;
+        width: 30%;
         height: 100%;
         margin-left: 2%;
     }

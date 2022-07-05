@@ -266,7 +266,7 @@ def build_set_panel():
                 children=[
                     html.Div(
                         children=[
-                            html.P("Frequency: "),
+                            html.P("Frequency [MHz]: "),
                         ],
                         style={'height':'50%'},
                     ),
@@ -303,7 +303,7 @@ def build_set_panel():
                 children=[ 
                     html.Div(
                         children=[
-                            html.P("Power Level: "),
+                            html.P("Attenuator [dB]: "),
                         ],
                         style={'height':'50%'},
                     ),
