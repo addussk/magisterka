@@ -7,6 +7,8 @@ from drivers import LTDZ, DS1820, PowerSupply
 from RfPowerDetector import rfPowerDetectorInstance 
 from PiecykAutomationInterface import PAI_Instance as pai
 from PiecykRequest import PRStartExperiment, PRStopExperiment, PRFakeTemperature, PRSynthFreq, PRSynthLevel, PRSynthRfEnable, PRAttenuator, PRExit, PRPing
+from MeasurementSession import MeasurementSessionInstance as msi
+
 
 class DataBase(object):
    ptr_to_database = None
@@ -246,6 +248,7 @@ class Measurement(State):
          print("[MEASUREMENT] managing_measurement class members[mode, start_freq, stop_freq]: ", self.mode, self.start_freq, self.stop_freq)
       
       if type_req == MEASUREMENT_START:
+         msi.clearAllTraces()
          if self.mode == 0:
             thread_list.append(threading.Thread(target=self.fixed__freq_mode))
          elif self.mode == 1:
@@ -290,6 +293,7 @@ class Measurement(State):
          transmittedPwr = self.rfPowerDetector.getFwdPowerDbm()
 
       self.write_to_database_Results(freq, transmittedPwr, receivedPwr)
+      msi.addDataPoint(transmittedPwr, receivedPwr, freq)
 
       return transmittedPwr
 

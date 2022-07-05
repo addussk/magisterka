@@ -12,6 +12,7 @@ from MlxSensorArray import mlxSensorArrayInstance
 from uwave_starter import checkIfUwaveIsRunning, startUwaveProcess
 from PiecykAutomationInterface import PAI_Instance as pai
 from PiecykRequest import PRStartExperiment, PRStopExperiment, PRFakeTemperature, PRSynthFreq, PRSynthLevel, PRSynthRfEnable, PRAttenuator, PRExit, PRPing
+from MeasurementSession import MeasurementSessionInstance as msi, TIME_KEY, FWD_KEY, RFL_KEY
 
 Global_DataBase = DataBase(db)
 
@@ -569,16 +570,55 @@ def register_callbacks(dashapp):
 
         if meas_state == MEASUREMENT_ONGOING:
             # Odczyt pomiarow z bazy danych
-            time_scope_last_meas = Global_DataBase.read_last_record(MeasurementInfo).get_time_scope()
-            frequency_measurement = Global_DataBase.read_filtered_table_live(time_scope_last_meas)
-            x_ax = [ el.get_data_meas() for el in frequency_measurement]
+#            time_scope_last_meas = Global_DataBase.read_last_record(MeasurementInfo).get_time_scope()
+#            frequency_measurement = Global_DataBase.read_filtered_table_live(time_scope_last_meas)
+#            x_ax = [ el.get_data_meas() for el in frequency_measurement]
             
             # transmit pwr
-            y_ax.append([ el.get_trans_pwr() for el in frequency_measurement])
+#            y_ax.append([ el.get_trans_pwr() for el in frequency_measurement])
             # received pwr
-            y_ax.append([ el.get_meas_pwr() for el in frequency_measurement])
+#            y_ax.append([ el.get_meas_pwr() for el in frequency_measurement])
 
-            return generate_graph( x_ax, y_ax, "stub")
+#            return generate_graph( x_ax, y_ax, "stub")
+
+            axis_x = msi.getTrace(TIME_KEY)
+            axis_y = msi.getTrace(FWD_KEY)
+
+            temp_dict = {
+                "x" : axis_x,
+                "y" : axis_y,
+                "mode": "lines+markers",
+                'type': 'scatter',
+                'name': "FWD",
+            }
+            all_fig = list()
+            all_fig.append(temp_dict)
+
+            td = {
+                "x" : axis_x,
+                "y" : msi.getTrace(RFL_KEY),
+                "mode": "lines+markers",
+                'type': 'scatter',
+                'name': "RFL",
+            }
+            all_fig.append(td)
+
+            fig={
+                    "data": all_fig,
+                    "layout": {
+                        "paper_bgcolor": "rgba(0,0,0,0)",
+                        "plot_bgcolor": "rgba(0,0,0,0)",
+                        "xaxis": dict(
+                            showline=False, showgrid=False, zeroline=False
+                        ),
+                        "yaxis": dict(
+                            showgrid=False, showline=False, zeroline=False
+                        ),
+                        "autosize": True,
+                    },
+                }
+
+            return fig
         else:
             triggered_by = dash.callback_context.triggered[0]
             
