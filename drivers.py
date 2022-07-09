@@ -58,6 +58,17 @@ OUTPUT_INDICATORS_FNC = {
     'PA_T': read_pa_temp,
 }
 
+# id : label content
+OUTPUT_INDICATORS = {
+    'O_PWR':"Output PWR:, [dBm]",
+    'Refl_PWR': "Reflected PWR:, [dBm]",
+    'SWR': "SWR:,",
+    'Freq': "Frequency:, [GHz]",
+    'PA_V': "PA Voltage:, [V]",
+    'PA_C': "PA Current:, [A]",
+    'PA_T': "PA Temperature:, [C]",
+}
+
 #Syntezator czestotliwosci
 class LTDZ():
     

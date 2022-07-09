@@ -53,6 +53,7 @@ layout_main = html.Div(
         html.Div(
             id='output-panel',
             className="row",
+            style={"display":"block"},
             children=[
                 html.H1("Status: OFF", id="status-header"),
                 html.Div(
@@ -74,6 +75,19 @@ layout_main = html.Div(
                     ],
                 ),
             ],
+        ),
+
+        html.Div(
+            id="graph-cfg-panel",
+            className="row",
+            style={"display":"none"},
+            children=[
+                html.H1("Graph config"),
+                html.Div(
+                    id="graph-cfg-container",
+                    children=generate_graph_cfg_controls(),
+                ),
+            ]
         ),
 
         html.Div(

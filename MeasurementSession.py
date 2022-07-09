@@ -1,7 +1,7 @@
 # The object of the class represents the measured dataset for the current measurement session.
 
 import datetime
-
+from MlxSensorArray import mlxSensorArrayInstance
 
 
 TIME_KEY = "timestamp"
@@ -13,6 +13,7 @@ T1_KEY = "t1"
 T2_KEY = "t2"
 T3_KEY = "t3"
 T4_KEY = "t4"
+TAVG_KEY = "tavg"
 TINTERNAL_KEY = "temp_int"
 VOLTAGE_KEY = "voltage"
 CURRENT_KEY = "current"
@@ -33,6 +34,7 @@ class MeasurementSession:
             T2_KEY: [],
             T3_KEY: [],
             T4_KEY: [],
+            TAVG_KEY: [],
             TINTERNAL_KEY: [],
             VOLTAGE_KEY: [],
             CURRENT_KEY: []
@@ -54,11 +56,13 @@ class MeasurementSession:
         self.__data[RFL_KEY].append(round(rflPwrDbm, 2))
         f = round(frequencyMhz, 3) if frequencyMhz is not None else 0
         self.__data[MHZ_KEY].append(f)
-        self.__data[T0_KEY].append(1)
-        self.__data[T1_KEY].append(2)
-        self.__data[T2_KEY].append(3)
-        self.__data[T3_KEY].append(4)
-        self.__data[T4_KEY].append(5)
+        self.__data[T0_KEY].append(mlxSensorArrayInstance[0]['object'])
+        self.__data[T1_KEY].append(mlxSensorArrayInstance[1]['object'])
+        self.__data[T2_KEY].append(mlxSensorArrayInstance[2]['object'])
+        self.__data[T3_KEY].append(mlxSensorArrayInstance[3]['object'])
+        self.__data[T4_KEY].append(mlxSensorArrayInstance[4]['object'])
+        print("!!!!!!!!!!!!!", mlxSensorArrayInstance[3])
+        self.__data[TAVG_KEY].append(mlxSensorArrayInstance.get_averaged_temperature())
         self.__data[TINTERNAL_KEY].append(tempInternal)
         self.__data[VOLTAGE_KEY].append(voltage)
         self.__data[CURRENT_KEY].append(current)

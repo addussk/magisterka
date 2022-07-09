@@ -69,7 +69,7 @@
         margin: 0;
     }
 
-    #output-panel {
+    #output-panel, #graph-cfg-panel {
         width: 30%;
         height: 100%;
         border: 2px solid darkred;

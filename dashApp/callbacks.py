@@ -1,18 +1,18 @@
 from statemachine import DataBase
 from dashApp.models import FrontEndInfo, Temperature, MeasSettings, MeasurementInfo
 from dash.dependencies import Input, Output, State
-from dash import html
+from dash import html, ALL
 from dashApp.templates import *
 from dashApp.extensions import db
 from defines import *
 import dash
 import datetime
-from drivers import OUTPUT_INDICATORS_FNC
+from drivers import OUTPUT_INDICATORS_FNC, OUTPUT_INDICATORS
 from MlxSensorArray import mlxSensorArrayInstance
 from uwave_starter import checkIfUwaveIsRunning, startUwaveProcess
 from PiecykAutomationInterface import PAI_Instance as pai
 from PiecykRequest import PRStartExperiment, PRStopExperiment, PRFakeTemperature, PRSynthFreq, PRSynthLevel, PRSynthRfEnable, PRAttenuator, PRExit, PRPing
-from MeasurementSession import MeasurementSessionInstance as msi, TIME_KEY, FWD_KEY, RFL_KEY
+from MeasurementSession import MeasurementSessionInstance as msi, TIME_KEY, FWD_KEY, RFL_KEY, MHZ_KEY, T0_KEY, T1_KEY, T2_KEY, T3_KEY, T4_KEY, TAVG_KEY, TINTERNAL_KEY, VOLTAGE_KEY, CURRENT_KEY
 
 Global_DataBase = DataBase(db)
 
@@ -48,6 +48,82 @@ P_TRACKING_MODE = 1
 PF_TRACKING_MODE = 2
 
 UNIT_TO_INC_DEC = 1 # MHz
+
+graph_traces = [
+    {
+        "key": FWD_KEY,
+        "label": "Forward Pwr dBm",
+        "defaultState": True,
+        "color": "#FF006E"      # ręczne zarządzanie kolorami linii, aby nie zmieniały się przy włączaniu/wyłączaniu krzywych
+    },
+    {
+        "key": RFL_KEY,
+        "label": "Reflected Pwr dBm",
+        "defaultState": True,
+        "color": "#3A86FF"
+    },
+    {
+        "key": MHZ_KEY,
+        "label": "Frequency MHz",
+        "defaultState": True,
+        "color": "#FEFAE0"
+    },
+    {
+        "key": T0_KEY,
+        "label": "Tube temp 0",
+        "defaultState": False,
+        "color": "#BABB74"
+    },
+    {
+        "key": T1_KEY,
+        "label": "Tube temp 1",
+        "defaultState": False,
+        "color": "#D2C06F"
+    },
+    {
+        "key": T2_KEY,
+        "label": "Tube temp 2",
+        "defaultState": False,
+        "color": "#DEC26D"
+    },
+    {
+        "key": T3_KEY,
+        "label": "Tube temp 3",
+        "defaultState": False,
+        "color": "#E9C46A"
+    },
+    {
+        "key": T4_KEY,
+        "label": "Tube temp 4",
+        "defaultState": False,
+        "color": "#EFB366"
+    },
+    {
+        "key": TAVG_KEY,
+        "label": "Tube Tavg",
+        "defaultState": False,
+        "color": "#E76F51"
+    },
+    {
+        "key": TINTERNAL_KEY,
+        "label": "PA Temp",
+        "defaultState": True,
+        "color": "#C66F5A"
+    },
+    {
+        "key": VOLTAGE_KEY,
+        "label": "PA Volts",
+        "defaultState": True,
+        "color": "#275C62"
+    },
+    {
+        "key": CURRENT_KEY,
+        "label": "PA Amps",
+        "defaultState": True,
+        "color": "#2A9D8F"
+    },
+]
+
 
 # Funkcja do wygenerowania elementu dcc.Graph
 def generate_graph(axis_x, axis_y, name):
@@ -434,7 +510,7 @@ def register_callbacks(dashapp):
         Input('interval-component', 'n_intervals')
     )
     def update_mlx_sensors(value):
-        mlxSensorArrayInstance.update_readings()
+#        mlxSensorArrayInstance.update_readings()
         values = []
         for i in range(len(mlxSensorArrayInstance)):
             temps = mlxSensorArrayInstance[i]
@@ -557,12 +633,35 @@ def register_callbacks(dashapp):
     def update_freq_input_store(freq_in, pwr_in):
         return [freq_in, pwr_in]
 
+
+    @dashapp.callback(
+        [
+            Output("output-panel", "style"),
+            Output("graph-cfg-panel", "style")
+        ],
+        [
+            Input("graph-cfg-btn", "n_clicks")
+        ],
+        [
+            State("output-panel", "style"),
+            State("graph-cfg-panel", "style")
+        ]
+    )
+    def show_graph_cfg_panel(n_clicks, op_style, gc_style):
+        if op_style["display"]=="none":
+            return [{"display":"block"}, {"display":"none"}]
+        else:
+            return [{"display":"none"}, {"display":"block"}]
+
     # Wiele komponentów może się aktualizować za każdym razem, gdy zostanie uruchomiony interwał.
     @dashapp.callback(
         Output('control-chart-live', 'figure'),
-        Input('interval-component', 'n_intervals'),
+        [
+            Input('interval-component', 'n_intervals'),
+            Input({"type":"graph-trace-switch", "key": ALL}, "on")
+        ]
         )
-    def update_graph_live(n):
+    def update_graph_live(n, trace_switch_list):
         x_ax, y_ax = list(), list()
         retFig = dash.no_update
         # sprawdzic czy jest aktualnie pomiar
@@ -581,30 +680,23 @@ def register_callbacks(dashapp):
 
 #            return generate_graph( x_ax, y_ax, "stub")
 
-            axis_x = msi.getTrace(TIME_KEY)
-            axis_y = msi.getTrace(FWD_KEY)
+            tracesList = list()
+            x_data = msi.getTrace(TIME_KEY)
 
-            temp_dict = {
-                "x" : axis_x,
-                "y" : axis_y,
-                "mode": "lines+markers",
-                'type': 'scatter',
-                'name': "FWD",
-            }
-            all_fig = list()
-            all_fig.append(temp_dict)
-
-            td = {
-                "x" : axis_x,
-                "y" : msi.getTrace(RFL_KEY),
-                "mode": "lines+markers",
-                'type': 'scatter',
-                'name': "RFL",
-            }
-            all_fig.append(td)
+            for i, gt in enumerate(graph_traces):
+                if trace_switch_list[i]:
+                    trace = {
+                        "x": x_data,
+                        "y": msi.getTrace(gt["key"]),
+                        "mode": "lines+markers",
+                        'type': 'scatter',
+                        'line': {'color':gt['color']},
+                        "name": gt["label"],
+                    }
+                    tracesList.append(trace)
 
             fig={
-                    "data": all_fig,
+                    "data": tracesList,
                     "layout": {
                         "paper_bgcolor": "rgba(0,0,0,0)",
                         "plot_bgcolor": "rgba(0,0,0,0)",

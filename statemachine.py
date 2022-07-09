@@ -8,7 +8,7 @@ from RfPowerDetector import rfPowerDetectorInstance
 from PiecykAutomationInterface import PAI_Instance as pai
 from PiecykRequest import PRStartExperiment, PRStopExperiment, PRFakeTemperature, PRSynthFreq, PRSynthLevel, PRSynthRfEnable, PRAttenuator, PRExit, PRPing
 from MeasurementSession import MeasurementSessionInstance as msi
-
+from MlxSensorArray import mlxSensorArrayInstance
 
 class DataBase(object):
    ptr_to_database = None
@@ -540,7 +540,8 @@ class Guard(object):
    def state_machine(self):
       read_mes_set = self.db.read_table(MeasSettings)
       current_step = self.choose_step()
-
+      mlxSensorArrayInstance.update_readings()    # Regularna aktualizacja sensorów temperatury bez względu na wybrany tryb pracy
+        
       if LOG_SM_ON:
          print("[SM] Current Step: ", current_step)
 

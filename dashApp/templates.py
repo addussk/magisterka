@@ -4,7 +4,8 @@ import plotly.graph_objs as go
 from dashApp.extensions import db
 from statemachine import DataBase
 from dashApp.models import  MeasurementInfo
-
+from dashApp.callbacks import graph_traces 
+from drivers import OUTPUT_INDICATORS 
 Global_DataBase = DataBase(db)
 
 # Dict dla drop list do wybierania trybow pomiaru(tab meas setts)
@@ -31,16 +32,7 @@ theme = {
     'secondary': '#fa0606',
 }
 
-# id : label content
-OUTPUT_INDICATORS = {
-    'O_PWR':"Output PWR:, [dBm]",
-    'Refl_PWR': "Reflected PWR:, [dBm]",
-    'SWR': "SWR:,",
-    'Freq': "Frequency:, [GHz]",
-    'PA_V': "PA Voltage:, [V]",
-    'PA_C': "PA Current:, [A]",
-    'PA_T': "PA Temperature:, [C]",
-}
+
 
 def generate_output_indicators():
     retArr = []
@@ -377,6 +369,8 @@ def build_chart_panel():
                 children=[
                     html.Button("Start!", id="start-btn", className="button"),
                     html.Br(),
+                    html.Button("Graph config", id="graph-cfg-btn", className="button"),
+                    html.Br(),
                     html.Button("Stop!", id="stop-btn", className="button",),
                 ]
             ),
@@ -550,3 +544,20 @@ def pf_meas_tab(state_value):
             ],
         )
     ]
+
+def generate_graph_cfg_controls():
+    controls = list()
+    for gt in graph_traces:
+        ctrl = daq.BooleanSwitch(
+            id={
+                "type": "graph-trace-switch",
+                "key": gt["key"],
+            },
+            color=gt["color"],
+            on=gt["defaultState"],
+            label={"label":gt["label"], "style":{"width":"50%", "margin-bottom":"10px"} },
+            labelPosition="right"
+        )
+        controls.append(ctrl)
+    return controls
+
