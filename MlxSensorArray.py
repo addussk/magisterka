@@ -34,7 +34,7 @@ class MlxSensorArray:
                 temperature = round(temperature, 3)  # there is no more accuracy in the sensor
             else:
                 temperature = self.__addresses[sensor_idx] + round(random(),2)
-        except e:
+        except Exception as e:
             print(f"Exception during object temperature IR sensor read idx={sensor_idx}, message:{e}")
             temperature = None
         finally:
@@ -52,7 +52,7 @@ class MlxSensorArray:
                 temperature = round(temperature, 3)  # there is no more accuracy in the sensor
             else:
                 temperature = self.__addresses[sensor_idx] - 10 + round(random(),2)    # -10 just to make it different from obj_temp (no special meaning)
-        except e:
+        except Exception as e:
             print(f"Exception during ambient temperature IR sensor read idx={sensor_idx}, message:{e}")
             temperature = None
         finally:
@@ -62,9 +62,12 @@ class MlxSensorArray:
 
     def get_averaged_temperature(self):
         s = 0
+        num = 0
         for i in range(len(self)):
-            s += self[i]["object"]
-        average = s / len(self)
+            if self[i]["object"] is not None:
+                s += self[i]["object"]
+                num += 1
+        average = s / num
         return round(average, 3)
 
     # Updates all readings in the sensor array
