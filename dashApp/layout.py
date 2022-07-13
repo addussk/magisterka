@@ -25,7 +25,7 @@ DICT_DEFAULT_CFG = {
             "power_min":1,
             "power_max":13,
             "time_step":1,
-        }
+        },
     }
 
 layout_main = html.Div(
@@ -100,6 +100,15 @@ layout_main = html.Div(
         ),
 
         html.Div(
+            id="dialog-form-t-tracking",
+            className="dialog_container",
+            children=t_tracking_tab(),
+            style={
+                'display':'none',
+            }
+        ),
+
+        html.Div(
             id="dialog-form-p-tracking",
             className="dialog_container",
             children=track_meas_tab(DICT_DEFAULT_CFG),
@@ -115,6 +124,11 @@ layout_main = html.Div(
             style={
                 'display':'none',
             }
+        ),
+
+        html.Div(
+            id="hidden-div",
+            style={'display':'none'}
         ),
 
         dcc.Interval(

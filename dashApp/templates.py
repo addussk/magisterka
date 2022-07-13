@@ -1,12 +1,90 @@
-from dash import html, dcc
+from dash import html, dcc, dash_table
 import dash_daq as daq
 import plotly.graph_objs as go
 from dashApp.extensions import db
 from statemachine import DataBase
 from dashApp.models import  MeasurementInfo
-from dashApp.callbacks import graph_traces 
 from drivers import OUTPUT_INDICATORS 
+from MeasurementSession import TIME_KEY, FWD_KEY, RFL_KEY, MHZ_KEY, T0_KEY, T1_KEY, T2_KEY, T3_KEY, T4_KEY, TAVG_KEY, TINTERNAL_KEY, VOLTAGE_KEY, CURRENT_KEY
+
 Global_DataBase = DataBase(db)
+
+
+graph_traces = [
+    {
+        "key": FWD_KEY,
+        "label": "Forward Pwr dBm",
+        "defaultState": True,
+        "color": "#FF006E"      # ręczne zarządzanie kolorami linii, aby nie zmieniały się przy włączaniu/wyłączaniu krzywych
+    },
+    {
+        "key": RFL_KEY,
+        "label": "Reflected Pwr dBm",
+        "defaultState": True,
+        "color": "#3A86FF"
+    },
+    {
+        "key": MHZ_KEY,
+        "label": "Frequency MHz",
+        "defaultState": True,
+        "color": "#FEFAE0"
+    },
+    {
+        "key": T0_KEY,
+        "label": "Tube temp 0",
+        "defaultState": False,
+        "color": "#BABB74"
+    },
+    {
+        "key": T1_KEY,
+        "label": "Tube temp 1",
+        "defaultState": False,
+        "color": "#D2C06F"
+    },
+    {
+        "key": T2_KEY,
+        "label": "Tube temp 2",
+        "defaultState": False,
+        "color": "#DEC26D"
+    },
+    {
+        "key": T3_KEY,
+        "label": "Tube temp 3",
+        "defaultState": False,
+        "color": "#E9C46A"
+    },
+    {
+        "key": T4_KEY,
+        "label": "Tube temp 4",
+        "defaultState": False,
+        "color": "#EFB366"
+    },
+    {
+        "key": TAVG_KEY,
+        "label": "Tube Tavg",
+        "defaultState": False,
+        "color": "#E76F51"
+    },
+    {
+        "key": TINTERNAL_KEY,
+        "label": "PA Temp",
+        "defaultState": True,
+        "color": "#C66F5A"
+    },
+    {
+        "key": VOLTAGE_KEY,
+        "label": "PA Volts",
+        "defaultState": True,
+        "color": "#275C62"
+    },
+    {
+        "key": CURRENT_KEY,
+        "label": "PA Amps",
+        "defaultState": True,
+        "color": "#2A9D8F"
+    },
+]
+
 
 # Dict dla drop list do wybierania trybow pomiaru(tab meas setts)
 DROP_LIST_MEAS_MODE = {
@@ -151,6 +229,11 @@ def init_config_storage():
             "power":36,
             "freq_step":1,
             "time_step":1,
+        },
+        "cur_temp_tracking_settings": {
+            "turn_on": False,
+            "time_step": 1,
+        
         }
     }
     
@@ -238,12 +321,20 @@ def build_mode_btns():
                 children=[
                     html.Button("P-Tracking", id="p-track-mode-btn", className="button"),
                 ],
+                style={"display":"none"}
+            ),
+            html.Div(
+                className="column mode-btn",
+                children=[
+                    html.Button("Temp-tracking", id="t-track-mode-btn", className="button"),
+                ],
             ),
             html.Div(
                 className="column mode-btn",
                 children=[
                     html.Button("PF-Tracking", id="pf-track-mode-btn", className="button"),
                 ],
+                style={"display":"none"}
             ),
         ]
     )
@@ -486,6 +577,53 @@ def fix_meas_tab(state_value):
             ],
         )
     ]
+
+def tt_table(data=()):
+    return dash_table.DataTable(
+        id="t-tracking-table", 
+        columns=([
+            {"id":"tt-seconds", "name":"Time [sec.]", "format":{"locale":{"symbol":["", "s."]}}},
+            {"id":"tt-temperature", "name":"Temperature [°C]", "format":{"locale":{"symbol":["", "°C"]}}}
+        ]),
+        data=data,
+        style_header={
+            "backgroundColor":'rgb(30, 30, 30)',
+            "color":"white"
+        },
+        style_data={
+            "backgroundColor":'rgb(50, 50, 50)',
+            "color":"white"            
+        },
+        editable=True,
+        row_deletable=True
+    )
+
+
+def t_tracking_tab():
+    return [
+        html.Div(
+            id='t-tracking-cfg-header',
+            children=[
+                html.Label('Temperature curve definition', className='left'),
+            ],
+            className="header-form",
+            style={'color':'#c8f10f'}
+        ),        
+
+        html.Button('Add row', id='tt-add-row-btn', className="right", n_clicks=0),
+        html.Br(),
+        html.Div(
+            id="tt-table-div", 
+            children=[tt_table()]),
+
+        html.Div(
+            className="button-container",
+            children=[
+                html.Button("Accept", id="accept-btn-t", className="button form-button"),
+            ],
+        )    
+    ]
+
 
 def pf_meas_tab(state_value):
     return [

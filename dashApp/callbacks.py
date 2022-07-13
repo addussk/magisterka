@@ -9,10 +9,10 @@ import dash
 import datetime
 from drivers import OUTPUT_INDICATORS_FNC, OUTPUT_INDICATORS
 from MlxSensorArray import mlxSensorArrayInstance
-from uwave_starter import checkIfUwaveIsRunning, startUwaveProcess
+from uwave_starter import checkIfUwaveIsRunning, startUwaveProcess, save_table_for_uwave, load_table_from_uwave
 from PiecykAutomationInterface import PAI_Instance as pai
 from PiecykRequest import PRStartExperiment, PRStopExperiment, PRFakeTemperature, PRSynthFreq, PRSynthLevel, PRSynthRfEnable, PRAttenuator, PRExit, PRPing
-from MeasurementSession import MeasurementSessionInstance as msi, TIME_KEY, FWD_KEY, RFL_KEY, MHZ_KEY, T0_KEY, T1_KEY, T2_KEY, T3_KEY, T4_KEY, TAVG_KEY, TINTERNAL_KEY, VOLTAGE_KEY, CURRENT_KEY
+from MeasurementSession import MeasurementSessionInstance as msi, TIME_KEY
 
 Global_DataBase = DataBase(db)
 
@@ -41,88 +41,16 @@ mode_btns_on_style = {
 }
 
 
-mode_btns_id = ['manual-mode-btn', 'p-track-mode-btn', 'pf-track-mode-btn']
+mode_btns_id = ['manual-mode-btn', 'p-track-mode-btn', 'pf-track-mode-btn', 't-track-mode-btn']
 
 MANUAL_MODE = 0
 P_TRACKING_MODE = 1
 PF_TRACKING_MODE = 2
+T_TRACKING_MODE = 3
 
 UNIT_TO_INC_DEC = 1 # MHz
 
-graph_traces = [
-    {
-        "key": FWD_KEY,
-        "label": "Forward Pwr dBm",
-        "defaultState": True,
-        "color": "#FF006E"      # ręczne zarządzanie kolorami linii, aby nie zmieniały się przy włączaniu/wyłączaniu krzywych
-    },
-    {
-        "key": RFL_KEY,
-        "label": "Reflected Pwr dBm",
-        "defaultState": True,
-        "color": "#3A86FF"
-    },
-    {
-        "key": MHZ_KEY,
-        "label": "Frequency MHz",
-        "defaultState": True,
-        "color": "#FEFAE0"
-    },
-    {
-        "key": T0_KEY,
-        "label": "Tube temp 0",
-        "defaultState": False,
-        "color": "#BABB74"
-    },
-    {
-        "key": T1_KEY,
-        "label": "Tube temp 1",
-        "defaultState": False,
-        "color": "#D2C06F"
-    },
-    {
-        "key": T2_KEY,
-        "label": "Tube temp 2",
-        "defaultState": False,
-        "color": "#DEC26D"
-    },
-    {
-        "key": T3_KEY,
-        "label": "Tube temp 3",
-        "defaultState": False,
-        "color": "#E9C46A"
-    },
-    {
-        "key": T4_KEY,
-        "label": "Tube temp 4",
-        "defaultState": False,
-        "color": "#EFB366"
-    },
-    {
-        "key": TAVG_KEY,
-        "label": "Tube Tavg",
-        "defaultState": False,
-        "color": "#E76F51"
-    },
-    {
-        "key": TINTERNAL_KEY,
-        "label": "PA Temp",
-        "defaultState": True,
-        "color": "#C66F5A"
-    },
-    {
-        "key": VOLTAGE_KEY,
-        "label": "PA Volts",
-        "defaultState": True,
-        "color": "#275C62"
-    },
-    {
-        "key": CURRENT_KEY,
-        "label": "PA Amps",
-        "defaultState": True,
-        "color": "#2A9D8F"
-    },
-]
+
 
 
 # Funkcja do wygenerowania elementu dcc.Graph
@@ -298,6 +226,8 @@ def register_callbacks(dashapp):
                     for key, value in cfg_mode['cur_sweep_meas_setting'].items():
                         if key != "turn_on":
                             cfg_to_store.append((key,value))
+                elif mode_btns_id[T_TRACKING_MODE] == data_mode:
+                    cfg_to_store.append(T_TRACKING_MODE)
                 else:
                     raise Exception("Error in start_stop_btn fnc")
 
@@ -322,7 +252,7 @@ def register_callbacks(dashapp):
     )
     def highlight_mode_btn(data):
         # default value dla: tryb bez zaznaczonego moda
-        retArr = [{'border':'none'}, {'border':'none'}, {'border':'none'}]
+        retArr = [{'border':'none'}, {'border':'none'}, {'border':'none'}, {'border':'none'}]
 
         # W store przechowywana dana z nazwa btn ktory ma zostac podswietlony, sprawdzamy w tablicy pozycje i edytujemy dla niego styl w zwracanej wartosci
         retArr[mode_btns_id.index(data)] = mode_btns_on_style
@@ -333,7 +263,7 @@ def register_callbacks(dashapp):
         [Input(mode_id, 'n_clicks' ) for mode_id in mode_btns_id],
         [State('mode-btn-hg', 'data')],
     )
-    def mode_btn(manual, p_track, pf_track, data):
+    def mode_btn(manual, p_track, pf_track, t_track, data):
         ctx = dash.callback_context
 
         # Odczytanie stanu czy pomiar jest dokonywany
@@ -351,6 +281,8 @@ def register_callbacks(dashapp):
                    data = mode_btns_id[P_TRACKING_MODE]
                 elif PF_TRACKING_MODE == meas_mode:
                     data = mode_btns_id[PF_TRACKING_MODE]
+                elif T_TRACKING_MODE == meas_mode:
+                    data = mode_btns_id[T_TRACKING_MODE]
                 else:
                     raise Exception("Wrong measurement mode")
         # Seq po wcisnieciu przycisku mode
@@ -361,6 +293,8 @@ def register_callbacks(dashapp):
                 data = mode_btns_id[P_TRACKING_MODE]
             elif ctx.triggered[0]['prop_id'] == 'pf-track-mode-btn.n_clicks':
                 data = mode_btns_id[PF_TRACKING_MODE]
+            elif ctx.triggered[0]['prop_id'] == 't-track-mode-btn.n_clicks':
+                data = mode_btns_id[T_TRACKING_MODE]
             else:
                 raise Exception("Fail in mode_btn fnc")
   
@@ -473,29 +407,34 @@ def register_callbacks(dashapp):
             Output('dialog-form-fix', 'style'),
             Output('dialog-form-p-tracking', 'style'),
             Output('dialog-form-pf-tracking', 'style'),
+            Output('dialog-form-t-tracking', 'style')
         ],
         [
             Input('manual-mode-btn', 'n_clicks' ),
             Input('p-track-mode-btn', 'n_clicks' ),
             Input('pf-track-mode-btn', 'n_clicks' ),
+            Input('t-track-mode-btn', 'n_clicks' ),
             Input('accept-btn-fix', 'n_clicks'),
             Input('accept-btn-p', 'n_clicks'),
             Input('accept-btn-pf', 'n_clicks'),
+            Input('accept-btn-t', 'n_clicks')
         ],
     )
-    def diag_box_on_off(fix_btn, p_btn, pf_btn, accept_btn_f, accept_btn_p, accept_btn_pf):
-        style = [ dash.no_update, dash.no_update, dash.no_update ]
+    def diag_box_on_off(fix_btn, p_btn, pf_btn, t_btn, accept_btn_f, accept_btn_p, accept_btn_pf, accept_btn_t):
+        style = [ dash.no_update, dash.no_update, dash.no_update, dash.no_update ]
 
         triggered_by = dash.callback_context.triggered[0]['prop_id']
 
         if triggered_by == 'manual-mode-btn.n_clicks':
-            style = [ {'display':'block'}, dash.no_update, dash.no_update ]
+            style = [ {'display':'block'}, dash.no_update, dash.no_update, dash.no_update ]
         elif triggered_by == 'p-track-mode-btn.n_clicks':
-            style = [ dash.no_update, {'display':'block'}, dash.no_update ]
+            style = [ dash.no_update, {'display':'block'}, dash.no_update, dash.no_update]
         elif triggered_by == 'pf-track-mode-btn.n_clicks':
-            style = [ dash.no_update, dash.no_update, {'display':'block'} ]
+            style = [ dash.no_update, dash.no_update, {'display':'block'}, dash.no_update ]
+        elif triggered_by == 't-track-mode-btn.n_clicks':
+            style = [ dash.no_update, dash.no_update, dash.no_update, {'display':'block'} ]
         else:
-            style = [ {'display':'none'}, {'display':'none'}, {'display':'none'} ]
+            style = [ {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'} ]   # chowanie paneli
 
         return style
     
@@ -510,7 +449,6 @@ def register_callbacks(dashapp):
         Input('interval-component', 'n_intervals')
     )
     def update_mlx_sensors(value):
-#        mlxSensorArrayInstance.update_readings()
         values = []
         for i in range(len(mlxSensorArrayInstance)):
             temps = mlxSensorArrayInstance[i]
@@ -534,6 +472,35 @@ def register_callbacks(dashapp):
             else:
                 return "STOPPED"
         
+
+    @dashapp.callback(
+        Output('t-tracking-table', 'data'),
+        Input('tt-add-row-btn', 'n_clicks'),
+        State('t-tracking-table', 'data'),
+        State('t-tracking-table', 'columns'))
+    def t_tracking_add_row(n_clicks, rows, columns):
+        if n_clicks > 0:
+            rows.append({c['id']: '' for c in columns})
+        return rows
+
+
+
+    @dashapp.callback(
+        Output('hidden-div', 'children'),
+        Input('accept-btn-t', 'n_clicks'),
+        State('t-tracking-table', 'data') )
+    def t_tracking_save_table(n_clicks, rows):
+        if n_clicks is not None and n_clicks > 0:
+            save_table_for_uwave(rows)
+        return None
+    
+    
+    @dashapp.callback(
+        Output('tt-table-div', 'children'),
+        Input('t-track-mode-btn', 'n_clicks'))
+    def t_tracking_load_table(n_clicks):
+        print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        return tt_table(data=load_table_from_uwave())
     
     
     @dashapp.callback(
@@ -545,10 +512,12 @@ def register_callbacks(dashapp):
             Input('accept-btn-fix', 'n_clicks'),
             Input('accept-btn-p', 'n_clicks'),
             Input('accept-btn-pf', 'n_clicks'),
+            Input('accept-btn-t', 'n_clicks'),
+            Input('dialog-form-t-tracking', 'children'),
         ],
         State("cfg-mode-store", "data"),
     )
-    def store_measurment_settings(form_fix, form_p_track, form_pf_track, acc_btn_fix, acc_btn_p, acc_btn_pf, cfg_mode):
+    def store_measurment_settings(form_fix, form_p_track, form_pf_track, acc_btn_fix, acc_btn_p, acc_btn_pf, acc_btn_t, form_t_track, cfg_mode):
         if LOG_CALL_SEQUENCE:
             print("[CALLBACK] store_measurment_settings ")
             
@@ -576,7 +545,8 @@ def register_callbacks(dashapp):
 
                     cfg_mode['cur_track_meas_setting']['turn_on'] = False
                     cfg_mode['cur_sweep_meas_setting']['turn_on'] = False
-
+                    cfg_mode['cur_temp_tracking_settings']['turn_on'] = False
+                    
                 elif triggered_by['prop_id'] == 'accept-btn-p.n_clicks':
                     config_from_form = unpack_html_element(form_p_track)
 
@@ -593,7 +563,8 @@ def register_callbacks(dashapp):
 
                     cfg_mode['cur_fix_meas_setting']['turn_on'] = False
                     cfg_mode['cur_sweep_meas_setting']['turn_on'] = False
-
+                    cfg_mode['cur_temp_tracking_settings']['turn_on'] = False
+                    
                 elif triggered_by['prop_id'] == 'accept-btn-pf.n_clicks':
                     config_from_form = unpack_html_element(form_pf_track)
 
@@ -610,6 +581,23 @@ def register_callbacks(dashapp):
 
                     cfg_mode['cur_fix_meas_setting']['turn_on'] = False
                     cfg_mode['cur_track_meas_setting']['turn_on'] = False
+                    cfg_mode['cur_temp_tracking_settings']['turn_on'] = False
+                    
+                elif triggered_by['prop_id'] == 'accept-btn-t.n_clicks':
+                #    config_from_form = unpack_html_element(form_t_track)
+                    
+                    temp_dict = {
+                        "turn_on": True,
+                        "time_step": 1     # TU JEST BŁĄD config_from_form[1]
+                    
+                    }
+                    
+                    cfg_mode['cur_temp_tracking_settings'] = temp_dict
+                    
+                    cfg_mode['cur_fix_meas_setting']['turn_on'] = False
+                    cfg_mode['cur_track_meas_setting']['turn_on'] = False
+                    cfg_mode['cur_sweep_meas_setting']['turn_on'] = False                    
+                    
                 else:
                     raise Exception("Fail in store_measurment_settings fnc")
 

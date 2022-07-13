@@ -50,6 +50,46 @@ def startUwaveProcess():
     )
     os.chdir(cwd)   # return to original folder
 
+
+def load_table_from_uwave():
+    file_path = UWAVE_PATH + "/ex0.txt"
+    with open(file_path, 'r') as f:
+        lines = f.readlines()
+    table = []
+    print("-----------------------------------")
+    print(lines)
+    for line in lines:
+        tokens = line.split(",")
+        try:
+            time = int(tokens[0])
+        except:
+            time = ""
+        try:
+            temp = int(tokens[1])
+        except:
+            temp = ""
+        row = {"tt-seconds": time, "tt-temperature": temp}
+        table.append(row)
+    print(table)
+    return table
+        
+    
+
+def save_table_for_uwave(table):
+    file_path = UWAVE_PATH + "/ex0.txt"
+    with open(file_path, 'w') as f:
+        lines = []
+        for row in table:
+            time = row['tt-seconds']
+            temp = row['tt-temperature']
+            if time == "" or temp == "":
+                continue
+            line = f"{time}, {temp}"
+            lines.append(line)
+        f.write('\n'.join(lines))
+
+    
+
 if __name__=="__main__":
     print(os.getcwd())
     print(checkIfUwaveIsRunning())

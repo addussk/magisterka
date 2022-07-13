@@ -92,7 +92,7 @@
 
     .column {
         float: left;
-        width: 25%;
+        width: 33%;
         height: 100%;
     }
 
@@ -260,6 +260,9 @@
         margin-top: 5%;
         border: solid 2px #f3f5f4;
         font-size: 1.5rem;
+        padding: 20px;
+        max-height: 90%;
+        overflow-y: auto;
     }
 
     .header-form{
