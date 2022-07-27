@@ -14,6 +14,7 @@ T2_KEY = "t2"
 T3_KEY = "t3"
 T4_KEY = "t4"
 TAVG_KEY = "tavg"
+TREQ_KEY = "treq"
 TINTERNAL_KEY = "temp_int"
 VOLTAGE_KEY = "voltage"
 CURRENT_KEY = "current"
@@ -35,6 +36,7 @@ class MeasurementSession:
             T3_KEY: [],
             T4_KEY: [],
             TAVG_KEY: [],
+            TREQ_KEY: [],
             TINTERNAL_KEY: [],
             VOLTAGE_KEY: [],
             CURRENT_KEY: []
@@ -50,7 +52,7 @@ class MeasurementSession:
         s += f"MHz: {self.__data[MHZ_KEY]} FWD: {self.__data[FWD_KEY]}"
         return s
     
-    def addDataPoint(self, fwdPwrDbm, rflPwrDbm, frequencyMhz=None, tempSensorList=(), tempInternal=None, voltage=None, current=None):
+    def addDataPoint(self, fwdPwrDbm, rflPwrDbm, frequencyMhz=None, tempSensorList=(), tempRequested=None, tempInternal=None, voltage=None, current=None):
         self.__data[TIME_KEY].append(datetime.datetime.now())
         self.__data[FWD_KEY].append(round(fwdPwrDbm, 2))
         self.__data[RFL_KEY].append(round(rflPwrDbm, 2))
@@ -61,8 +63,8 @@ class MeasurementSession:
         self.__data[T2_KEY].append(mlxSensorArrayInstance[2]['object'])
         self.__data[T3_KEY].append(mlxSensorArrayInstance[3]['object'])
         self.__data[T4_KEY].append(mlxSensorArrayInstance[4]['object'])
-        print("!!!!!!!!!!!!!", mlxSensorArrayInstance[3])
         self.__data[TAVG_KEY].append(mlxSensorArrayInstance.get_averaged_temperature())
+        self.__data[TREQ_KEY].append(tempRequested)
         self.__data[TINTERNAL_KEY].append(tempInternal)
         self.__data[VOLTAGE_KEY].append(voltage)
         self.__data[CURRENT_KEY].append(current)

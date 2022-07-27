@@ -34,7 +34,7 @@ k0=17.9885
 k1=-0.9411
 k2=-8.8395
 
-autorun=1
+autorun=0
 show_fake_temp_info=1
 show_temp_info=1 
 show_rf_info=1

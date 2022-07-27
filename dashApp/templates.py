@@ -5,7 +5,7 @@ from dashApp.extensions import db
 from statemachine import DataBase
 from dashApp.models import  MeasurementInfo
 from drivers import OUTPUT_INDICATORS 
-from MeasurementSession import TIME_KEY, FWD_KEY, RFL_KEY, MHZ_KEY, T0_KEY, T1_KEY, T2_KEY, T3_KEY, T4_KEY, TAVG_KEY, TINTERNAL_KEY, VOLTAGE_KEY, CURRENT_KEY
+from MeasurementSession import TIME_KEY, FWD_KEY, RFL_KEY, MHZ_KEY, T0_KEY, T1_KEY, T2_KEY, T3_KEY, T4_KEY, TAVG_KEY, TREQ_KEY, TINTERNAL_KEY, VOLTAGE_KEY, CURRENT_KEY
 
 Global_DataBase = DataBase(db)
 
@@ -26,7 +26,7 @@ graph_traces = [
     {
         "key": MHZ_KEY,
         "label": "Frequency MHz",
-        "defaultState": True,
+        "defaultState": False,
         "color": "#FEFAE0"
     },
     {
@@ -66,10 +66,16 @@ graph_traces = [
         "color": "#E76F51"
     },
     {
+        "key": TREQ_KEY,
+        "label": "Tube req. temp",
+        "defaultState": True,
+        "color": "#c83f1e"
+    },
+    {
         "key": TINTERNAL_KEY,
         "label": "PA Temp",
         "defaultState": True,
-        "color": "#C66F5A"
+        "color": "#7AC980"
     },
     {
         "key": VOLTAGE_KEY,
@@ -144,7 +150,7 @@ def generate_temp_indicator():
                 children=[
                     daq.Thermometer(
                         id="thermometer-indicator",
-                        label="Averaged:",
+                        label="Averaged temperature:",
                         min=0,
                         max=105,
                         value=50, # should be update in runtime

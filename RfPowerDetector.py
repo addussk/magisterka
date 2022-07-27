@@ -12,8 +12,8 @@ class RfPowerDetector:
     def __init__(self, i2cbus=1, dummy_values=False):
         self.dummy_values = dummy_values
 
-        fwd_att_cpl =  0 + 16  # dB  +30 att
-        rfl_att_cpl =  0 + 16  # dB  +30 att
+        fwd_att_cpl =  16 + 30 + 6  # dB  (coupler + att1 + att2)
+        rfl_att_cpl =  16 + 30 + 3  # dB  (coupler + att1 + att2)
         self.interpolators = {
             # from the AD8317 datasheet, Fig. 7 (at 5.8 GHz)
             # Pin = -45 dBm, Vout = 1.36 V
@@ -64,7 +64,6 @@ class RfPowerDetector:
         ch_id = "rfl"
         v = self.readVoltage(ch_id)
         pwr = float(self.__calibration(v, ch_id))
-        print("---", v, pwr)
         self.__rflPowerDbm = pwr
         return pwr
     

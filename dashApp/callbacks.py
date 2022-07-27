@@ -228,6 +228,7 @@ def register_callbacks(dashapp):
                             cfg_to_store.append((key,value))
                 elif mode_btns_id[T_TRACKING_MODE] == data_mode:
                     cfg_to_store.append(T_TRACKING_MODE)
+                    print("==== TRACKING START PRESSED")
                 else:
                     raise Exception("Error in start_stop_btn fnc")
 

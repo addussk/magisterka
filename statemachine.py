@@ -27,6 +27,8 @@ class DataBase(object):
       if LOG_INPUT_PARAM_ON:
          print("[DB] Function: configure_measurement input param: ", parm)
 
+      print(parm)
+
       # FIXED MODE 
       if parm[0] == 0:
          # aktualnie UI zawiera formularz ktory pozwala na wpisanie czest, mocy i kroku czasu. TODO: Dopytac czy potrzeba dla fix moda zakres mocy
@@ -56,6 +58,10 @@ class DataBase(object):
          self.update_setting(MeasSettings, MeasSettings.power_max, parm[4][1])
          self.update_setting(MeasSettings, MeasSettings.time_step, parm[5][1])
          self.update_setting(MeasSettings, MeasSettings.state, parm[6])
+
+      # TEMPERATURE TRACKING MODE
+      if parm[0] == 3:
+         self.update_setting(MeasSettings, MeasSettings.mode, parm[0])
 
    def read_record_all(self, typeTable):
       return self.ptr_to_database.session.query(typeTable).order_by(typeTable.id).all()
@@ -255,6 +261,8 @@ class Measurement(State):
             thread_list.append(threading.Thread(target=self.tracking_mode))
          elif self.mode == 2:
             thread_list.append(threading.Thread(target=self.sweeping_mode))
+         elif self.mode == 3:
+            thread_list.append(threading.Thread(target=self.temp_tracking_mode))
          else:
             raise Exception("Problem with creation measurement")
 
@@ -282,7 +290,7 @@ class Measurement(State):
       pai.request(PRStopExperiment())
       pai.request(PRSynthRfEnable(0))      
 
-   def measure(self, freq, in_power):
+   def measure(self, freq=0, in_power=0):
 
       if self.rfPowerDetector == None:
          print("Watch out! ADC is  unconnected, dummy data will be generated for measurement of received power")
@@ -293,7 +301,8 @@ class Measurement(State):
          transmittedPwr = self.rfPowerDetector.getFwdPowerDbm()
 
       self.write_to_database_Results(freq, transmittedPwr, receivedPwr)
-      msi.addDataPoint(transmittedPwr, receivedPwr, freq)
+      requestedTemperature = round(pai.lastResponse.temperatureRequested, 2)
+      msi.addDataPoint(transmittedPwr, receivedPwr, freq, tempRequested=requestedTemperature)
 
       return transmittedPwr
 
@@ -365,7 +374,6 @@ class Measurement(State):
             self.update_setting(MeasSettings, MeasSettings.best_scan_power, best_result[0])
 
    def fixed__freq_mode(self):
-
 #      try:
 #         # skonfigurowanie polaczenia z syntezatorem czestotliwosci
 #         x = LTDZ()
@@ -386,16 +394,29 @@ class Measurement(State):
 #      except:
 #         print("Warning: LTDZ has not been configured properly")
 
-      pai.request(PRSynthFreq(self.start_freq * self.MHz))  
+   #   pai.request(PRSynthFreq(self.start_freq * self.MHz))  
       pai.request(PRSynthLevel(2))         
       pai.request(PRSynthRfEnable(1))      
-      pai.request(PRAttenuator(5)) 
+      pai.request(PRAttenuator(25)) 
 
       while self.state == MEASUREMENT_START:
          print("Fixed measurement")
          time.sleep(self.time_step)
-
          retVal = self.measure(self.start_freq, self.power)
+
+   def temp_tracking_mode(self):
+      pai.request(PRSynthLevel(2))         
+      pai.request(PRSynthRfEnable(1))      
+      pai.request(PRAttenuator(25)) 
+      pai.request(PRStartExperiment())
+      while self.state == MEASUREMENT_START:
+         print("Temperature tracking mode")
+         time.sleep(self.time_step)
+         retVal = self.measure(self.start_freq, self.power)
+         temperature = mlxSensorArrayInstance.get_averaged_temperature()
+         pai.request(PRFakeTemperature(temperature))
+      pai.request(PRStopExperiment())
+
 
    def update_settings(self):
       self.mode = self.read_record(MeasSettings, "mode")

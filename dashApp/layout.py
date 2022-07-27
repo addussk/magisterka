@@ -70,7 +70,6 @@ layout_main = html.Div(
                     id="temperature_panel",
                     className="row",
                     children=[
-                        html.H1("Temperature:", className='row'),
                         generate_temp_indicator(),  
                     ],
                 ),

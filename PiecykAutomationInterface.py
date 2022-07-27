@@ -16,6 +16,7 @@ class PiecykAutomationInterface:
         self.osUdp = None
         self.cmdSocket = None
         self.ansSocket = None
+        self.lastResponse = None
         print("PAI init:", vars(self))
 
     def init(self):
@@ -84,7 +85,8 @@ class PiecykAutomationInterface:
               #      print ('Error message: ' + oac.message)
               #      #TODO: raise an exception here!
               #  print ("Answer: " + oac.inputString)
-                print(oac)  
+              #  print(oac)  
+                self.lastResponse = oac
                 return oac
             time.sleep(0.001)
                 
@@ -124,7 +126,7 @@ class PiecykClientUdpListener(threading.Thread):
             #    print("Received data:", data)
                 oac = PiecykAnswer.PiecykAnswer((data.decode(), addr))            
                 self.qUdpAnswers.put(oac)
-                print(oac)
+            #    print(oac)
                                 
         print("PiecykClientUdpListener thread stopped.")
 
@@ -137,8 +139,9 @@ if __name__=="__main__":
     with PAI_Instance as pai:
         print (pai)
         #pai.init()
-        time.sleep(3)
+    #    time.sleep(3)
         pai.request(PRPing("TestPing"))
+        pai.request(PRStopExperiment())
         time.sleep(1)
      #   pai.request(PRStopExperiment())
      #   pai.request(PRStartExperiment())
@@ -150,9 +153,18 @@ if __name__=="__main__":
         resp = pai.request(PRAttenuator(5))           # no resp
      #   pai.request(PRExit())                   # no resp
         time.sleep(1)
-        pai.request(PRStartExperiment())
-        time.sleep(4)
-
+      #  pai.request(PRStartExperiment())
+        time.sleep(2)
+        pai.request(PRSynthLevel(2))         
+        pai.request(PRSynthRfEnable(1))      
+        pai.request(PRAttenuator(5))         
+        pai.request(PRStopExperiment())
+        pai.request(PRPing("TestPing"))
+        pai.request(PRPing("TestPing"))
+        time.sleep(1)
+        pai.request(PRPing("TestPing"))
+        pai.request(PRPing("TestPing"))
+   #     pai.request(PRSynthRfEnable(0))
         print("Main thread finished")
     
    

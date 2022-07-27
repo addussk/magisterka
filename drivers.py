@@ -35,10 +35,28 @@ def read_freq():
 #        oac = PAI_Instance.qUdpAnswers.get_nowait()
 #    except Queue.Empty as e:
 #       return "---"
-    resp = PAI_Instance.request(PRPing("ReadingFreq"))
+    PAI_Instance.request(PRPing("ReadingFreq"))
+    try:
+        return PAI_Instance.lastResponse.frequency / 1e9
+    except Exception as e:
+        print(e)
+        return "---"
+
+def read_atten_state():
+    try:
+        return PAI_Instance.lastResponse.attenuation
+    except Exception as e:
+        print(e)
+        return "---"
     
-    return resp.frequency / 1e9
+def read_requested_temperature():
+    try:
+        return round(PAI_Instance.lastResponse.temperatureRequested, 1)
+    except Exception as e:
+        print(e)
+        return "---"
     
+
 def read_pa_voltage():
     return random.randint(10,20)
 
@@ -53,6 +71,8 @@ OUTPUT_INDICATORS_FNC = {
     'Refl_PWR': read_reflected_pwr,
     'SWR': read_swr,
     'Freq': read_freq,
+    'Atten': read_atten_state,
+    'TempReq': read_requested_temperature,
     'PA_V': read_pa_voltage,
     'PA_C': read_pa_current,
     'PA_T': read_pa_temp,
@@ -64,6 +84,8 @@ OUTPUT_INDICATORS = {
     'Refl_PWR': "Reflected PWR:, [dBm]",
     'SWR': "SWR:,",
     'Freq': "Frequency:, [GHz]",
+    'Atten': "Attenuator:, [dB]",
+    'TempReq': "Required temperature:, [C]",
     'PA_V': "PA Voltage:, [V]",
     'PA_C': "PA Current:, [A]",
     'PA_T': "PA Temperature:, [C]",
