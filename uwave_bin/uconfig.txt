@@ -12,7 +12,7 @@ freqmax=5.875e9
 
 
 #initials, must be within limits
-freq0=5.7777777e9
+freq0=5.85e9
 level0=3
 atten0=29
 
@@ -29,10 +29,10 @@ ctrltick=1
 stillwaiting=15
 
 #controller settings
-Pmax=15.0
-k0=17.9885
-k1=-0.9411
-k2=-8.8395
+Pmax=20.0
+k0=16
+k1=0.04
+k2=5
 
 autorun=0
 show_fake_temp_info=1
