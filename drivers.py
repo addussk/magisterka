@@ -58,13 +58,13 @@ def read_requested_temperature():
     
 
 def read_pa_voltage():
-    return random.randint(10,20)
+    return round(rfPowerDetectorInstance.getPaVoltage(), 2)
 
 def read_pa_current():
-    return "---"
+    return round(rfPowerDetectorInstance.getPaCurrent(), 3)
 
 def read_pa_temp():
-    return random.randint(10,20)
+    return 0
 
 OUTPUT_INDICATORS_FNC = {
     'O_PWR': read_output_pwr,

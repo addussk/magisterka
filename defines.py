@@ -1,6 +1,6 @@
-LOG_ON = False
+LOG_ON = True
 LOG_SENSORS_ON = False
-LOG_SM_ON = True
+LOG_SM_ON = False
 LOG_DB_ON = True
 LOG_TASK_INFO_ON = False
 LOG_INPUT_PARAM_ON = False
