@@ -300,7 +300,7 @@ class Measurement(State):
          receivedPwr = self.rfPowerDetector.getRflPowerDbm()
          transmittedPwr = self.rfPowerDetector.getFwdPowerDbm()
 
-      self.write_to_database_Results(freq, transmittedPwr, receivedPwr)
+#      self.write_to_database_Results(freq, transmittedPwr, receivedPwr)   # zbędne, gdy korzystamy z obiektu MeasurementSession
       requestedTemperature = round(pai.lastResponse.temperatureRequested, 2)
       msi.addDataPoint(transmittedPwr, receivedPwr, freq, tempRequested=requestedTemperature)
 
@@ -598,7 +598,7 @@ class Guard(object):
             self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_ONGOING)
 
          elif read_mes_set.get_state() == MEASUREMENT_STOP:
-            self.scheduler.pop()
+            self.scheduler.clear()   # działa niezależnie od tego, czy na lista zawiera jakieś elementy
             self.db.update_last_record(MeasurementInfo, MeasurementInfo.finish, datetime.datetime.now())
             self.state.managing_measurement(read_mes_set.get_state(), self.scheduler)
             self.db.update_setting(MeasSettings,MeasSettings.state, MEASUREMENT_FREE)

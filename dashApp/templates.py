@@ -258,53 +258,15 @@ def fill_style():
 
 def build_banner():
     return html.Div(
-        id="header",
-        className="row",
-        children=[
-            html.Div(
-                id="baner-logo",
-                className="column",
-                children=[
-                    html.Img(id="logo", src='/dashboard/assets/logoPW.png' ),
-                ]
-            ),
-            html.Div(
-                id="baner-text",
-                className="column",
-                children=[
-                    html.H2("Intelligent RF Power Source"),
-                ]
-            ),
-        ],
-    )
-    return html.Div(
         id="banner",
-        className="banner",
         children=[
-            html.Div(
-                id="banner-text",
-                children=[
-                    html.H5("Praca Magisterska"),
-                    html.H6("Adrian Kruczak"),
-                ],
-            ),
-            html.Div(
-                id="banner-logo",
-                children=[
-                    html.A(
-                        html.Button(
-                            id="btn_repo", children="LINK TO SOURCE CODE", n_clicks=0,
-                        ),
-                        href="https://github.com/addussk/magisterka",
-                    ),
-                    html.A(
-                        html.Img(id="logo", src='/dashboard/assets/logoPW.png' ),
-                    ),
-                ],
-            ),
-        ],
+            html.Img(id="logo", src='/dashboard/assets/logo_irtm.png', style={'width':'80px', 'height':'110px', 'float':'left', 'margin-top':'9px', 'margin-right':'9px'} ),
+            html.H2("Intelligent RF Power Source"),
+        ]
     )
+ 
 
+# do wykasowania wkrotce
 def build_mode_btns():
     return html.Div(
         id="header-modes",
@@ -344,6 +306,42 @@ def build_mode_btns():
             ),
         ]
     )
+
+def build_mode_panel():
+    return html.Div(
+        id="header-modes",
+        children=[
+            html.Button("Mode: (select)", id="mode-select-btn", className="button")
+        ]
+    )
+    
+def build_config():
+    return html.Div(
+        id="header-config",
+        children=[
+            html.Button("Open mode controls", id="config-open-btn"),
+            html.Label("Timer:"),
+            daq.LEDDisplay(id="led-timer", value="00:00", backgroundColor="#1e2130", color="#4adc65")
+        
+        ]
+    
+    )
+    
+def dialog_mode_selector():
+    return [
+        html.H2("Mode selector"),
+        dcc.RadioItems([
+            {'label': 'Manual mode', 'value': 'manual'},
+            {'label': 'Temperature tracking mode', 'value': 't-tracking'},
+            {'label': 'Load scanning mode', 'value': 'scanning'}
+        ],
+        style={'text-align':'left'}),
+        
+        html.Button("Close", id="dialog-mode-selector-close-btn", className="button", style={"font-size":"2rem"})
+    
+    
+    
+    ]
 
 def build_set_panel():
     return html.Div(

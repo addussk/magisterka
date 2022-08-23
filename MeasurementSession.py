@@ -49,7 +49,7 @@ class MeasurementSession:
 
     def __str__(self):
         s = f"Trace title: {self.session_title},\nTrace length: {len(self.__data[TIME_KEY])}\n"
-        s += f"MHz: {self.__data[MHZ_KEY]} FWD: {self.__data[FWD_KEY]}"
+        s += f"MHz: {self.__data[MHZ_KEY]} FWD: {self.__data[FWD_KEY]} RFL: {self.__data[RFL_KEY]}"
         return s
     
     def addDataPoint(self, fwdPwrDbm, rflPwrDbm, frequencyMhz=None, tempSensorList=(), tempRequested=None, tempInternal=None, voltage=None, current=None):

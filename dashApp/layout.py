@@ -43,9 +43,11 @@ layout_main = html.Div(
         html.Div(
             id='input-panel',
             children=[
+                build_mode_panel(),
                 build_banner(),
-                build_mode_btns(),
-                build_set_panel(),
+                build_config(),
+           #     build_mode_btns(),
+           #     build_set_panel(),
                 build_chart_panel(),
             ]
         ),
@@ -87,6 +89,15 @@ layout_main = html.Div(
                     children=generate_graph_cfg_controls(),
                 ),
             ]
+        ),
+
+        html.Div(
+            id="dialog-mode-selector",
+            className="dialog_container",
+            children=dialog_mode_selector(),     # UZUPEŁNIĆ
+            style={
+                'display':'none',
+            }
         ),
 
         html.Div(

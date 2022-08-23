@@ -184,14 +184,13 @@ def register_callbacks(dashapp):
 
         elif ctx.triggered[0]['prop_id'] == 'stop-btn.n_clicks':
             # Btn zostal wcisniety przez uzytkownika
-            if MEASUREMENT_FREE == measurement_status:
-                data['stop-btn-style'] = stop_btn_on_style
-
-            elif MEASUREMENT_ONGOING == measurement_status:
-                # Zapis  do bazy danych zaczecie pomiaru
-                Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
-                data['start-btn-style'] = start_btn_off_style
-                data['stop-btn-style'] = stop_btn_on_style
+  #      if MEASUREMENT_FREE == measurement_status:           # ten warunek jest dla mnie niezrozumiały
+  #          data['stop-btn-style'] = stop_btn_on_style
+  #      elif MEASUREMENT_ONGOING == measurement_status:      # ten też jest niezrozumiały; skoro było kliknięcie w STOP, to należy je przeprocesować.
+            # Zapis do bazy danych - zatrzymanie pomiaru
+            Global_DataBase.update_setting(MeasSettings, MeasSettings.state, MEASUREMENT_STOP)
+            data['start-btn-style'] = start_btn_off_style
+            data['stop-btn-style'] = stop_btn_on_style
                 
         elif ctx.triggered[0]['prop_id'] == 'start-btn.n_clicks':
             cfg_to_store = []
@@ -246,6 +245,31 @@ def register_callbacks(dashapp):
                 dash.no_update
 
         return data
+    
+    
+    
+    
+    
+    @dashapp.callback(
+        [Output('dialog-mode-selector', 'style')],
+        [Input('mode-select-btn', 'n_clicks'),
+        Input('dialog-mode-selector-close-btn', 'n_clicks')],
+        [State('dialog-mode-selector', "style")],
+    )
+    def mode_select_btn(n_clicks, n_clicks_2, dms_style):
+        if n_clicks>0 or n_clicks_2>0:
+            if dms_style["display"]=="none":
+                return [{'display':'block'}]    
+            else:
+                return [{'display':'none'}]
+    
+    
+    
+    
+    
+    
+    
+    
     
     @dashapp.callback(
         [Output(mode_id, 'style' ) for mode_id in mode_btns_id],
@@ -637,10 +661,11 @@ def register_callbacks(dashapp):
         ]
     )
     def show_graph_cfg_panel(n_clicks, op_style, gc_style):
-        if op_style["display"]=="none":
-            return [{"display":"block"}, {"display":"none"}]
-        else:
-            return [{"display":"none"}, {"display":"block"}]
+        if n_clicks>0:
+            if op_style["display"]=="none":
+                return [{"display":"block"}, {"display":"none"}]
+            else:
+                return [{"display":"none"}, {"display":"block"}]
 
     # Wiele komponentów może się aktualizować za każdym razem, gdy zostanie uruchomiony interwał.
     @dashapp.callback(

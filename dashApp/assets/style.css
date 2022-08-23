@@ -12,6 +12,8 @@
         background-color: #1e2130;
         color: #f3f5f4;
         font-family: "Open Sans", sans-serif;
+ /*       height: 100%; */
+ /*       margin: 0; */
     }
 
     .padding-zero {
@@ -42,17 +44,20 @@
     }
 
     #big-app-container {
-        width: 1010px;
+     /*   width: 1010px;  */
         height: 570px;
-        text-align : center;
+        text-align : center; 
+ /*       display: flex;
+        flex-flow: column;
+        height: 100%;   */
     }
 
-    #big-app-container ::after{
+ /*   #big-app-container ::after{
         content: '';
         display: block;
         clear: both;
     }
-
+*/
     #input-panel {
         width: 70%;
         height: 100%;
@@ -74,6 +79,13 @@
         height: 100%;
         border: 2px solid darkred;
         float:left;
+
+    }
+
+    #output-panel ::after{
+        content: '';
+        display: block;
+        clear: both;
     }
 
     #header {
@@ -97,25 +109,12 @@
     }
 
 
-    #baner-logo, #baner-btn {
-
-    }
 
     #logo {
         width: 100%;
         height: 100%;
     }
 
-    #baner-text{
-        width: 50%;
-        height: 100%;
-        padding: auto;
-    }
-
-    #baner-text h2 {
-        margin: auto;
-        padding: 2%;
-    }
 
     .button {
         width: 85%;
@@ -136,16 +135,54 @@
         font-size: large;
     }
 
+    #banner {
+      /*  height: 80px;  */
+    }
+
+    #banner h2 {
+        margin: 0px;
+        text-align: left;
+    }
+
     #header-modes {
         margin-top: 1%;
         font-weight: bold;
         font-size: 1.5rem;
+        float: left;
+        width: 130px;
+        height: 130px;
     }
 
     #header-modes h2 {
         height: 100%;
         margin: auto;
         padding: 2%;
+    }
+
+    #header-config button {
+        float: left;
+        width: 200px;
+        height: 2.5rem;
+    }
+
+    #header-config label {
+        float: left;
+        line-height: 2.5rem;
+        padding-left: 10px;
+    }
+
+    #header-config ::after{
+        content: '';
+        display: block;
+        clear: both;
+    }
+
+    #led-timer {
+        float: right;
+        position: relative;
+   /*     top: -40px;   */
+        margin-right: 14px;
+    
     }
 
     .mode-btn > button {
@@ -178,9 +215,12 @@
     }
 
     #chart-panel{
-        height: 60%;
+        height: 87%;
+        width: 100%;
         padding: 0%;
         margin: 0%;
+        float: left; 
+ /*       flex: 1 1 auto; */
     }
 
     #chart-container {
@@ -195,9 +235,10 @@
 
     #stop-btn-container {
         width: 21%;
-        display: flex;
+        float: right;
+  /*      display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: space-between; */
     }
 
     #stop-btn-container > button {
@@ -261,6 +302,19 @@
         padding: 20px;
         max-height: 90%;
         overflow-y: auto;
+    }
+
+    .dialog_container label {
+        display: block;
+        height: 5rem;
+        line-height: 5rem;
+        font-size: 2rem;
+    }
+    
+    .dialog_container input {
+        width: 3rem;
+        height: 1.5rem;
+        
     }
 
     .header-form{

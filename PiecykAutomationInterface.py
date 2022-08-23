@@ -33,7 +33,7 @@ class PiecykAutomationInterface:
         else:
             self.osUdp = PiecykClientUdpListener(self.qUdpAnswers, self.ansSocket)
             self.osUdp.start()
-            time.sleep(0.1)
+            time.sleep(0.01)
             print("Ports are open.")
             return True
     
