@@ -82,7 +82,7 @@ OUTPUT_INDICATORS_FNC = {
 OUTPUT_INDICATORS = {
     'O_PWR':"Output PWR:, [dBm]",
     'Refl_PWR': "Reflected PWR:, [dBm]",
-    'SWR': "SWR:,",
+    'SWR': "Return Loss:, [dB]",
     'Freq': "Frequency:, [GHz]",
     'Atten': "Attenuator:, [dB]",
     'TempReq': "Required temperature:, [C]",

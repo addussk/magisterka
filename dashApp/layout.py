@@ -47,8 +47,9 @@ layout_main = html.Div(
                 build_banner(),
                 build_config(),
            #     build_mode_btns(),
-           #     build_set_panel(),
                 build_chart_panel(),
+#                build_mode_controls()
+                build_manual_mode_controls(),
             ]
         ),
 
@@ -109,7 +110,7 @@ layout_main = html.Div(
             }
         ),
 
-        html.Div(
+        html.Div(                          # okienko konfiguracji trybu śledzenia temperatury
             id="dialog-form-t-tracking",
             className="dialog_container",
             children=t_tracking_tab(),

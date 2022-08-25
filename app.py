@@ -3,6 +3,7 @@ from statemachine import Guard, Idle, Calibration, State
 from defines import *
 import datetime, time, threading
 from flask import Flask
+from ModesManager import modes_manager
 
 app = Flask(__name__, instance_relative_config=False)
 
@@ -53,7 +54,8 @@ def make_measurement():
         if LOG_TASK_INFO_ON:
             print("task completed")
 
-t2 = threading.Thread(target=make_measurement)
+#t2 = threading.Thread(target=make_measurement)
+t2 = threading.Thread(target=modes_manager)
 t2.start()
 
 if __name__ == '__main__':

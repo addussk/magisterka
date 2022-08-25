@@ -314,7 +314,8 @@ def build_mode_panel():
             html.Button("Mode: (select)", id="mode-select-btn", className="button")
         ]
     )
-    
+
+
 def build_config():
     return html.Div(
         id="header-config",
@@ -335,7 +336,9 @@ def dialog_mode_selector():
             {'label': 'Temperature tracking mode', 'value': 't-tracking'},
             {'label': 'Load scanning mode', 'value': 'scanning'}
         ],
-        style={'text-align':'left'}),
+        style={'text-align':'left'},
+        id='mode-selector'
+        ),
         
         html.Button("Close", id="dialog-mode-selector-close-btn", className="button", style={"font-size":"2rem"})
     
@@ -343,10 +346,11 @@ def dialog_mode_selector():
     
     ]
 
-def build_set_panel():
+def build_manual_mode_controls():
     return html.Div(
-        id="setting-panel",
+        id="manual-mode-controls",
         className="row",
+        style={"display":"none"},
         children=[
             html.Div(
                 className='left column-set lab_btns',
@@ -421,6 +425,8 @@ def build_set_panel():
                     dcc.Input(id="power_input", className="numeric_input", type="number", placeholder="dBm", debounce=True, min=0, max=15)
                 ],
             ),
+            
+            html.Button("Close", id="close-manual-mode-controls-btn", style={'width':'10%', 'height':'80%', 'margin-top':'10px'})
         ]
     )
 
@@ -623,7 +629,7 @@ def t_tracking_tab():
         html.Div(
             className="button-container",
             children=[
-                html.Button("Accept", id="accept-btn-t", className="button form-button"),
+                html.Button("Save and close", id="close-t-tracking-mode-controls-btn", className="button form-button"),
             ],
         )    
     ]
