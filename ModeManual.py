@@ -11,6 +11,7 @@ def runManualMode():
 	print("---------> Starting MANUAL mode")
 	
 	msi.clearAllTraces()
+	msi.isFrequencyDomain = False
 	
 	pai.request(PRSynthLevel(2))         
 	pai.request(PRSynthRfEnable(1))      

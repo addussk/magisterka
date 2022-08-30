@@ -2,7 +2,7 @@
 
 import datetime
 from MlxSensorArray import mlxSensorArrayInstance
-
+from copy import copy
 
 TIME_KEY = "timestamp"
 FWD_KEY = "fwdPwrDbm"
@@ -73,6 +73,13 @@ class MeasurementSession:
         print("------------")
         return self.__data[key]
     
+    def replaceTracesFromOtherInstance(self, msi):
+        self.clearAllTraces()
+        for key in self.__data.keys():
+            trace = msi.getTrace(key)
+            self.__data[key] = copy(trace)
+        self.isFrequencyDomain = msi.isFrequencyDomain
+        
     
 MeasurementSessionInstance = MeasurementSession()
 

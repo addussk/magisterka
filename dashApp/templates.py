@@ -620,7 +620,7 @@ def t_tracking_tab():
             style={'color':'#c8f10f'}
         ),        
 
-        html.Button('Add row', id='tt-add-row-btn', className="right", n_clicks=0),
+        html.Button('Add row', id='tt-add-row-btn', className="right", n_clicks=0, style={"padding":"2rem"}),
         html.Br(),
         html.Div(
             id="tt-table-div", 
@@ -629,7 +629,7 @@ def t_tracking_tab():
         html.Div(
             className="button-container",
             children=[
-                html.Button("Save and close", id="close-t-tracking-mode-controls-btn", className="button form-button"),
+                html.Button("Save and close", id="close-t-tracking-mode-controls-btn", className="button form-button", style={"padding":"2rem"}),
             ],
         )    
     ]

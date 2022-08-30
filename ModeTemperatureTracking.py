@@ -11,6 +11,7 @@ def runTemperatureTrackingMode():
 	print("---------> Starting TEMPERATURE TRACKING mode")
 
 	msi.clearAllTraces()
+	msi.isFrequencyDomain = False
 
 	pai.request(PRSynthLevel(2))         
 	pai.request(PRSynthRfEnable(1))      

@@ -795,7 +795,10 @@ def register_callbacks(dashapp):
         if aci.isRunning():
 
             tracesList = list()
-            x_data = msi.getTrace(TIME_KEY)
+            if msi.isFrequencyDomain:
+                x_data = msi.getTrace(MHZ_KEY)
+            else:
+                x_data = msi.getTrace(TIME_KEY)
 
             for i, gt in enumerate(graph_traces):
                 if trace_switch_list[i]:
