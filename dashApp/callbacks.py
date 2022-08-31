@@ -52,7 +52,7 @@ P_TRACKING_MODE = 1
 PF_TRACKING_MODE = 2
 T_TRACKING_MODE = 3
 
-UNIT_TO_INC_DEC = 1 # MHz
+
 
 
 def has_triggered(id):
@@ -478,11 +478,11 @@ def register_callbacks(dashapp):
         # Service seq
         else:
             if triggered_by == 'freq-inc-btn.n_clicks':
-                setValue = current_freq + UNIT_TO_INC_DEC
+                setValue = current_freq + 10      # click -> +10 MHz frequency step
                 resp = pai.request(PRSynthFreq(setValue * 1e6))
                 retValue = resp.frequency / 1e6
             elif triggered_by == 'freq-dec-btn.n_clicks':
-                setValue = current_freq - UNIT_TO_INC_DEC
+                setValue = current_freq - 10      # click -> +10 MHz frequency step
                 resp = pai.request(PRSynthFreq(setValue * 1e6))
                 retValue = resp.frequency / 1e6
             else:
@@ -513,11 +513,11 @@ def register_callbacks(dashapp):
         # Service seq
         else:
             if triggered_by == 'power-inc-btn.n_clicks':
-                setValue = current_pwr + UNIT_TO_INC_DEC
+                setValue = current_pwr + 1            # click -> +1 dB attenuator step
                 resp = pai.request(PRAttenuator(setValue))
                 retValue = resp.attenuation
             elif triggered_by == 'power-dec-btn.n_clicks':
-                setValue = current_pwr - UNIT_TO_INC_DEC
+                setValue = current_pwr - 1            # click -> -1 dB attenuator step
                 resp = pai.request(PRAttenuator(setValue))
                 retValue = resp.attenuation
             else:
