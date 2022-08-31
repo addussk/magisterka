@@ -30,3 +30,5 @@ STEP_CALIBRATION = 4
 
 SCANNING_RESULT = list()
 
+
+RESULTS_SAVE_DIRECTORY = "/home/pi/piecyk-wyniki"

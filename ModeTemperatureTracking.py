@@ -29,6 +29,7 @@ def runTemperatureTrackingMode():
 		time.sleep(0.5)
 		
 	# Turn off the RF after STOP command or mode change
+	msi.saveTracesToFile("temperatureTracking")
 	pai.request(PRStopExperiment())
 	aci.stopProcess()
 	

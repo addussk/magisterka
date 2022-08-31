@@ -30,8 +30,9 @@ def runManualMode():
 
 
 	# Turn off the RF after STOP command or mode change
+	msi.saveTracesToFile("manual")
 	pai.request(PRStopExperiment())
 	pai.request(PRSynthRfEnable(0))  
 	aci.stopProcess()
-
+	
 	print("---------->  FINISHED MANUAL")

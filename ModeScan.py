@@ -40,9 +40,9 @@ def runScanningMode():
 		msi.replaceTracesFromOtherInstance(ms)
 	
 	# Turn off the RF after STOP command or mode change
+	msi.saveTracesToFile("scanning")
 	pai.request(PRStopExperiment())
 	pai.request(PRSynthRfEnable(0))  
-		
 	aci.stopProcess()
 
 	print("----------> FINISHED SCANNING")

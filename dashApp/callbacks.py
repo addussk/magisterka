@@ -788,7 +788,7 @@ def register_callbacks(dashapp):
         prevent_initial_call=True,
     )
     def download_traces(n_clicks):
-        return dict(content="Hello world!", filename="hello.txt")
+        return dict(content=msi.getTracesAsCsv(), filename=msi.getResultsFileName()+".csv")
 
 
     # Aktualizacja wykresu co sekundę

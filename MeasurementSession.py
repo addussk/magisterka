@@ -2,7 +2,10 @@
 
 import datetime
 from MlxSensorArray import mlxSensorArrayInstance
+from RfPowerDetector import rfPowerDetectorInstance 
 from copy import copy
+from defines import RESULTS_SAVE_DIRECTORY
+import time
 
 TIME_KEY = "timestamp"
 FWD_KEY = "fwdPwrDbm"
@@ -42,6 +45,7 @@ class MeasurementSession:
             CURRENT_KEY: []
             }
         self.isFrequencyDomain = False      # time domain by default
+        self.__resultsFileName = ""
 
     def clearAllTraces(self):
         for k, v in self.__data.items():
@@ -52,7 +56,7 @@ class MeasurementSession:
         s += f"MHz: {self.__data[MHZ_KEY]} FWD: {self.__data[FWD_KEY]} RFL: {self.__data[RFL_KEY]}"
         return s
     
-    def addDataPoint(self, fwdPwrDbm, rflPwrDbm, frequencyMhz=None, tempSensorList=(), tempRequested=None, tempInternal=None, voltage=None, current=None):
+    def addDataPoint(self, fwdPwrDbm, rflPwrDbm, frequencyMhz=None, tempRequested=None, tempInternal=None):
         self.__data[TIME_KEY].append(datetime.datetime.now())
         self.__data[FWD_KEY].append(round(fwdPwrDbm, 2))
         self.__data[RFL_KEY].append(round(rflPwrDbm, 2))
@@ -66,8 +70,8 @@ class MeasurementSession:
         self.__data[TAVG_KEY].append(mlxSensorArrayInstance.get_averaged_temperature())
         self.__data[TREQ_KEY].append(tempRequested)
         self.__data[TINTERNAL_KEY].append(tempInternal)
-        self.__data[VOLTAGE_KEY].append(voltage)
-        self.__data[CURRENT_KEY].append(current)
+        self.__data[VOLTAGE_KEY].append(round(rfPowerDetectorInstance.getPaVoltage(no_update=True), 3))
+        self.__data[CURRENT_KEY].append(round(rfPowerDetectorInstance.getPaCurrent(no_update=True), 3))
 
     def getTrace(self, key):
         print("------------")
@@ -79,6 +83,61 @@ class MeasurementSession:
             trace = msi.getTrace(key)
             self.__data[key] = copy(trace)
         self.isFrequencyDomain = msi.isFrequencyDomain
+    
+    # Functions returns a string, which represents all traces.
+    # It can be saved into a CSV file.
+    def getTracesAsCsv(self):
+        SEPARATOR = ";"
+        keys = [      # order of columns needs to be well defined
+            TIME_KEY,
+            FWD_KEY,
+            RFL_KEY,
+            MHZ_KEY,
+            T0_KEY,
+            T1_KEY,
+            T2_KEY,
+            T3_KEY,
+            T4_KEY,
+            TAVG_KEY,
+            TREQ_KEY,
+            TINTERNAL_KEY,
+            VOLTAGE_KEY,
+            CURRENT_KEY
+        ]
+
+        lines = []
+        for i in range(len(self.__data[FWD_KEY])):   # FWD because it is always stored
+            if i==0:                                 # header
+                line = SEPARATOR.join(map(str, keys))
+                lines.append("#" + line)
+                continue
+            line = ""
+            for j, key in enumerate(keys):
+                try:
+                    v = self.__data[key][i]
+                except:
+                    v = "(no data)"
+                line += str(v)
+                if j<(len(keys)-1):
+                    line += ";"
+            lines.append(line)
+        output = "\n".join(lines)
+        self.__updateFileName()
+        return output
+    
+    def __updateFileName(self):
+        self.__resultsFileName = f"{RESULTS_SAVE_DIRECTORY}/results_" + time.strftime("%Y%m%d-%H%M%S")
+    
+    def getResultsFileName(self):
+        return self.__resultsFileName
+    
+    def saveTracesToFile(self, fn_suffix=""):
+        if fn_suffix != "":
+            fn_suffix = f"_{fn_suffix}"
+        csv = self.getTracesAsCsv()
+        fname = self.__resultsFileName + fn_suffix+".csv"
+        with open(fname, "w") as text_file:
+            text_file.write(csv)
         
     
 MeasurementSessionInstance = MeasurementSession()

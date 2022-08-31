@@ -84,18 +84,22 @@ class RfPowerDetector:
         rl = self.__fwdPowerDbm - self.__rflPowerDbm 
         return rl
     
-    def getPaVoltage(self):   # To w zasadzie powinno byc w innej klasie, bo nie pasuje do RfPowerDetector, ale nie mam teraz czasu na refaktoring
+    def getPaVoltage(self, no_update = False):   # To w zasadzie powinno byc w innej klasie, bo nie pasuje do RfPowerDetector, ale nie mam teraz czasu na refaktoring
+        if no_update:
+            return self.__paVoltage
         ch_id = "voltage"
         v = self.readVoltage(ch_id)
         voltage = float(self.__calibration(v, ch_id))
         self.__paVoltage = voltage
         return voltage
         
-    def getPaCurrent(self):   # j.w.
+    def getPaCurrent(self, no_update = False):   # j.w.
+        if no_update:
+            return self.__paCurrent
         ch_id = "current"
         v = self.readVoltage(ch_id)
         current = float(self.__calibration(v, ch_id))
-        self.__rflPowerDbm = current
+        self.__paCurrent = current
         return current
     
 rfPowerDetectorInstance = RfPowerDetector()
