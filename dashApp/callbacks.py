@@ -802,9 +802,8 @@ def register_callbacks(dashapp):
     def update_graph_live(n, trace_switch_list):
         x_ax, y_ax = list(), list()
         retFig = dash.no_update
-        # sprawdzic czy jest aktualnie pomiar
-
-        if aci.isRunning():
+        
+        if aci.isRunning() or "graph-trace-switch" in ctx.triggered[0]['prop_id']:   # drugi warunek dla zaktualizowania wykresu po klikaniu w przełączniki poszczególnych krzywych
 
             tracesList = list()
             if msi.isFrequencyDomain:

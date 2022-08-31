@@ -62,7 +62,7 @@ graph_traces = [
     {
         "key": TAVG_KEY,
         "label": "Tube Tavg",
-        "defaultState": False,
+        "defaultState": True,
         "color": "#E76F51"
     },
     {
