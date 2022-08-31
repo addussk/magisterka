@@ -28,6 +28,8 @@ DICT_DEFAULT_CFG = {
         },
     }
 
+
+
 layout_main = html.Div(
     id="big-app-container",
     children=[
@@ -46,6 +48,7 @@ layout_main = html.Div(
                 build_mode_panel(),
                 build_banner(),
                 build_config(),
+                build_error_msg(),
            #     build_mode_btns(),
                 build_chart_panel(),
 #                build_mode_controls()

@@ -327,6 +327,15 @@ def build_config():
         ]
     
     )
+
+def build_error_msg():
+    return html.Div(
+        id="header-error",
+        children = [
+            html.H3("Error"),
+            html.P(id="header-error-msg", children="Message")
+        ]
+    )
     
 def dialog_mode_selector():
     return [
@@ -707,5 +716,7 @@ def generate_graph_cfg_controls():
             labelPosition="right"
         )
         controls.append(ctrl)
+    controls.append(dcc.Download(id="download-traces"))
+    controls.append(html.Button("Download traces", id="download-traces-btn"))
     return controls
 

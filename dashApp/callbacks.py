@@ -147,15 +147,17 @@ def register_callbacks(dashapp):
 
 
     @dashapp.callback(
-        Output('status-header', 'children'),
+        [Output('status-header', 'children'), Output('header-error', 'style'), Output('header-error-msg','children')],
         Input('interval-component', 'n_intervals')
     )
     def update_status(data):
         resp = pai.request(PRPing("ReadingRfOnOff"))
-        retHeader = "Status: ---"
+        status = "Status: ---"
         if resp is not None:
-            retHeader = "Status: ON" if resp.rfOn else "Status: OFF"
-        return retHeader
+            status = "Status: ON" if resp.rfOn else "Status: OFF"
+        display = "block" if mlxSensorArrayInstance.get_communication_error() else "none"
+        error = {"display":display}
+        return [status, error, "IR sensors - communication error. Check connection cable!"]
 
 
     @dashapp.callback(
@@ -777,6 +779,16 @@ def register_callbacks(dashapp):
                 return [{"display":"block"}, {"display":"none"}]
             else:
                 return [{"display":"none"}, {"display":"block"}]
+
+
+    # Pobieranie danych z wykresu w formie pliku CSV
+    @dashapp.callback(
+        Output("download-traces", "data"),
+        Input("download-traces-btn", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def download_traces(n_clicks):
+        return dict(content="Hello world!", filename="hello.txt")
 
 
     # Aktualizacja wykresu co sekundę

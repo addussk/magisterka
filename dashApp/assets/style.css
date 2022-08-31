@@ -363,3 +363,11 @@
         margin-top: 0;
         margin-bottom: 0;
     }
+
+    #header-error {
+        background-color: red;
+        z-index: 100;
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
+    }

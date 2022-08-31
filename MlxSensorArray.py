@@ -26,6 +26,7 @@ class MlxSensorArray:
        
     # Reads object temprature from the idx-sensor
     def read_object_temperature(self, sensor_idx):
+        communicationError = False
         try:
             if not self.dummy_values:
                 sensor = self.__sensors[sensor_idx]
@@ -37,10 +38,17 @@ class MlxSensorArray:
         except Exception as e:
             print(f"Exception during object temperature IR sensor read idx={sensor_idx}, message:{e}")
             temperature = None
+            communicationError = True
         finally:
             i2cMutex.release()
         self.__object_temperatures[sensor_idx] = temperature
+        self.__communicationError = communicationError
         return temperature
+
+
+    def get_communication_error(self):
+        return self.__communicationError
+
 
     # Reads ambient tempreature from the idx-sensor 
     def read_ambient_temperature(self, sensor_idx):
@@ -67,7 +75,9 @@ class MlxSensorArray:
             if self[i]["object"] is not None:
                 s += self[i]["object"]
                 num += 1
-        average = s / num
+        average  = 0
+        if num != 0:        # avoid division by zero
+            average = s / num
         return round(average, 3)
 
     # Updates all readings in the sensor array
