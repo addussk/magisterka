@@ -829,12 +829,22 @@ def register_callbacks(dashapp):
                         "paper_bgcolor": "rgba(0,0,0,0)",
                         "plot_bgcolor": "rgba(0,0,0,0)",
                         "xaxis": dict(
-                            showline=False, showgrid=False, zeroline=False
+                            showline=True, showgrid=True, zeroline=False, gridcolor="#333", ticklabelstep=2, ticklen=3, tickformat="%H:%M:%S"
                         ),
                         "yaxis": dict(
-                            showgrid=False, showline=False, zeroline=False
+                            showline=True, showgrid=True, zeroline=True, gridcolor="#333", dtick=5, nticks=10, ticklabelstep=1, ticklen=3, tickmode="auto"
                         ),
                         "autosize": True,
+                        "font": {
+                            "color": "#ddd",
+                            "size": 16
+                        },
+                        "margin" : {
+                            "b": 40,
+                            "l": 25,
+                            "t": 15,
+                            "r": 5
+                        }
                     },
                 }
 

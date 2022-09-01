@@ -372,3 +372,8 @@
         width: 100%;
         display: none;
     }
+
+    #download-traces-btn {
+        width: 100%;
+        padding: 0.4rem;
+    }

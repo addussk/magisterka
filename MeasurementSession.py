@@ -126,7 +126,7 @@ class MeasurementSession:
         return output
     
     def __updateFileName(self):
-        self.__resultsFileName = f"{RESULTS_SAVE_DIRECTORY}/results_" + time.strftime("%Y%m%d-%H%M%S")
+        self.__resultsFileName = f"results_" + time.strftime("%Y%m%d-%H%M%S")
     
     def getResultsFileName(self):
         return self.__resultsFileName
@@ -135,7 +135,7 @@ class MeasurementSession:
         if fn_suffix != "":
             fn_suffix = f"_{fn_suffix}"
         csv = self.getTracesAsCsv()
-        fname = self.__resultsFileName + fn_suffix+".csv"
+        fname = f"{RESULTS_SAVE_DIRECTORY}/{self.__resultsFileName}{fn_suffix}.csv"
         with open(fname, "w") as text_file:
             text_file.write(csv)
         
