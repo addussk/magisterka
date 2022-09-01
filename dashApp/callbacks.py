@@ -805,23 +805,28 @@ def register_callbacks(dashapp):
         
         if aci.isRunning() or "graph-trace-switch" in ctx.triggered[0]['prop_id']:   # drugi warunek dla zaktualizowania wykresu po klikaniu w przełączniki poszczególnych krzywych
 
+            legend_switch = trace_switch_list[-2]   # hardcoded for simplicity
+
             tracesList = list()
             if msi.isFrequencyDomain:
                 x_data = msi.getTrace(MHZ_KEY)
             else:
                 x_data = msi.getTrace(TIME_KEY)
 
-            for i, gt in enumerate(graph_traces):
+            print(trace_switch_list)
+            for i, stl in enumerate(switch_traces):
+                print(i, stl)
                 if trace_switch_list[i]:
-                    trace = {
-                        "x": x_data,
-                        "y": msi.getTrace(gt["key"]),
-                        "mode": "lines+markers",
-                        'type': 'scatter',
-                        'line': {'color':gt['color']},
-                        "name": gt["label"],
-                    }
-                    tracesList.append(trace)
+                    for st in stl:
+                        trace = {
+                            "x": x_data,
+                            "y": msi.getTrace(st["key"]),
+                            "mode": "lines+markers",
+                            'type': 'scatter',
+                            'line': {'color':st['color']},
+                            "name": st["label"],
+                        }
+                        tracesList.append(trace)
 
             fig={
                     "data": tracesList,
@@ -844,7 +849,8 @@ def register_callbacks(dashapp):
                             "l": 25,
                             "t": 15,
                             "r": 5
-                        }
+                        },
+                        "showlegend": legend_switch
                     },
                 }
 

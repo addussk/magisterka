@@ -39,7 +39,7 @@ graph_traces = [
         "key": T1_KEY,
         "label": "Tube temp 1",
         "defaultState": False,
-        "color": "#D2C06F"
+        "color": "#D2C06F",
     },
     {
         "key": T2_KEY,
@@ -91,6 +91,21 @@ graph_traces = [
     },
 ]
 
+switch_traces = list()   # this list will be filled during creation of the graph control panel
+
+shared_switches = [
+    {
+        "key": "indivitual-temps",
+        "keyList": [T0_KEY, T1_KEY, T2_KEY, T3_KEY, T4_KEY],
+        "label": "Individual temp. [°C]"
+    },
+    {
+        "key": "pa-power-supply",
+        "keyList": [VOLTAGE_KEY, CURRENT_KEY],
+        "label": "PA power supply"
+    }
+
+]
 
 # Dict dla drop list do wybierania trybow pomiaru(tab meas setts)
 DROP_LIST_MEAS_MODE = {
@@ -702,21 +717,61 @@ def pf_meas_tab(state_value):
         )
     ]
 
+
+def _boolean_switch(key, label, color="white", defaultState=True):
+    return daq.BooleanSwitch(     
+        id={
+            "type": "graph-trace-switch",
+            "key": key,
+        },
+        color=color,
+        on=defaultState,
+        label={"label":label, "style":{"width":"50%", "margin-bottom":"10px"} },
+        labelPosition="right"
+    )
+
 def generate_graph_cfg_controls():
     controls = list()
+    global switch_traces      # necessary for callback to recognize which value comes from which switch
+    switch_traces = list()
+    ctrl = None
+    sharedSwitch = None
     for gt in graph_traces:
-        ctrl = daq.BooleanSwitch(
-            id={
-                "type": "graph-trace-switch",
-                "key": gt["key"],
-            },
-            color=gt["color"],
-            on=gt["defaultState"],
-            label={"label":gt["label"], "style":{"width":"50%", "margin-bottom":"10px"} },
-            labelPosition="right"
-        )
+        # Check whether gt belongs to sharedSwitch (current group)?
+        if sharedSwitch is not None and gt["key"] in sharedSwitch["keyList"]:
+            continue     # yes, it belongs the the group of shared switches, do not add more switches
+        else:
+            sharedSwitch = None      # no, it does not belong
+        
+        # Check whether the gt has a shared switch to join the group?
+        for ss in shared_switches:
+            if gt["key"] in ss["keyList"]:
+                sharedSwitch = ss
+                break
+        
+        if sharedSwitch is None:
+            ctrl = _boolean_switch(gt["key"], gt["label"], gt["color"], gt["defaultState"])     # Individual switch
+            stl = [{"color":gt["color"], "label":gt["label"], "key":gt["key"]}]
+            switch_traces.append(stl)
+        else:
+            key = "shared-" + sharedSwitch["key"]
+            ctrl = _boolean_switch(key, sharedSwitch["label"], gt["color"], gt["defaultState"])     # Switch shared by a few traces
+            stl = list()
+            for k in sharedSwitch["keyList"]:
+                for gt2 in graph_traces:
+                    if gt2["key"] == k:
+                        st = {"color":gt2["color"], "label":gt2["label"], "key":gt2["key"]}
+                        stl.append(st)
+            switch_traces.append(stl)
+            
         controls.append(ctrl)
+    controls.append(html.Hr())
+    controls.append(_boolean_switch("legend", "Legend on/off"))
+    controls.append(_boolean_switch("collect-after-stop", "Collect data after stop", ))
     controls.append(dcc.Download(id="download-traces"))
-    controls.append(html.Button("Download traces", id="download-traces-btn"))
+    controls.append(html.Button("Download traces as CSV file", id="download-traces-btn"))
+    
+    print("SWITCH_TRACES:", switch_traces)
+    
     return controls
 
