@@ -9,6 +9,7 @@ import time
 
 TIME_KEY = "timestamp"
 FWD_KEY = "fwdPwrDbm"
+FWD_WATTS_KEY = "fwdPwrWatts"
 RFL_KEY = "rflPwrDbm"
 MHZ_KEY = "frequencyMhz"
 T0_KEY = "t0"
@@ -31,6 +32,7 @@ class MeasurementSession:
         self.__data = {     # a dictionary of lists
             TIME_KEY: [],
             FWD_KEY: [],
+            FWD_WATTS_KEY: [],
             RFL_KEY: [],
             MHZ_KEY: [],
             T0_KEY: [],
@@ -53,13 +55,14 @@ class MeasurementSession:
 
     def __str__(self):
         s = f"Trace title: {self.session_title},\nTrace length: {len(self.__data[TIME_KEY])}\n"
-        s += f"MHz: {self.__data[MHZ_KEY]} FWD: {self.__data[FWD_KEY]} RFL: {self.__data[RFL_KEY]}"
+        s += f"MHz: {self.__data[MHZ_KEY]} FWD: {self.__data[FWD_KEY]} dBm  RFL: {self.__data[RFL_KEY]} dBm"
         return s
     
     def addDataPoint(self, fwdPwrDbm, rflPwrDbm, frequencyMhz=None, tempRequested=None, tempInternal=None):
         self.__data[TIME_KEY].append(datetime.datetime.now())
-        self.__data[FWD_KEY].append(round(fwdPwrDbm, 2))
-        self.__data[RFL_KEY].append(round(rflPwrDbm, 2))
+        self.__data[FWD_KEY].append(round(fwdPwrDbm, 3))
+        self.__data[FWD_WATTS_KEY].append(round(10**((fwdPwrDbm-30)/10), 2))
+        self.__data[RFL_KEY].append(round(rflPwrDbm, 3))
         f = round(frequencyMhz, 3) if frequencyMhz is not None else 0
         self.__data[MHZ_KEY].append(f)
         self.__data[T0_KEY].append(mlxSensorArrayInstance[0]['object'])
@@ -91,6 +94,7 @@ class MeasurementSession:
         keys = [      # order of columns needs to be well defined
             TIME_KEY,
             FWD_KEY,
+            FWD_WATTS_KEY,
             RFL_KEY,
             MHZ_KEY,
             T0_KEY,
@@ -100,7 +104,7 @@ class MeasurementSession:
             T4_KEY,
             TAVG_KEY,
             TREQ_KEY,
-            TINTERNAL_KEY,
+       #     TINTERNAL_KEY,
             VOLTAGE_KEY,
             CURRENT_KEY
         ]

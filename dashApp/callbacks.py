@@ -539,9 +539,8 @@ def register_callbacks(dashapp):
         for indicator in OUTPUT_INDICATORS.keys():
             retArr.append(OUTPUT_INDICATORS_FNC[indicator]())
 
-        if len(retArr) == len(OUTPUT_INDICATORS.keys()):
-            return retArr
-        else: raise Exception("Wrong length of array in update_sensors_output cb")
+        return retArr
+        
 
     # Callback wyswietlajacy formularz dla danego typu
 #    @dashapp.callback(

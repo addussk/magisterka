@@ -22,10 +22,14 @@ except:
 import digitalio
 
 def read_output_pwr():
-    return round(rfPowerDetectorInstance.getFwdPowerDbm(), 2)
+    dbm = rfPowerDetectorInstance.getFwdPowerDbm()
+    watts = 10 ** ((dbm-30) / 10)
+    return round(watts, 2)
 
 def read_reflected_pwr():
-    return round(rfPowerDetectorInstance.getRflPowerDbm(), 2)
+    dbm = rfPowerDetectorInstance.getRflPowerDbm()
+    watts = 10 ** ((dbm-30) / 10)
+    return round(watts, 2)
 
 def read_swr():
     return round(rfPowerDetectorInstance.getReturnLossDb(), 2)  # TODO: calculate SWR from return loss
@@ -75,20 +79,20 @@ OUTPUT_INDICATORS_FNC = {
     'TempReq': read_requested_temperature,
     'PA_V': read_pa_voltage,
     'PA_C': read_pa_current,
-    'PA_T': read_pa_temp,
+ #   'PA_T': read_pa_temp,
 }
 
 # id : label content
 OUTPUT_INDICATORS = {
-    'O_PWR':"Output PWR:, [dBm]",
-    'Refl_PWR': "Reflected PWR:, [dBm]",
+    'O_PWR':"Output PWR:, [Watts]",
+    'Refl_PWR': "Reflected PWR:, [Watts]",
     'SWR': "Return Loss:, [dB]",
     'Freq': "Frequency:, [GHz]",
     'Atten': "Attenuator:, [dB]",
     'TempReq': "Required temperature:, [C]",
     'PA_V': "PA Voltage:, [V]",
     'PA_C': "PA Current:, [A]",
-    'PA_T': "PA Temperature:, [C]",
+ #   'PA_T': "PA Temperature:, [C]",
 }
 
 #Syntezator czestotliwosci

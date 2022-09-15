@@ -5,7 +5,7 @@ from dashApp.extensions import db
 from statemachine import DataBase
 from dashApp.models import  MeasurementInfo
 from drivers import OUTPUT_INDICATORS 
-from MeasurementSession import TIME_KEY, FWD_KEY, RFL_KEY, MHZ_KEY, T0_KEY, T1_KEY, T2_KEY, T3_KEY, T4_KEY, TAVG_KEY, TREQ_KEY, TINTERNAL_KEY, VOLTAGE_KEY, CURRENT_KEY
+from MeasurementSession import TIME_KEY, FWD_KEY, FWD_WATTS_KEY, RFL_KEY, MHZ_KEY, T0_KEY, T1_KEY, T2_KEY, T3_KEY, T4_KEY, TAVG_KEY, TREQ_KEY, TINTERNAL_KEY, VOLTAGE_KEY, CURRENT_KEY
 
 Global_DataBase = DataBase(db)
 
@@ -14,8 +14,14 @@ graph_traces = [
     {
         "key": FWD_KEY,
         "label": "Forward Pwr dBm",
-        "defaultState": True,
+        "defaultState": False,
         "color": "#FF006E"      # ręczne zarządzanie kolorami linii, aby nie zmieniały się przy włączaniu/wyłączaniu krzywych
+    },
+    {
+        "key": FWD_WATTS_KEY,
+        "label": "Forward Pwr watts",
+        "defaultState": True,
+        "color": "#FF0036"
     },
     {
         "key": RFL_KEY,
@@ -71,16 +77,16 @@ graph_traces = [
         "defaultState": True,
         "color": "#c83f1e"
     },
-    {
-        "key": TINTERNAL_KEY,
-        "label": "PA Temp",
-        "defaultState": True,
-        "color": "#7AC980"
-    },
+#    {
+#        "key": TINTERNAL_KEY,
+#        "label": "PA Temp",
+#        "defaultState": True,
+#        "color": "#7AC980"
+#    },
     {
         "key": VOLTAGE_KEY,
         "label": "PA Volts",
-        "defaultState": True,
+        "defaultState": False,
         "color": "#275C62"
     },
     {
@@ -465,25 +471,30 @@ def build_chart_panel():
                         id="control-chart-live",
                         figure=go.Figure(
                             {
-                                "data": [
-                                    {
-                                        "x": [1,2,3,4,5],
-                                        "y": [1,2,3,4,5],
-                                        "mode": "lines+markers",
-                                    }
-                                ],
+                                "data": None,
                                 "layout": {
                                     "paper_bgcolor": "rgba(0,0,0,0)",
                                     "plot_bgcolor": "rgba(0,0,0,0)",
                                     "xaxis": dict(
-                                        showline=False, showgrid=False, zeroline=False
+                                        showline=True, showgrid=True, zeroline=False, gridcolor="#333", ticklabelstep=2, ticklen=3, tickformat="%H:%M:%S"
                                     ),
                                     "yaxis": dict(
-                                        showgrid=False, showline=False, zeroline=False
+                                        showline=True, showgrid=True, zeroline=True, gridcolor="#333", dtick=5, nticks=10, ticklabelstep=1, ticklen=3, tickmode="auto"
                                     ),
                                     "autosize": True,
+                                    "font": {
+                                        "color": "#ddd",
+                                        "size": 16
+                                    },
+                                    "margin" : {
+                                        "b": 40,
+                                        "l": 25,
+                                        "t": 15,
+                                        "r": 5
+                                    },
+                                    "showlegend": False
                                 },
-                            }
+                            }                        
                         ),
                     ),
                 ],
@@ -767,7 +778,7 @@ def generate_graph_cfg_controls():
         controls.append(ctrl)
     controls.append(html.Hr())
     controls.append(_boolean_switch("legend", "Legend on/off"))
-    controls.append(_boolean_switch("collect-after-stop", "Collect data after stop", ))
+ #   controls.append(_boolean_switch("collect-after-stop", "Collect data after stop", ))
     controls.append(dcc.Download(id="download-traces"))
     controls.append(html.Button("Download traces as CSV file", id="download-traces-btn"))
     

@@ -5,6 +5,7 @@ import psutil
 import subprocess
 import os
 import signal
+import time
 
 UWAVE_PATH = "/home/pi/magisterka/uwave_bin"
 UWAVE_PROCESS_NAME = "uwave"
@@ -48,6 +49,7 @@ def startUwaveProcess():
         shell=True,
         preexec_fn=os.setsid
     )
+#    time.sleep(2)
     os.chdir(cwd)   # return to original folder
 
 
