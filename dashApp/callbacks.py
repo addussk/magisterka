@@ -320,6 +320,9 @@ def register_callbacks(dashapp):
     )
     def mode_select_btn(n_clicks, n_clicks_2, dms_style):
         mode = aci.getMode().value
+        if n_clicks is None and n_clicks_2 is None:
+            return [{'display':'none'}, mode]    # aby poprawnie zachowywało się Open mode controls po pierwszym załadowaniu aplikacji
+
         if n_clicks>0 or n_clicks_2>0:
             if dms_style["display"]=="none":
                 return [{'display':'block'}, mode]    
@@ -374,7 +377,7 @@ def register_callbacks(dashapp):
         Input('config-open-btn', 'n_clicks'),
         State('mode-selector', 'value'))
     def t_tracking_load_table(n_clicks, mode_selector_value):
-        if n_clicks>0 and mode_selector_value == 't-tracking':
+        if n_clicks is not None and mode_selector_value == 't-tracking':
             return tt_table(data=load_table_from_uwave())
         else:
             return tt_table(data=[])    
@@ -773,7 +776,7 @@ def register_callbacks(dashapp):
         ]
     )
     def show_graph_cfg_panel(n_clicks, op_style, gc_style):
-        if n_clicks>0:
+        if n_clicks is not None:
             if op_style["display"]=="none":
                 return [{"display":"block"}, {"display":"none"}]
             else:
