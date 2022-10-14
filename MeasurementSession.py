@@ -3,9 +3,10 @@
 import datetime
 from MlxSensorArray import mlxSensorArrayInstance
 from RfPowerDetector import rfPowerDetectorInstance 
-from copy import copy
+from copy import copy, deepcopy
 from defines import RESULTS_SAVE_DIRECTORY
 import time
+import numpy as np
 
 TIME_KEY = "timestamp"
 FWD_KEY = "fwdPwrDbm"
@@ -46,12 +47,16 @@ class MeasurementSession:
             VOLTAGE_KEY: [],
             CURRENT_KEY: []
             }
+        self.__plottedData = deepcopy(self.__data)
         self.isFrequencyDomain = False      # time domain by default
         self.__resultsFileName = ""
+        self.desiredPlotTraceLength = 300
+        
 
     def clearAllTraces(self):
         for k, v in self.__data.items():
             self.__data[k] = list()
+            self.__plottedData[k] = list()
 
     def __str__(self):
         s = f"Trace title: {self.session_title},\nTrace length: {len(self.__data[TIME_KEY])}\n"
@@ -75,10 +80,32 @@ class MeasurementSession:
         self.__data[TINTERNAL_KEY].append(tempInternal)
         self.__data[VOLTAGE_KEY].append(round(rfPowerDetectorInstance.getPaVoltage(no_update=True), 3))
         self.__data[CURRENT_KEY].append(round(rfPowerDetectorInstance.getPaCurrent(no_update=True), 3))
-
+        if len(self.__data[MHZ_KEY]) % 30 == 0:
+            self.__selectDataForPlot()
+        else:
+            for key, datalist in self.__data.items():
+                self.__plottedData[key].append(datalist[-1])  # add last element
+        
     def getTrace(self, key):
-        print("------------")
-        return self.__data[key]
+        #return self.__data[key]
+        return self.__plottedData[key]
+    
+    
+    def __selectDataForPlot(self):
+        length = len(self.__data[MHZ_KEY])
+        
+        if length < self.desiredPlotTraceLength:
+            self.__plottedData = deepcopy(self.__data)
+        
+        selected_indexes = np.linspace(0, length-1, self.desiredPlotTraceLength, dtype=int)
+
+        for key in self.__data.keys():
+            self.__plottedData[key].clear()
+
+        for idx in np.nditer(selected_indexes):
+            for key in self.__data.keys():
+                self.__plottedData[key].append( self.__data[key][idx] ) 
+            
     
     def replaceTracesFromOtherInstance(self, msi):
         self.clearAllTraces()
@@ -86,6 +113,7 @@ class MeasurementSession:
             trace = msi.getTrace(key)
             self.__data[key] = copy(trace)
         self.isFrequencyDomain = msi.isFrequencyDomain
+        self.__plottedData = deepcopy(self.__data)
     
     # Functions returns a string, which represents all traces.
     # It can be saved into a CSV file.
