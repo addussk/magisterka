@@ -122,11 +122,11 @@
     }
 
     .button-container{
-        width: 50vh;
+        width: 80vh;
         height: 15vh;
         padding: 5%;
-        margin-top: 5%;
-        margin-left: 15%;
+        margin-top: 5px;
+        margin-left: 12%;
     }
 
     .form-button {
@@ -299,13 +299,13 @@
     .dialog_container {
         background-color:rgba(26, 27, 54, 0.95);
         position: fixed;
-        z-index: 2;
-        width: 60%;
-        margin-left: 20%;
+        z-index: 20;
+        width: 70%;
+        margin-left: 15%;
         margin-top: 5%;
         border: solid 2px #f3f5f4;
         font-size: 1.5rem;
-        padding: 20px;
+        padding: 30px;
         max-height: 90%;
         overflow-y: auto;
     }
@@ -376,4 +376,23 @@
     #download-traces-btn {
         width: 100%;
         padding: 0.4rem;
+    }
+
+    .dash-spreadsheet-inner table {
+        color: #ccc;
+    }
+    
+    .rc-slider-mark {
+      font-size: 20px;
+    }
+
+    #t-tracking-table {
+        padding-bottom: 20px;
+    }
+
+    #app-link {
+        margin-top: 15px;
+        display: block;
+        z-index: 10;
+        position: relative;
     }

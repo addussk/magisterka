@@ -79,6 +79,11 @@ layout_main = html.Div(
                         generate_temp_indicator(),  
                     ],
                 ),
+                dcc.Link(
+                    href="-",
+                    title="-",
+                    id="app-link"
+                )
             ],
         ),
 

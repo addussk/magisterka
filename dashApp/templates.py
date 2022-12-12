@@ -627,17 +627,29 @@ def tt_table(data=()):
     return dash_table.DataTable(
         id="t-tracking-table", 
         columns=([
-            {"id":"tt-seconds", "name":"Time [sec.]", "format":{"locale":{"symbol":["", "s."]}}},
-            {"id":"tt-temperature", "name":"Temperature [°C]", "format":{"locale":{"symbol":["", "°C"]}}}
+            {"id":"tt-seconds", "name":"Time [sec.]", "format":{"locale":{"symbol":["", "s."]}}, "presentation":"dropdown"},
+            {"id":"tt-temperature", "name":"Temperature [°C]", "format":{"locale":{"symbol":["", "°C"]}}, "presentation":"dropdown" }
         ]),
         data=data,
         style_header={
-            "backgroundColor":'rgb(30, 30, 30)',
-            "color":"white"
+            "backgroundColor":'rgb(130, 130, 130)',
+            "color":"black"
         },
         style_data={
-            "backgroundColor":'rgb(50, 50, 50)',
-            "color":"white"            
+            "backgroundColor":'rgb(150, 150, 150)',
+            "color":"black"            
+        },
+        dropdown={
+            "tt-seconds": {
+                "options": [
+                    {"label":f"{i/60} minutes", "value":i} for i in range(30, 60*60, 30)
+                ]
+            },
+            "tt-temperature": {
+                "options": [
+                    {"label":i, "value":i} for i in range(30, 150, 5)
+                ]
+            }
         },
         editable=True,
         row_deletable=True
@@ -645,7 +657,15 @@ def tt_table(data=()):
 
 
 def t_tracking_tab():
+    freq_marks = {
+        5700: "5.70 GHz",
+        5750: "5.75 GHz",
+        5800: "5.80 GHz",
+        5850: "5.85 GHz",
+        5900: "5.90 GHz"
+    } 
     return [
+        html.Button('Add row', id='tt-add-row-btn', className="right", n_clicks=0, style={"padding":"2rem", "z-index":"10", "position":"relative"}),
         html.Div(
             id='t-tracking-cfg-header',
             children=[
@@ -653,14 +673,28 @@ def t_tracking_tab():
             ],
             className="header-form",
             style={'color':'#c8f10f'}
-        ),        
-
-        html.Button('Add row', id='tt-add-row-btn', className="right", n_clicks=0, style={"padding":"2rem"}),
-        html.Br(),
+        ),     
         html.Div(
             id="tt-table-div", 
             children=[tt_table()]),
-
+        html.Div(
+            style={"padding":"20px"},
+            children=[
+                dcc.Slider(
+                    min=5700, 
+                    max=5900, 
+                    step=5, 
+                    value=5850, 
+                    id="tt-freq-slider", 
+                    marks=freq_marks,
+                    persistence=True
+                )
+            ]
+        ),
+        html.Label(
+            id = "tt-freq-label",
+            
+        ),
         html.Div(
             className="button-container",
             children=[

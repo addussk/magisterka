@@ -10,6 +10,8 @@ from MlxSensorArray import mlxSensorArrayInstance
 def runTemperatureTrackingMode():
 	print("---------> Starting TEMPERATURE TRACKING mode")
 
+	lastFrequency = aci.getFrequencyMhz()
+
 	msi.clearAllTraces()
 	msi.isFrequencyDomain = False
 
@@ -17,12 +19,16 @@ def runTemperatureTrackingMode():
 	pai.request(PRSynthRfEnable(1))      
 	pai.request(PRAttenuator(aci.getAttenuator())) 		
 	pai.request(PRStartExperiment())
+	pai.request(PRSynthFreq(lastFrequency * 1e3))
 	
 	while aci.isRunning() and aci.getMode()==Mode.TEMPERATURE_TRACKING:
 		receivedPwr = rfPowerDetectorInstance.getRflPowerDbm()
 		transmittedPwr = rfPowerDetectorInstance.getFwdPowerDbm()
 		requestedTemperature = round(pai.lastResponse.temperatureRequested, 2)
 		frequency = aci.getFrequencyMhz()
+		if frequency != lastFrequency:
+			pai.request(PRSynthFreq(frequency * 1e3))
+			lastFrequency = frequency
 		msi.addDataPoint(transmittedPwr, receivedPwr, frequency, tempRequested=requestedTemperature)
 		temperature = mlxSensorArrayInstance.get_averaged_temperature()
 		pai.request(PRFakeTemperature(temperature))

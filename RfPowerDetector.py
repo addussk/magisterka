@@ -20,10 +20,10 @@ class RfPowerDetector:
             # Pin = -45 dBm, Vout = 1.36 V
             # Pin = -10 dBm, Vout = 0.58 V
                 "fwd": {
-                    "interp": interpolate.interp1d([1.36, 0.58], [-45+fwd_att_cpl, -10+fwd_att_cpl], fill_value='extrapolate'), 
+                    "interp": interpolate.interp1d([1.36, 0.58], [-45-1.44+fwd_att_cpl, -10-1.2+fwd_att_cpl], fill_value='extrapolate'), 
                     "ch": ADS.P1 },
                 "rfl": {
-                    "interp": interpolate.interp1d([1.36, 0.58], [-45+fwd_att_cpl, -10+fwd_att_cpl], fill_value='extrapolate'),
+                    "interp": interpolate.interp1d([1.36, 0.58], [-45-1.44+fwd_att_cpl, -10-1.5+fwd_att_cpl], fill_value='extrapolate'),
                     "ch": ADS.P0 },
                 "voltage": {
                     "interp": interpolate.interp1d([0, 2.273567], [0, 30], fill_value='extrapolate'),  # zastosowany jest dzielnik napięcia 820R/(10k+820R)

@@ -50,7 +50,7 @@ class MeasurementSession:
         self.__plottedData = deepcopy(self.__data)
         self.isFrequencyDomain = False      # time domain by default
         self.__resultsFileName = ""
-        self.desiredPlotTraceLength = 300
+        self.desiredPlotTraceLength = 100
         
 
     def clearAllTraces(self):
@@ -76,7 +76,10 @@ class MeasurementSession:
         self.__data[T3_KEY].append(mlxSensorArrayInstance[3]['object'])
         self.__data[T4_KEY].append(mlxSensorArrayInstance[4]['object'])
         self.__data[TAVG_KEY].append(mlxSensorArrayInstance.get_averaged_temperature())
-        self.__data[TREQ_KEY].append(tempRequested)
+        if tempRequested is not None and tempRequested > -199:
+            self.__data[TREQ_KEY].append(tempRequested)
+        else:
+            self.__data[TREQ_KEY].append(None)
         self.__data[TINTERNAL_KEY].append(tempInternal)
         self.__data[VOLTAGE_KEY].append(round(rfPowerDetectorInstance.getPaVoltage(no_update=True), 3))
         self.__data[CURRENT_KEY].append(round(rfPowerDetectorInstance.getPaCurrent(no_update=True), 3))

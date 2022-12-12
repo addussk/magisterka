@@ -16,7 +16,9 @@ from PiecykRequest import PRStartExperiment, PRStopExperiment, PRFakeTemperature
 from MeasurementSession import MeasurementSessionInstance as msi, TIME_KEY
 from ActualConfig import ActualConfigInstance as aci
 from ActualConfig import Mode
-
+import fcntl
+import socket
+import struct
 
 Global_DataBase = DataBase(db)
 
@@ -26,18 +28,22 @@ FORM_INPUT_ID_ARR = ["fixed-freq-input", "power-fix-input"]
 
 start_btn_off_style = {
     'backgroundColor': '#065b0a9d',
+    'color':'#4adc65'
 }
 
 start_btn_on_style = {
     'backgroundColor': '#08f614',
+    'color':'#065b0a'
 }
 
 stop_btn_off_style = {
     'backgroundColor': '#731603d3',
+    'color':'#ff2b00'
 }
 
 stop_btn_on_style = {
     'backgroundColor': '#f10202',
+    'color':'#731603'
 }
 
 mode_btns_on_style = {
@@ -175,7 +181,18 @@ def register_callbacks(dashapp):
         if has_triggered('start-btn'):
             print("------ START ----------")
             aci.requestStartProcess()
-        return None
+        return []
+
+
+    @dashapp.callback(
+        Output('tt-freq-label', 'children'),
+        Input('tt-freq-slider', 'value')
+    )
+    def tt_frequency(freqGHz):
+        freqMHz = freqGHz * 1e3
+        aci.setFrequencyMHz(freqMHz)
+        return f"Frequency: {round(freqMHz / 1e3)} MHz"
+
  
 
     # Style przyciskow START/STOP odświeżane automatycznie co 1 sek - dzieki temu wątek
@@ -604,6 +621,22 @@ def register_callbacks(dashapp):
         values.append(aci.getProcessTimeStr())
         return values
 
+    @dashapp.callback(
+        [Output('app-link', 'href'), Output('app-link', 'title')],
+        Input('interval-component', 'n_intervals')
+    )
+    def update_app_link(n_intervals):
+        # Implementation based on:
+        # https://circuitdigest.com/microcontroller-projects/display-ip-address-of-raspberry-pi
+        network = b'eth0'   # wired interface is fixed in this application
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        ip_addr = socket.inet_ntoa(fcntl.ioctl(
+            s.fileno(),
+            0x8915,  # SIOCGIFADDR
+            struct.pack('256s', network[:15])
+        )[20:24])
+        link = f"http://{ip_addr}:8080/dashboard/"
+        return [link, link]
 
     # Pilnowanie, czy aplikacja uwave jest uruchomiona w tle i jeśli nie jest, to jej uruchamianie
     @dashapp.callback(
@@ -781,6 +814,8 @@ def register_callbacks(dashapp):
                 return [{"display":"block"}, {"display":"none"}]
             else:
                 return [{"display":"none"}, {"display":"block"}]
+        else:
+            return [{"display":"block"}, {"display":"none"}]
 
 
     # Pobieranie danych z wykresu w formie pliku CSV
@@ -807,7 +842,7 @@ def register_callbacks(dashapp):
         
         if aci.isRunning() or "graph-trace-switch" in ctx.triggered[0]['prop_id']:   # drugi warunek dla zaktualizowania wykresu po klikaniu w przełączniki poszczególnych krzywych
 
-            legend_switch = trace_switch_list[-2]   # hardcoded for simplicity
+            legend_switch = trace_switch_list[-1]   # hardcoded for simplicity
 
             tracesList = list()
             if msi.isFrequencyDomain:
@@ -848,7 +883,7 @@ def register_callbacks(dashapp):
                         },
                         "margin" : {
                             "b": 40,
-                            "l": 25,
+                            "l": 30,
                             "t": 15,
                             "r": 5
                         },

@@ -30,9 +30,9 @@ stillwaiting=15
 
 #controller settings
 Pmax=20.0
-k0=8
-k1=0.03
-k2=5
+k0=19
+k1=0.01
+k2=3
 
 autorun=0
 show_fake_temp_info=1
